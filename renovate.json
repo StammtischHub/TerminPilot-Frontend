@@ -1,6 +1,32 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    ":disableDependencyDashboard"
+  ],
+  "timezone": "Europe/Berlin",
+  "schedule": ["* 0-6 * * *"],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
+  "labels": ["renovate"],
+  "rebaseWhen": "behind-base-branch",
+  "automerge": true,
+  "platformAutomerge": true,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "packageRules": [
+    {
+      "description": "Wait 3 days before updating dependencies",
+      "matchPackagePatterns": ["*"],
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "description": "Major Updates: Create PR, but no Auto-Merge",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["renovate", "major update"]
+    }
   ]
 }

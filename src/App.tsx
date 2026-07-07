@@ -1,12 +1,15 @@
-import { Button, Typography, Stack } from '@mui/material';
+import { Routes, Route } from "react-router";
+import LoginPage from "./pages/LoginPage.tsx";
+import HomePage from "./pages/HomePage.tsx";
 
-function App() {
+export default function App() {
   return (
-    <Stack spacing={2} sx={{ p: 4 }}>
-      <Typography variant="h4">Hello Material UI 🎉</Typography>
-      <Button variant="contained">Klick mich</Button>
-    </Stack>
+    <Routes>
+      <Route path="/" element={<LoginPage />} />
+      <Route
+        path="/home"
+        element={<HomePage />}
+      />
+    </Routes>
   );
 }
-
-export default App;

@@ -16,6 +16,16 @@
     "enabled": true,
     "automerge": true
   },
+
+  "hostRules": [
+    {
+      "hostType": "npm",
+      "matchHost": "https://npm.pkg.github.com/",
+      "username": "x-access-token",
+      "token": "{{ secrets.GH_PACKAGES_TOKEN }}"
+    }
+  ],
+
   "packageRules": [
     {
       "description": "Wait 3 days before updating dependencies",

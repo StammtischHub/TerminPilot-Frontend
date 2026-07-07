@@ -1,0 +1,139 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      ignore_dependencies_vulnerabilities:
+        description: 'Ignore dependency vulnerabilities and proceed with release (not recommended)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  check-permissions:
+    name: Check Permissions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch and event
+        run: |
+          if [ "${{ github.ref_name }}" != "main" ]; then
+            echo "::error::Workflow runs on branch '${{ github.ref_name }}' – only main allowed"
+            exit 1
+          fi
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+            echo "::error::Workflow was not triggered manually but by '${{ github.event_name }}' – only workflow_dispatch allowed"
+            exit 1
+          fi
+          echo "✅ Branch is main"
+
+      - name: Check repository role
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ env.GITHUB_TOKEN }}
+          script: |
+            const { data: perm } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: context.actor,
+            });
+
+            const allowedRoles = ['admin', 'maintain'];
+
+            if (!allowedRoles.includes(perm.permission)) {
+              core.setFailed(
+                `::error::${context.actor} has role "${perm.permission}" – needs: ${allowedRoles.join(' or ')}`
+              );
+            }
+            console.log(`✅ ${context.actor} is eligible (${perm.permission})`);
+
+  dependency-check:
+    name: Dependency Check
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ github.event.inputs.ignore_dependencies_vulnerabilities == 'true' }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Run Trivy Vulnerability Scan
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          image-ref: '.'
+          format: json
+          output: trivy-results.json
+          severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+          exit-code: '0'
+
+      - name: Evaluate Vulnerabilities
+        run: |
+          count=$(jq '[.Results[]?.Vulnerabilities[]?] | length' trivy-results.json)
+
+          cat trivy-results.json | jq -r '
+            .Results[]?.Vulnerabilities[]? |
+            "\(.Severity)|\(.PkgName)|\(.InstalledVersion)|\(.FixedVersion // "no fix")|\(.VulnerabilityID)"
+          ' | while IFS="|" read -r severity pkg installed fixed cve; do
+            case "$severity" in
+              CRITICAL) color="\e[35m" ;;  # Magenta
+              HIGH)     color="\e[31m" ;;  # rot
+              MEDIUM)   color="\e[33m" ;;  # gelb
+              LOW)      color="\e[34m" ;;  # blau
+            esac
+            link="https://nvd.nist.gov/vuln/detail/${cve}"
+            echo -e "${color}[${severity}]\e[0m ${pkg}\n\t${installed} -> ${fixed}\n\t${cve} (${link})"
+          done
+
+          if [ "$count" -gt 0 ]; then
+            echo "::warning::Found $count vulnerabilities. See report above."
+            exit 1
+          else
+            echo "No vulnerabilities found."
+          fi
+
+  version_release:
+    name: Version Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    outputs:
+      new_version: ${{ steps.release.outputs.new_version }}
+
+    steps:
+      - name: Generate App Token
+        uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+
+      - name: Install semantic-release
+        run: |
+          pnpm install \
+            semantic-release \
+            @semantic-release/changelog \
+            @semantic-release/git \
+            @semantic-release/github \
+            @semantic-release/exec
+
+      - name: Run semantic-release
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GIT_AUTHOR_NAME: "StammtischHub Release Bot"
+          GIT_AUTHOR_EMAIL: "3667706+stammtischhub-releaser[bot]@users.noreply.github.com"
+          GIT_COMMITTER_NAME: "StammtischHub Release Bot"
+          GIT_COMMITTER_EMAIL: "3667706+stammtischhub-releaser[bot]@users.noreply.github.com"
+        run: pnpm semantic-release

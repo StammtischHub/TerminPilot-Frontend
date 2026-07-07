@@ -7,7 +7,7 @@ on:
 
 jobs:
   dependency-check:
-    name: Dependency Check
+    name: Check dependencies
     runs-on: ubuntu-latest
 
     steps:
@@ -48,16 +48,24 @@ jobs:
             echo "No vulnerabilities found."
           fi
 
-  lint_typescript:
+  lint_project:
+    name: Lint project
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: read
     steps:
       - uses: actions/checkout@v7
 
       - uses: pnpm/action-setup@v6
         with:
           version: 11
+
+      - name: Configure npm registry auth
+        run: pnpm config set "//npm.pkg.github.com/:_authToken" "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Check format
         run: pnpm format:check

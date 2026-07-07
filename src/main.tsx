@@ -1,9 +1,9 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
-import App from './App'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import App from './App';
 
-const theme = createTheme() // Standard Material Design Theme
+const theme = createTheme(); // Standard Material Design Theme
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -11,5 +11,5 @@ createRoot(document.getElementById('root')!).render(
       <CssBaseline /> {}
       <App />
     </ThemeProvider>
-  </StrictMode>
-)
+  </StrictMode>,
+);

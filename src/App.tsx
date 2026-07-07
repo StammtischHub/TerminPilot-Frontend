@@ -1,4 +1,4 @@
-import { Button, Typography, Stack } from '@mui/material'
+import { Button, Typography, Stack } from '@mui/material';
 
 function App() {
   return (
@@ -6,7 +6,7 @@ function App() {
       <Typography variant="h4">Hello Material UI 🎉</Typography>
       <Button variant="contained">Klick mich</Button>
     </Stack>
-  )
+  );
 }
 
-export default App
+export default App;

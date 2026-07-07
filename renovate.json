@@ -22,7 +22,7 @@
       "hostType": "npm",
       "matchHost": "https://npm.pkg.github.com/",
       "username": "x-access-token",
-      "token": "{{ secrets.GH_PACKAGES_TOKEN }}"
+      "token": "{{ secrets.GITHUB_TOKEN }}"
     }
   ],
 

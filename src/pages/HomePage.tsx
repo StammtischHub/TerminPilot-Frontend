@@ -2,10 +2,10 @@ import {
   SpeedDial, SpeedDialAction, SpeedDialIcon,
   Stack, useMediaQuery,
 } from "@mui/material";
-import AppBarsWrapper from "./components/AppBarsWrapper/AppBarsWrapper.tsx";
-import GroupCard from "./components/GroupCard/GroupCard.tsx";
-import {theme} from "../theme.ts";
+import AppBarsWrapper from "./components/AppBarsWrapper.tsx";
+import GroupCard from "./components/GroupCard.tsx";
 import {AddBox, GroupAdd} from "@mui/icons-material";
+import {isMobile} from "../tools/ThemeHelpers.ts";
 
 const actions = [
   { icon: <AddBox />, name: 'Add new Event' },
@@ -13,8 +13,6 @@ const actions = [
 ];
 
 export default function HomePage() {
-  const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
-
   return (
     <AppBarsWrapper>
       <Stack spacing={3} sx={{ alignItems: 'center', mt: '24px', mb: '24px' }}>
@@ -24,7 +22,7 @@ export default function HomePage() {
       </Stack>
       <SpeedDial
         ariaLabel="Add actions"
-        FabProps={{ size: isMdUp ? 'large' : 'medium' }}
+        FabProps={{ size: useMediaQuery(isMobile) ? 'large' : 'medium' }}
         sx={{ position: 'absolute', bottom: {xs: 62, md: 65}, right: {xs: 2, md: 10} }}
         icon={<SpeedDialIcon />}
       >

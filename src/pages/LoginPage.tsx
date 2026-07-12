@@ -15,7 +15,7 @@ import {
   VisibilityOff,
   Login as LoginIcon,
 } from '@mui/icons-material';
-import TextFieldWithIcon from './components/TextFieldWithIcon/TextFieldWithIcon.tsx';
+import TextFieldWithIcon from './components/TextFieldWithIcon.tsx';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);

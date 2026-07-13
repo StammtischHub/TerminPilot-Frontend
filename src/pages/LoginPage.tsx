@@ -21,7 +21,10 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <Container maxWidth="xs" sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <Container
+      maxWidth="xs"
+      sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+    >
       <Stack
         direction="column"
         spacing={2.5}
@@ -76,9 +79,14 @@ export default function LoginPage() {
           </Link>
         </Typography>
 
-        <Button variant="contained" sx={{
-          width: '80%',
-        }} fullWidth startIcon={<LoginIcon />}>
+        <Button
+          variant="contained"
+          sx={{
+            width: '80%',
+          }}
+          fullWidth
+          startIcon={<LoginIcon />}
+        >
           Login
         </Button>
       </Stack>

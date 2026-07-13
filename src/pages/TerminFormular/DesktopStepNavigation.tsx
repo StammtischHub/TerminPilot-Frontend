@@ -1,9 +1,7 @@
-import {
-  StepButton, Step, Stepper
-} from "@mui/material";
-import { useLocation, useNavigate } from "react-router";
-import { steps, WIZARD_BASE_PATH } from "./steps.config";
-import { useFormWizard } from "./FormWizardContext";
+import { StepButton, Step, Stepper } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router';
+import { steps, WIZARD_BASE_PATH } from './steps.config';
+import { useFormWizard } from './FormWizardContext';
 
 export function DesktopStepNavigation() {
   const location = useLocation();

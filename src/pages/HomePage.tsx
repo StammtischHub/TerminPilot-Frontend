@@ -1,11 +1,8 @@
-import {
-  SpeedDial, SpeedDialAction, SpeedDialIcon,
-  Stack, useMediaQuery,
-} from "@mui/material";
-import AppBarsWrapper from "./components/AppBarsWrapper.tsx";
-import GroupCard from "./components/GroupCard.tsx";
-import {AddBox, GroupAdd} from "@mui/icons-material";
-import {isMobile} from "../tools/ThemeHelpers.ts";
+import { SpeedDial, SpeedDialAction, SpeedDialIcon, Stack, useMediaQuery } from '@mui/material';
+import AppBarsWrapper from './components/AppBarsWrapper.tsx';
+import GroupCard from './components/GroupCard.tsx';
+import { AddBox, GroupAdd } from '@mui/icons-material';
+import { isMobile } from '../tools/ThemeHelpers.ts';
 
 const actions = [
   { icon: <AddBox />, name: 'Add new Event' },
@@ -23,7 +20,7 @@ export default function HomePage() {
       <SpeedDial
         ariaLabel="Add actions"
         FabProps={{ size: useMediaQuery(isMobile) ? 'large' : 'medium' }}
-        sx={{ position: 'absolute', bottom: {xs: 62, md: 65}, right: {xs: 2, md: 10} }}
+        sx={{ position: 'absolute', bottom: { xs: 62, md: 65 }, right: { xs: 2, md: 10 } }}
         icon={<SpeedDialIcon />}
       >
         {actions.map((action) => (
@@ -37,7 +34,7 @@ export default function HomePage() {
               },
               staticTooltipLabel: {
                 sx: {
-                  width: 'max-content'
+                  width: 'max-content',
                 },
               },
             }}
@@ -49,14 +46,14 @@ export default function HomePage() {
 }
 
 const exampleGroups = [
-  { groupName: "Gruppe 1" },
-  { groupName: "Gruppe 2" },
-  { groupName: "Gruppe 1" },
-  { groupName: "Gruppe 2" },
-  { groupName: "Gruppe 1" },
-  { groupName: "Gruppe 2" },
-  { groupName: "Gruppe 1" },
-  { groupName: "Gruppe 2" },
-  { groupName: "Gruppe 1" },
-  { groupName: "Gruppe 2" }
-]
+  { groupName: 'Gruppe 1' },
+  { groupName: 'Gruppe 2' },
+  { groupName: 'Gruppe 1' },
+  { groupName: 'Gruppe 2' },
+  { groupName: 'Gruppe 1' },
+  { groupName: 'Gruppe 2' },
+  { groupName: 'Gruppe 1' },
+  { groupName: 'Gruppe 2' },
+  { groupName: 'Gruppe 1' },
+  { groupName: 'Gruppe 2' },
+];

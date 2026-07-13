@@ -1,3 +1,3 @@
-import {theme} from "../theme.ts";
+import { theme } from '../theme.ts';
 
-export const isMobile = theme.breakpoints.down("sm");
+export const isMobile = theme.breakpoints.down('sm');

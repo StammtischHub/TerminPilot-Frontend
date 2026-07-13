@@ -1,10 +1,10 @@
-import MobileStepper from "@mui/material/MobileStepper";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import { useLocation, useNavigate } from "react-router";
-import { steps, WIZARD_BASE_PATH } from "./steps.config";
+import MobileStepper from '@mui/material/MobileStepper';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import { useLocation, useNavigate } from 'react-router';
+import { steps, WIZARD_BASE_PATH } from './steps.config';
 
 export function MobileStepNavigation() {
   const location = useLocation();

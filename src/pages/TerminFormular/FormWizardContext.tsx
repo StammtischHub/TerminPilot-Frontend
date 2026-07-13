@@ -11,10 +11,10 @@
 // Zusätzlich wird der State bei jeder Änderung in sessionStorage gespiegelt,
 // damit er auch einen versehentlichen Reload (F5) übersteht.
 
-import { createContext, useContext, useEffect, useReducer, type ReactNode } from "react";
-import {type EventFormData, initialFormData } from "./types";
+import { createContext, useContext, useEffect, useReducer, type ReactNode } from 'react';
+import { type EventFormData, initialFormData } from './types';
 
-const STORAGE_KEY = "event-formular-wizard";
+const STORAGE_KEY = 'event-formular-wizard';
 
 type WizardState = {
   data: EventFormData;
@@ -28,16 +28,16 @@ const initialState: WizardState = {
 
 type Action =
   | {
-      type: "UPDATE_STEP";
+      type: 'UPDATE_STEP';
       step: keyof EventFormData;
       payload: Partial<EventFormData[keyof EventFormData]>;
     }
-  | { type: "VISIT_STEP"; step: string }
-  | { type: "RESET" };
+  | { type: 'VISIT_STEP'; step: string }
+  | { type: 'RESET' };
 
 function reducer(state: WizardState, action: Action): WizardState {
   switch (action.type) {
-    case "UPDATE_STEP":
+    case 'UPDATE_STEP':
       return {
         ...state,
         data: {
@@ -45,11 +45,11 @@ function reducer(state: WizardState, action: Action): WizardState {
           [action.step]: { ...state.data[action.step], ...action.payload },
         },
       };
-    case "VISIT_STEP":
+    case 'VISIT_STEP':
       return state.visitedSteps.includes(action.step)
         ? state
         : { ...state, visitedSteps: [...state.visitedSteps, action.step] };
-    case "RESET":
+    case 'RESET':
       return initialState;
     default:
       return state;
@@ -59,7 +59,7 @@ function reducer(state: WizardState, action: Action): WizardState {
 type FormWizardContextValue = WizardState & {
   updateStep: (
     step: keyof EventFormData,
-    payload: Partial<EventFormData[keyof EventFormData]>
+    payload: Partial<EventFormData[keyof EventFormData]>,
   ) => void;
   visitStep: (step: string) => void;
   reset: () => void;
@@ -88,9 +88,9 @@ export function FormWizardProvider({ children }: { children: ReactNode }) {
 
   const value: FormWizardContextValue = {
     ...state,
-    updateStep: (step, payload) => dispatch({ type: "UPDATE_STEP", step, payload }),
-    visitStep: (step) => dispatch({ type: "VISIT_STEP", step }),
-    reset: () => dispatch({ type: "RESET" }),
+    updateStep: (step, payload) => dispatch({ type: 'UPDATE_STEP', step, payload }),
+    visitStep: (step) => dispatch({ type: 'VISIT_STEP', step }),
+    reset: () => dispatch({ type: 'RESET' }),
   };
 
   return <FormWizardContext.Provider value={value}>{children}</FormWizardContext.Provider>;
@@ -99,7 +99,7 @@ export function FormWizardProvider({ children }: { children: ReactNode }) {
 export function useFormWizard() {
   const ctx = useContext(FormWizardContext);
   if (!ctx) {
-    throw new Error("useFormWizard muss innerhalb von <FormWizardProvider> verwendet werden");
+    throw new Error('useFormWizard muss innerhalb von <FormWizardProvider> verwendet werden');
   }
   return ctx;
 }

@@ -1,44 +1,44 @@
 export type EventFormData = {
-  users: number[],
+  users: number[];
   conditions?: {
-    weekdays: Days[],
+    weekdays: Days[];
     datePeriod: {
-      start: Date,
-      end: Date
-    },
+      start: Date;
+      end: Date;
+    };
     timePeriod?: {
-      start: string,
-      end: string
-    },
-    durationInMinutes: number,
-  },
+      start: string;
+      end: string;
+    };
+    durationInMinutes: number;
+  };
   event: {
-    title: string,
-    start: Date,
-    end: Date,
-    location?: string,
-    notes?: string
-  }
-}
+    title: string;
+    start: Date;
+    end: Date;
+    location?: string;
+    notes?: string;
+  };
+};
 
 const Days = {
-  MONDAY: "MO",
-  TUESDAY: "DI",
-  WEDNESDAY: "MI",
-  THURSDAY: "DO",
-  FRIDAY: "FR",
-  SATURDAY: "SA",
-  SUNDAY: "SO",
+  MONDAY: 'MO',
+  TUESDAY: 'DI',
+  WEDNESDAY: 'MI',
+  THURSDAY: 'DO',
+  FRIDAY: 'FR',
+  SATURDAY: 'SA',
+  SUNDAY: 'SO',
 } as const;
 
 type Days = (typeof Days)[keyof typeof Days];
 
 export const initialFormData: EventFormData = {
   users: [],
-  event: { title: "", start: new Date(), end: new Date() },
+  event: { title: '', start: new Date(), end: new Date() },
 };
 
 export type StepConfig = {
-  path: string,
-  label: string
+  path: string;
+  label: string;
 };

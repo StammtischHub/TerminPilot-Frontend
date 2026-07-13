@@ -1,17 +1,24 @@
-import {useEffect, useState} from "react";
-import { useNavigate } from "react-router";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import { useFormWizard } from "../FormWizardContext";
-import {steps, WIZARD_BASE_PATH} from "../steps.config";
-import {Checkbox, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import { useFormWizard } from '../FormWizardContext';
+import { steps, WIZARD_BASE_PATH } from '../steps.config';
+import {
+  Checkbox,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
 
 export function UserSelection() {
   const { data, updateStep, visitStep } = useFormWizard();
   const navigate = useNavigate();
 
   useEffect(() => {
-    visitStep("user-selection");
+    visitStep('user-selection');
   }, [visitStep]);
 
   const canProceed = data.users.length != 0;
@@ -29,9 +36,8 @@ export function UserSelection() {
     }
 
     setChecked(newChecked);
-    updateStep("users", newChecked);
+    updateStep('users', newChecked);
   };
-
 
   return (
     <Stack spacing={2} sx={{ alignItems: 'center', mt: '24px', mb: '24px' }}>
@@ -40,10 +46,7 @@ export function UserSelection() {
           const labelId = `checkbox-list-label-${user.id}`;
 
           return (
-            <ListItem
-              key={user.id}
-              disablePadding
-            >
+            <ListItem key={user.id} disablePadding>
               <ListItemButton onClick={handleToggle(user.id)} dense>
                 <ListItemIcon>
                   <Checkbox
@@ -72,6 +75,6 @@ export function UserSelection() {
 }
 
 const exampleUsers = [
-  { name: "Leon", id: 1 },
-  { name: "Jannis", id: 2 },
-]
+  { name: 'Leon', id: 1 },
+  { name: 'Jannis', id: 2 },
+];

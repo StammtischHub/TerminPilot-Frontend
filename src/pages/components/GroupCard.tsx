@@ -1,13 +1,13 @@
-import {Card, CardActionArea, CardContent, Typography} from "@mui/material";
-import {Group, Settings} from "@mui/icons-material";
+import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
+import { Group, Settings } from '@mui/icons-material';
 
 type GroupCardProps = {
   groupName: string;
-}
+};
 
 export default function GroupCard({ groupName }: GroupCardProps) {
   return (
-    <Card sx={{ width: { xs: '70%', md: '60%'}, display: 'flex', flexDirection: 'row' }}>
+    <Card sx={{ width: { xs: '70%', md: '60%' }, display: 'flex', flexDirection: 'row' }}>
       <CardActionArea>
         <CardContent sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Group fontSize="large" />
@@ -22,5 +22,5 @@ export default function GroupCard({ groupName }: GroupCardProps) {
         </CardContent>
       </CardActionArea>
     </Card>
-  )
+  );
 }

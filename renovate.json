@@ -28,6 +28,11 @@
 
   "packageRules": [
     {
+      "matchDepTypes": ["packageManager"],
+      "allowedVersions": "<=11.11.0",
+      "description": "See https://github.com/pnpm/pnpm/issues/12959"
+    },
+    {
       "description": "Wait 3 days before updating dependencies",
       "matchPackagePatterns": ["*"],
       "minimumReleaseAge": "3 days"

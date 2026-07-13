@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { AccountCircle, Groups, Home } from '@mui/icons-material';
 import { type ReactNode, useState } from 'react';
+import {useNavigate} from "react-router";
 
 type AppBarsWrapperProps = {
   children: ReactNode;
@@ -17,6 +18,7 @@ type AppBarsWrapperProps = {
 
 export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
   const [value, setValue] = useState(0);
+  const navigate = useNavigate();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -29,6 +31,7 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
             sx={{ textTransform: 'none', margin: '2px 0 2px 0' }}
             onClick={() => {
               setValue(0);
+              navigate('/home')
             }}
           >
             <Home fontSize="large" sx={{ mr: 2 }} />
@@ -55,7 +58,7 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
             setValue(newValue);
           }}
         >
-          <BottomNavigationAction label="Home" icon={<Home />} />
+          <BottomNavigationAction label="Home" icon={<Home />} onClick={() => navigate('/home')}/>
           <BottomNavigationAction label="Soziales" icon={<Groups />} />
         </BottomNavigation>
       </Paper>

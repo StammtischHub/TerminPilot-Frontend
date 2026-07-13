@@ -119,8 +119,6 @@ jobs:
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
-        with:
-          version: 11
 
       - name: Configure npm registry auth
         run: pnpm config set "//npm.pkg.github.com/:_authToken" "${{ secrets.GITHUB_TOKEN }}"

@@ -9,7 +9,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<LoginPage />} />
       <Route path="/home" element={<HomePage />} />
-      <Route path="termin" element={<TerminFormularLayout />}>
+      <Route path="event" element={<TerminFormularLayout />}>
         <Route index element={<Navigate to="user-selection" replace />} />
         <Route path="user-selection" element={<UserSelection />} />
       </Route>

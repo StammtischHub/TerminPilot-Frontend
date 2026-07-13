@@ -10,8 +10,9 @@ import {
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemText,
+  ListItemText, Paper,
 } from '@mui/material';
+import {generateSeparateStyle} from "../../../tools/ThemeHelpers.ts";
 
 export function UserSelection() {
   const { data, updateStep, visitStep } = useFormWizard();
@@ -21,9 +22,9 @@ export function UserSelection() {
     visitStep('user-selection');
   }, [visitStep]);
 
-  const canProceed = data.users.length != 0;
+  const canProceed = data.userSelection.users.length != 0;
 
-  const [checked, setChecked] = useState([1]);
+  const [checked, setChecked] = useState(data.userSelection.users);
 
   const handleToggle = (value: number) => () => {
     const currentIndex = checked.indexOf(value);
@@ -35,34 +36,37 @@ export function UserSelection() {
       newChecked.splice(currentIndex, 1);
     }
 
+    console.log(newChecked);
+
     setChecked(newChecked);
-    updateStep('users', newChecked);
+    updateStep('userSelection', {users: newChecked});
   };
 
   return (
     <Stack spacing={2} sx={{ alignItems: 'center', mt: '24px', mb: '24px' }}>
-      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', ml: '24px' }}>
-        {exampleUsers.map((user) => {
-          const labelId = `checkbox-list-label-${user.id}`;
+      <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), maxHeight: 500 }}>
+        <List sx={{ bgcolor: 'background.paper', width: '100%', maxHeight: 'inherit', overflow: 'auto' }}>
+          {exampleUsers.map((user) => {
+            const labelId = `checkbox-list-label-${user.id}`;
 
-          return (
-            <ListItem key={user.id} disablePadding>
-              <ListItemButton onClick={handleToggle(user.id)} dense>
-                <ListItemIcon>
-                  <Checkbox
-                    edge="end"
-                    checked={checked.includes(user.id)}
-                    tabIndex={-1}
-                    disableRipple
-                    slotProps={{ input: { 'aria-labelledby': labelId } }}
-                  />
-                </ListItemIcon>
-                <ListItemText id={labelId} primary={`${user.name}`} />
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
+            return (
+              <ListItem key={user.id} disablePadding>
+                <ListItemButton onClick={handleToggle(user.id)} dense>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="end"
+                      checked={checked.includes(user.id)}
+                      disableRipple
+                      slotProps={{ input: { 'aria-labelledby': labelId } }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText id={labelId} primary={`${user.name}`} />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Paper>
       <Button
         variant="contained"
         disabled={!canProceed}
@@ -77,4 +81,18 @@ export function UserSelection() {
 const exampleUsers = [
   { name: 'Leon', id: 1 },
   { name: 'Jannis', id: 2 },
+  { name: 'Leon', id: 3 },
+  { name: 'Jannis', id: 4 },
+  { name: 'Leon', id: 5 },
+  { name: 'Jannis', id: 6 },
+  { name: 'Leon', id: 7 },
+  { name: 'Jannis', id: 8 },
+  { name: 'Leon', id: 9 },
+  { name: 'Jannis', id: 10 },
+  { name: 'Leon', id: 11 },
+  { name: 'Jannis', id: 12 },
+  { name: 'Leon', id: 13 },
+  { name: 'Jannis', id: 14 },
+  { name: 'Leon', id: 15 },
+  { name: 'Jannis', id: 16 },
 ];

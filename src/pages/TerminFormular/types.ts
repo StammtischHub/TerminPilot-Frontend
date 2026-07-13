@@ -1,5 +1,7 @@
 export type EventFormData = {
-  users: number[];
+  userSelection: {
+    users: number[];
+  }
   conditions?: {
     weekdays: Days[];
     datePeriod: {
@@ -34,7 +36,7 @@ const Days = {
 type Days = (typeof Days)[keyof typeof Days];
 
 export const initialFormData: EventFormData = {
-  users: [],
+  userSelection: { users: [] },
   event: { title: '', start: new Date(), end: new Date() },
 };
 

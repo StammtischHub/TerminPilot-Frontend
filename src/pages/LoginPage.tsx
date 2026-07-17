@@ -23,7 +23,7 @@ export default function LoginPage() {
   return (
     <Container
       maxWidth="xs"
-      sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+      sx={{ height: '100dvh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
     >
       <Stack
         direction="column"

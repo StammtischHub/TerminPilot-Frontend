@@ -22,7 +22,7 @@ export default function HomePage() {
       </Stack>
       <SpeedDial
         ariaLabel="Add actions"
-        FabProps={{ size: useMediaQuery(isMobile) ? 'large' : 'medium' }}
+        FabProps={{ size: useMediaQuery(isMobile) ? 'medium' : 'large' }}
         sx={{ position: 'absolute', bottom: { xs: 62, md: 65 }, right: { xs: 2, md: 10 } }}
         icon={<SpeedDialIcon />}
       >

@@ -21,7 +21,7 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
   const navigate = useNavigate();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh' }}>
       <AppBar position="sticky">
         <Toolbar>
           <Button

@@ -1,9 +1,9 @@
 import { SpeedDial, SpeedDialAction, SpeedDialIcon, Stack, useMediaQuery } from '@mui/material';
-import AppBarsWrapper from './components/AppBarsWrapper.tsx';
-import GroupCard from './components/GroupCard.tsx';
+import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
+import GroupCard from '../components/GroupCard.tsx';
 import { AddBox, GroupAdd } from '@mui/icons-material';
 import { isMobile } from '../tools/ThemeHelpers.ts';
-import {useNavigate} from "react-router";
+import { useNavigate } from 'react-router';
 
 const actions = [
   { icon: <AddBox />, name: 'Add new Event', path: '/event' },
@@ -30,7 +30,9 @@ export default function HomePage() {
           <SpeedDialAction
             key={action.name}
             icon={action.icon}
-            onClick={() => {navigate(action.path)}}
+            onClick={() => {
+              navigate(action.path);
+            }}
             slotProps={{
               tooltip: {
                 open: true,

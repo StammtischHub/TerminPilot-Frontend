@@ -1,6 +1,6 @@
 import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
 import { Group, Settings } from '@mui/icons-material';
-import {generateSeparateStyle} from "../../tools/ThemeHelpers.ts";
+import { generateSeparateStyle } from '../tools/ThemeHelpers.ts';
 
 type GroupCardProps = {
   groupName: string;
@@ -8,7 +8,9 @@ type GroupCardProps = {
 
 export default function GroupCard({ groupName }: GroupCardProps) {
   return (
-    <Card sx={{ width: generateSeparateStyle('70%', '60%'), display: 'flex', flexDirection: 'row' }}>
+    <Card
+      sx={{ width: generateSeparateStyle('70%', '60%'), display: 'flex', flexDirection: 'row' }}
+    >
       <CardActionArea>
         <CardContent sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Group fontSize="large" />

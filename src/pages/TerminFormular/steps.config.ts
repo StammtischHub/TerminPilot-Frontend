@@ -8,4 +8,4 @@ export const steps: StepConfig[] = [
   { path: 'overview', label: 'Übersicht' },
 ];
 
-export const WIZARD_BASE_PATH = "/event";
+export const WIZARD_BASE_PATH = '/event';

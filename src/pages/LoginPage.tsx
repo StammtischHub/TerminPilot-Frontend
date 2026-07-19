@@ -1,24 +1,40 @@
-import { useState } from 'react';
-import {
-  Container,
-  Typography,
-  InputAdornment,
-  IconButton,
-  Button,
-  Link,
-  Stack,
-} from '@mui/material';
-import {
-  PersonOutlined,
-  LockOutlined,
-  Visibility,
-  VisibilityOff,
-  Login as LoginIcon,
-} from '@mui/icons-material';
-import TextFieldWithIcon from './components/TextFieldWithIcon.tsx';
+import { useState, type FormEvent } from 'react';
+import { Alert, Button, Container, Link, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Login as LoginIcon } from '@mui/icons-material';
+import { useAuth } from '../auth/AuthContext.tsx';
+import { Link as RouterLink, Navigate, useLocation, useNavigate } from 'react-router';
+import { isMobile } from '../tools/ThemeHelpers.ts';
+import PasswordTextField from '../components/textFields/PasswordTextField.tsx';
+import UsernameTextField from '../components/textFields/UsernameTextField.tsx';
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
+  const mobile = useMediaQuery(isMobile);
+  const { login, user, isLoading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/home';
+
+  if (isLoading) return null;
+  if (user) return <Navigate to={from} replace />;
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+    setSubmitting(true);
+    try {
+      await login(username, password);
+      navigate(from, { replace: true });
+    } catch {
+      setError('Benutzername oder Passwort ist falsch.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <Container
@@ -26,66 +42,40 @@ export default function LoginPage() {
       sx={{ height: '100dvh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
     >
       <Stack
+        component="form"
+        onSubmit={handleSubmit}
+        noValidate
         direction="column"
         spacing={2.5}
-        sx={{
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
+        sx={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}
       >
-        <Typography variant="h1">TerminPilot</Typography>
+        <Typography variant={mobile ? 'h3' : 'h1'} component="h1">
+          TerminPilot
+        </Typography>
 
-        <TextFieldWithIcon
-          id="username-input"
-          label="Username"
-          placeholder="Dein Name"
-          autoComplete="username"
-          icon={<PersonOutlined fontSize="small" />}
-        />
+        {error && (
+          <Alert severity="error" sx={{ width: '100%' }}>
+            {error}
+          </Alert>
+        )}
 
-        <TextFieldWithIcon
-          id="password-input"
-          label="Password"
-          placeholder="Dein Passwort"
-          type={showPassword ? 'text' : 'password'}
-          autoComplete="current-password"
-          icon={<LockOutlined fontSize="small" />}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword((s) => !s)}
-                    edge="end"
-                    size="small"
-                    aria-label={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
-                  >
-                    {showPassword ? (
-                      <Visibility fontSize="small" />
-                    ) : (
-                      <VisibilityOff fontSize="small" />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
+        <UsernameTextField value={username} onChange={(e) => setUsername(e.target.value)} />
+
+        <PasswordTextField value={password} onChange={(e) => setPassword(e.target.value)} />
 
         <Typography component="p" variant="body2">
-          noch kein Konto?{' '}
-          <Link href="#" underline="always">
+          Noch kein Konto?{' '}
+          <Link component={RouterLink} to="/register" underline="always">
             Registrieren
           </Link>
         </Typography>
 
         <Button
+          type="submit"
           variant="contained"
-          sx={{
-            width: '80%',
-          }}
-          fullWidth
+          sx={{ width: '80%' }}
           startIcon={<LoginIcon />}
+          loading={submitting}
         >
           Login
         </Button>

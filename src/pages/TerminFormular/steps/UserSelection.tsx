@@ -10,9 +10,10 @@ import {
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemText, Paper,
+  ListItemText,
+  Paper,
 } from '@mui/material';
-import {generateSeparateStyle} from "../../../tools/ThemeHelpers.ts";
+import { generateSeparateStyle } from '../../../tools/ThemeHelpers.ts';
 
 export function UserSelection() {
   const { data, updateStep, visitStep } = useFormWizard();
@@ -39,13 +40,20 @@ export function UserSelection() {
     console.log(newChecked);
 
     setChecked(newChecked);
-    updateStep('userSelection', {users: newChecked});
+    updateStep('userSelection', { users: newChecked });
   };
 
   return (
     <Stack spacing={2} sx={{ alignItems: 'center', mt: '24px', mb: '24px' }}>
       <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), maxHeight: 500 }}>
-        <List sx={{ bgcolor: 'background.paper', width: '100%', maxHeight: 'inherit', overflow: 'auto' }}>
+        <List
+          sx={{
+            bgcolor: 'background.paper',
+            width: '100%',
+            maxHeight: 'inherit',
+            overflow: 'auto',
+          }}
+        >
           {exampleUsers.map((user) => {
             const labelId = `checkbox-list-label-${user.id}`;
 

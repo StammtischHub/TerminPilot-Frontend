@@ -1,7 +1,6 @@
 import createClient, { type Middleware } from 'openapi-fetch';
 import type { components, paths } from './generated/types';
 
-// Bequeme Re-Exports der Contract-Typen für den Rest der App
 export type UserResponse = components['schemas']['UserResponse'];
 export type UserRole = components['schemas']['UserRole'];
 
@@ -46,7 +45,7 @@ const unauthorizedMiddleware: Middleware = {
 };
 
 export const api = createClient<paths>({
-  baseUrl: '/', // relative Pfade => Vite-Proxy, Contract-Server-URL irrelevant
-  credentials: 'include', // Cookies immer mitschicken
+  baseUrl: '/',
+  credentials: 'include',
 });
 api.use(csrfMiddleware, unauthorizedMiddleware);

@@ -1,16 +1,18 @@
+import type {Dayjs} from "dayjs";
+
 export type EventFormData = {
   userSelection: {
     users: number[];
   };
   conditions?: {
-    weekdays: Days[];
-    datePeriod: {
-      start: Date;
-      end: Date;
+    weekdays: Weekday[];
+    datePeriod?: {
+      start?: Dayjs;
+      end?: Dayjs;
     };
     timePeriod?: {
-      start: string;
-      end: string;
+      start?: Dayjs;
+      end?: Dayjs;
     };
     durationInMinutes: number;
   };
@@ -23,17 +25,7 @@ export type EventFormData = {
   };
 };
 
-const Days = {
-  MONDAY: 'MO',
-  TUESDAY: 'DI',
-  WEDNESDAY: 'MI',
-  THURSDAY: 'DO',
-  FRIDAY: 'FR',
-  SATURDAY: 'SA',
-  SUNDAY: 'SO',
-} as const;
-
-type Days = (typeof Days)[keyof typeof Days];
+export type Weekday = 'Mo' | 'Di' | 'Mi' | 'Do' | 'Fr' | 'Sa' | 'So';
 
 export const initialFormData: EventFormData = {
   userSelection: { users: [] },

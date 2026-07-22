@@ -5,6 +5,7 @@ import { TerminFormularLayout } from './pages/TerminFormular/TerminFormularLayou
 import { UserSelection } from './pages/TerminFormular/steps/UserSelection.tsx';
 import { RequireAuth } from './auth/RequireAuth.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
+import {Conditions} from "./pages/TerminFormular/steps/Conditions.tsx";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="event" element={<TerminFormularLayout />}>
           <Route index element={<Navigate to="user-selection" replace />} />
           <Route path="user-selection" element={<UserSelection />} />
+          <Route path="conditions" element={<Conditions />} />
         </Route>
       </Route>
 

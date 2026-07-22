@@ -1,12 +1,12 @@
 import { useState, type FormEvent } from 'react';
 import { Alert, Button, Container, Link, Stack, Typography, useMediaQuery } from '@mui/material';
-import { PersonAddAlt1 as RegisterIcon } from '@mui/icons-material';
+import {PersonAddAlt1 as RegisterIcon, PersonOutlined} from '@mui/icons-material';
 import { useAuth } from '../auth/AuthContext.tsx';
 import { ApiError } from '../api/client.ts';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router';
 import { isMobile } from '../tools/ThemeHelpers.ts';
-import UsernameTextField from '../components/textFields/UsernameTextField.tsx';
 import PasswordTextField from '../components/textFields/PasswordTextField.tsx';
+import TextFieldWithIcon from "../components/textFields/TextFieldWithIcon.tsx";
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
@@ -92,28 +92,36 @@ export default function RegisterPage() {
           </Alert>
         )}
 
-        <UsernameTextField
+        <TextFieldWithIcon
+          id="username-input"
+          label="Benutzername"
+          icon={<PersonOutlined fontSize="small" />}
+          placeholder="Benutzername"
+          autoComplete="username"
+          required
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(event) => setUsername(event.target.value)}
           error={Boolean(fieldErrors.username)}
           helperText={fieldErrors.username ?? '3–50 Zeichen'}
         />
 
         <PasswordTextField
+          id="password-input"
+          label="Passwort"
           autoComplete="new-password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(event) => setPassword(event.target.value)}
           error={Boolean(fieldErrors.password)}
           helperText={fieldErrors.password ?? 'Mindestens 12 Zeichen'}
         />
 
         <PasswordTextField
-          id="register-password-confirm-input"
+          id="password-confirm-input"
           label="Passwort bestätigen"
           placeholder="Passwort wiederholen"
           autoComplete="new-password"
           value={passwordConfirm}
-          onChange={(e) => setPasswordConfirm(e.target.value)}
+          onChange={(event) => setPasswordConfirm(event.target.value)}
           error={Boolean(fieldErrors.passwordConfirm)}
           helperText={fieldErrors.passwordConfirm ?? ''}
         />

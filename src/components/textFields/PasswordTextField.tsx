@@ -11,15 +11,11 @@ export default function PasswordTextField({ ...props }: PasswordTextFieldProps):
 
   return (
     <TextFieldWithIcon
-      id="password-input"
-      label="Passwort"
       icon={
         passwordFocus ? <LockOpenOutlined fontSize="small" /> : <LockOutlined fontSize="small" />
       }
       placeholder="Passwort"
       type={showPassword ? 'text' : 'password'}
-      autoComplete="current-password"
-      required
       onFocus={() => setPasswordFocus(true)}
       onBlur={() => setPasswordFocus(false)}
       slotProps={{
@@ -27,10 +23,9 @@ export default function PasswordTextField({ ...props }: PasswordTextFieldProps):
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
-                onClick={() => setShowPassword((s) => !s)}
+                onClick={() => setShowPassword((show) => !show)}
                 edge="end"
                 size="small"
-                aria-label={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
               >
                 {showPassword ? (
                   <Visibility fontSize="small" />

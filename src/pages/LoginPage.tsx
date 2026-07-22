@@ -1,11 +1,11 @@
 import { useState, type FormEvent } from 'react';
 import { Alert, Button, Container, Link, Stack, Typography, useMediaQuery } from '@mui/material';
-import { Login as LoginIcon } from '@mui/icons-material';
+import {Login as LoginIcon, PersonOutlined} from '@mui/icons-material';
 import { useAuth } from '../auth/AuthContext.tsx';
 import { Link as RouterLink, Navigate, useLocation, useNavigate } from 'react-router';
 import { isMobile } from '../tools/ThemeHelpers.ts';
 import PasswordTextField from '../components/textFields/PasswordTextField.tsx';
-import UsernameTextField from '../components/textFields/UsernameTextField.tsx';
+import TextFieldWithIcon from "../components/textFields/TextFieldWithIcon.tsx";
 
 export default function LoginPage() {
   const mobile = useMediaQuery(isMobile);
@@ -59,9 +59,25 @@ export default function LoginPage() {
           </Alert>
         )}
 
-        <UsernameTextField value={username} onChange={(e) => setUsername(e.target.value)} />
+        <TextFieldWithIcon
+          id="username-input"
+          label="Benutzername"
+          icon={<PersonOutlined fontSize="small" />}
+          placeholder="Benutzername"
+          autoComplete="username"
+          required
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+        />
 
-        <PasswordTextField value={password} onChange={(e) => setPassword(e.target.value)} />
+        <PasswordTextField
+          id="password-input"
+          label="Passwort"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
         <Typography component="p" variant="body2">
           Noch kein Konto?{' '}

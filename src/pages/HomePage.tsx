@@ -2,7 +2,7 @@ import { SpeedDial, SpeedDialAction, SpeedDialIcon, Stack, useMediaQuery } from 
 import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
 import GroupCard from '../components/GroupCard.tsx';
 import { AddBox, GroupAdd } from '@mui/icons-material';
-import { isMobile } from '../tools/ThemeHelpers.ts';
+import { isMobile } from '../utils/ThemeHelpers.ts';
 import { useNavigate } from 'react-router';
 
 const actions = [

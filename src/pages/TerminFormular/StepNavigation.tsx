@@ -1,6 +1,6 @@
 import { DesktopStepNavigation } from './DesktopStepNavigation';
 import { MobileStepNavigation } from './MobileStepNavigation';
-import { isMobile } from '../../tools/ThemeHelpers.ts';
+import { isMobile } from '../../utils/ThemeHelpers.ts';
 import { useMediaQuery } from '@mui/material';
 
 export function StepNavigation() {

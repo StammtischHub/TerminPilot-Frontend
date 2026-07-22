@@ -3,7 +3,7 @@ import { Alert, Button, Container, Link, Stack, Typography, useMediaQuery } from
 import {Login as LoginIcon, PersonOutlined} from '@mui/icons-material';
 import { useAuth } from '../auth/AuthContext.tsx';
 import { Link as RouterLink, Navigate, useLocation, useNavigate } from 'react-router';
-import { isMobile } from '../tools/ThemeHelpers.ts';
+import { isMobile } from '../utils/ThemeHelpers.ts';
 import PasswordTextField from '../components/textFields/PasswordTextField.tsx';
 import TextFieldWithIcon from "../components/textFields/TextFieldWithIcon.tsx";
 

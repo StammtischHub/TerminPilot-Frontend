@@ -1,6 +1,6 @@
 import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
 import { Group, Settings } from '@mui/icons-material';
-import { generateSeparateStyle } from '../tools/ThemeHelpers.ts';
+import { generateSeparateStyle } from '../utils/ThemeHelpers.ts';
 
 type GroupCardProps = {
   groupName: string;

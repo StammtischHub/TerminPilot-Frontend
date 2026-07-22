@@ -13,7 +13,7 @@ import {
   ListItemText,
   Paper,
 } from '@mui/material';
-import { generateSeparateStyle } from '../../../tools/ThemeHelpers.ts';
+import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
 
 export function UserSelection() {
   const { data, updateStep, visitStep } = useFormWizard();

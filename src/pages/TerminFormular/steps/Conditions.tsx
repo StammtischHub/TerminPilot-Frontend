@@ -4,20 +4,13 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { useFormWizard } from '../FormWizardContext';
 import { steps, WIZARD_BASE_PATH } from '../steps.config';
-import {
-  Box,
-  Paper,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from '@mui/material';
+import { Box, Paper, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs, { type Dayjs } from 'dayjs';
-import type {DatePeriod, TimePeriod, Weekday} from '../formular.types.ts';
+import type { DatePeriod, TimePeriod, Weekday } from '../formular.types.ts';
 import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
-import type {DateValidationError, TimeValidationError} from "@mui/x-date-pickers";
+import type { DateValidationError, TimeValidationError } from '@mui/x-date-pickers';
 
 const WEEKDAYS: Weekday[] = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
@@ -34,16 +27,30 @@ export function Conditions() {
   }, [visitStep]);
 
   const [weekdays, setWeekdays] = useState<Weekday[]>(data.conditions?.weekdays ?? WEEKDAYS);
-  const [datePeriod, setDatePeriod] = useState<DatePeriod>(data.conditions?.datePeriod ?? {start: currentDateDayjs, end: currentDateDayjs.add(3, "months")});
-  const [timePeriod, setTimePeriod] = useState<TimePeriod>(data.conditions?.timePeriod ?? {start: unixEpochTimeDayjs, end: unixEpochTimeDayjs.hour(23).minute(59)});
+  const [datePeriod, setDatePeriod] = useState<DatePeriod>(
+    data.conditions?.datePeriod ?? {
+      start: currentDateDayjs,
+      end: currentDateDayjs.add(3, 'months'),
+    },
+  );
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>(
+    data.conditions?.timePeriod ?? {
+      start: unixEpochTimeDayjs,
+      end: unixEpochTimeDayjs.hour(23).minute(59),
+    },
+  );
   const [durationInMinutes, setDurationInMinutes] = useState<number>(
     data.conditions?.durationInMinutes ?? 30,
   );
-  const [dateErrors, setDateErrors] = useState<Record<keyof DatePeriod, DateValidationError | null>>({
+  const [dateErrors, setDateErrors] = useState<
+    Record<keyof DatePeriod, DateValidationError | null>
+  >({
     start: null,
     end: null,
   });
-  const [timeErrors, setTimeErrors] = useState<Record<keyof TimePeriod, TimeValidationError | null>>({
+  const [timeErrors, setTimeErrors] = useState<
+    Record<keyof TimePeriod, TimeValidationError | null>
+  >({
     start: null,
     end: null,
   });
@@ -160,7 +167,7 @@ export function Conditions() {
                     height: 44,
                     minWidth: 44,
                     color: 'text.primary',
-                    fontWeight: "normal",
+                    fontWeight: 'normal',
                     '&.Mui-selected, &.Mui-selected:hover': {
                       bgcolor: 'primary.main',
                       color: 'primary.contrastText',
@@ -189,8 +196,9 @@ export function Conditions() {
                 value={datePeriod.start}
                 onChange={(newValue) => handleDatePeriodChange('start', newValue)}
                 onError={(reason) => {
-                  console.log(reason)
-                  setDateErrors((prev) => ({ ...prev, start: reason }))}}
+                  console.log(reason);
+                  setDateErrors((prev) => ({ ...prev, start: reason }));
+                }}
                 format="DD.MM.YYYY"
                 disablePast
                 maxDate={datePeriod.end}
@@ -198,7 +206,7 @@ export function Conditions() {
                   textField: {
                     fullWidth: true,
                     error: Boolean(dateErrors.start),
-                    helperText: getStartDateErrorMessage(dateErrors.start)
+                    helperText: getStartDateErrorMessage(dateErrors.start),
                   },
                 }}
               />
@@ -206,9 +214,10 @@ export function Conditions() {
                 label="Bis"
                 value={datePeriod.end}
                 onChange={(newValue) => handleDatePeriodChange('end', newValue)}
-                onError={(reason) =>{
-                  console.log(reason)
-                  setDateErrors((prev) => ({ ...prev, end: reason }))}}
+                onError={(reason) => {
+                  console.log(reason);
+                  setDateErrors((prev) => ({ ...prev, end: reason }));
+                }}
                 format="DD.MM.YYYY"
                 disablePast
                 minDate={datePeriod.start}
@@ -217,7 +226,7 @@ export function Conditions() {
                   textField: {
                     fullWidth: true,
                     error: Boolean(dateErrors.end),
-                    helperText: getEndDateErrorMessage(dateErrors.end)
+                    helperText: getEndDateErrorMessage(dateErrors.end),
                   },
                 }}
               />

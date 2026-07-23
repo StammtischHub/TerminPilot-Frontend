@@ -1,11 +1,11 @@
 import { useState, type FormEvent } from 'react';
 import { Alert, Button, Container, Link, Stack, Typography, useMediaQuery } from '@mui/material';
-import {Login as LoginIcon, PersonOutlined} from '@mui/icons-material';
+import { Login as LoginIcon, PersonOutlined } from '@mui/icons-material';
 import { useAuth } from '../auth/AuthContext.tsx';
 import { Link as RouterLink, Navigate, useLocation, useNavigate } from 'react-router';
 import { isMobile } from '../utils/ThemeHelpers.ts';
 import PasswordTextField from '../components/textFields/PasswordTextField.tsx';
-import TextFieldWithIcon from "../components/textFields/TextFieldWithIcon.tsx";
+import TextFieldWithIcon from '../components/textFields/TextFieldWithIcon.tsx';
 
 export default function LoginPage() {
   const mobile = useMediaQuery(isMobile);

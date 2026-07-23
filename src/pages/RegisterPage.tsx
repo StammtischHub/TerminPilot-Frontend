@@ -1,12 +1,12 @@
 import { useState, type FormEvent } from 'react';
 import { Alert, Button, Container, Link, Stack, Typography, useMediaQuery } from '@mui/material';
-import {PersonAddAlt1 as RegisterIcon, PersonOutlined} from '@mui/icons-material';
+import { PersonAddAlt1 as RegisterIcon, PersonOutlined } from '@mui/icons-material';
 import { useAuth } from '../auth/AuthContext.tsx';
 import { ApiError } from '../api/client.ts';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router';
 import { isMobile } from '../utils/ThemeHelpers.ts';
 import PasswordTextField from '../components/textFields/PasswordTextField.tsx';
-import TextFieldWithIcon from "../components/textFields/TextFieldWithIcon.tsx";
+import TextFieldWithIcon from '../components/textFields/TextFieldWithIcon.tsx';
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 

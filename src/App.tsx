@@ -5,7 +5,7 @@ import { TerminFormularLayout } from './pages/TerminFormular/TerminFormularLayou
 import { UserSelection } from './pages/TerminFormular/steps/UserSelection.tsx';
 import { RequireAuth } from './auth/RequireAuth.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
-import {Conditions} from "./pages/TerminFormular/steps/Conditions.tsx";
+import { Conditions } from './pages/TerminFormular/steps/Conditions.tsx';
 
 export default function App() {
   return (

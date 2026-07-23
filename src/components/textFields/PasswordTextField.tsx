@@ -22,11 +22,7 @@ export default function PasswordTextField({ ...props }: PasswordTextFieldProps):
         input: {
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton
-                onClick={() => setShowPassword((show) => !show)}
-                edge="end"
-                size="small"
-              >
+              <IconButton onClick={() => setShowPassword((show) => !show)} edge="end" size="small">
                 {showPassword ? (
                   <Visibility fontSize="small" />
                 ) : (

@@ -1,16 +1,16 @@
-import dayjs, {type Dayjs} from "dayjs";
+import dayjs, { type Dayjs } from 'dayjs';
 
 export type Weekday = 'Mo' | 'Di' | 'Mi' | 'Do' | 'Fr' | 'Sa' | 'So';
 
 export type DatePeriod = {
   start: Dayjs;
   end: Dayjs;
-}
+};
 
 export type TimePeriod = {
   start: Dayjs;
   end: Dayjs;
-}
+};
 
 export type EventFormData = {
   userSelection: {
@@ -18,8 +18,8 @@ export type EventFormData = {
   };
   conditions?: {
     weekdays: Weekday[];
-    datePeriod: DatePeriod
-    timePeriod: TimePeriod
+    datePeriod: DatePeriod;
+    timePeriod: TimePeriod;
     durationInMinutes: number;
   };
   event: {

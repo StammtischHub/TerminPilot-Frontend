@@ -13,10 +13,10 @@ export const initialState: WizardState = {
 
 export type Action =
   | {
-  type: 'UPDATE_STEP';
-  step: keyof EventFormData;
-  payload: Partial<EventFormData[keyof EventFormData]>;
-}
+      type: 'UPDATE_STEP';
+      step: keyof EventFormData;
+      payload: Partial<EventFormData[keyof EventFormData]>;
+    }
   | { type: 'VISIT_STEP'; step: string }
   | { type: 'RESET' };
 

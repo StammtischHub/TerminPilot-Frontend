@@ -1,4 +1,7 @@
-import type { StepConfig } from './types';
+type StepConfig = {
+  path: string;
+  label: string;
+};
 
 export const steps: StepConfig[] = [
   { path: 'user-selection', label: 'Personenauswahl' },

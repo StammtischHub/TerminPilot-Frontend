@@ -37,11 +37,12 @@ export function UserSelection() {
       newChecked.splice(currentIndex, 1);
     }
 
-    console.log(newChecked);
-
     setChecked(newChecked);
     updateStep('userSelection', { users: newChecked });
   };
+
+  const currentStepIndex = steps.findIndex((step) => step.path === 'user-selection');
+  const nextStep = steps[currentStepIndex + 1];
 
   return (
     <Stack spacing={2} sx={{ alignItems: 'center', mt: '24px', mb: '24px' }}>
@@ -78,7 +79,7 @@ export function UserSelection() {
       <Button
         variant="contained"
         disabled={!canProceed}
-        onClick={() => navigate(`${WIZARD_BASE_PATH}/${steps[1].path}`)}
+        onClick={() => nextStep && navigate(`${WIZARD_BASE_PATH}/${nextStep.path}`)}
       >
         Weiter
       </Button>

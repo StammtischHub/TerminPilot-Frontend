@@ -14,13 +14,16 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import type { Dayjs } from 'dayjs';
-import type { Weekday } from '../types';
-import { generateSeparateStyle } from '../../../tools/ThemeHelpers.ts';
+import dayjs, { type Dayjs } from 'dayjs';
+import type {DatePeriod, TimePeriod, Weekday} from '../formular.types.ts';
+import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
+import type {DateValidationError, TimeValidationError} from "@mui/x-date-pickers";
 
 const WEEKDAYS: Weekday[] = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
-type Period = { start?: Dayjs; end?: Dayjs };
+const currentDateDayjs = dayjs().hour(0).minute(0).second(0).millisecond(0);
+
+const unixEpochTimeDayjs = dayjs(0).hour(0).minute(0).second(0).millisecond(0);
 
 export function Conditions() {
   const { data, updateStep, visitStep } = useFormWizard();
@@ -30,41 +33,96 @@ export function Conditions() {
     visitStep('conditions');
   }, [visitStep]);
 
-  // Lokaler State, gespiegelt aus dem (gesamten optionalen!) data.conditions
-  const [weekdays, setWeekdays] = useState<Weekday[]>(data.conditions?.weekdays ?? []);
-  const [datePeriod, setDatePeriod] = useState<Period>(data.conditions?.datePeriod ?? {});
-  const [timePeriod, setTimePeriod] = useState<Period>(data.conditions?.timePeriod ?? {});
+  const [weekdays, setWeekdays] = useState<Weekday[]>(data.conditions?.weekdays ?? WEEKDAYS);
+  const [datePeriod, setDatePeriod] = useState<DatePeriod>(data.conditions?.datePeriod ?? {start: currentDateDayjs, end: currentDateDayjs.add(3, "months")});
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>(data.conditions?.timePeriod ?? {start: unixEpochTimeDayjs, end: unixEpochTimeDayjs.hour(23).minute(59)});
   const [durationInMinutes, setDurationInMinutes] = useState<number>(
     data.conditions?.durationInMinutes ?? 30,
   );
+  const [dateErrors, setDateErrors] = useState<Record<keyof DatePeriod, DateValidationError | null>>({
+    start: null,
+    end: null,
+  });
+  const [timeErrors, setTimeErrors] = useState<Record<keyof TimePeriod, TimeValidationError | null>>({
+    start: null,
+    end: null,
+  });
 
-  // Die Seite ist komplett optional – "Weiter" bleibt also auch nutzbar,
-  // wenn nichts ausgefüllt wurde. Blockiert wird nur ein widersprüchlicher
-  // Bereich (z.B. "Von" liegt nach "Bis").
-  const dateRangeValid =
-    !datePeriod.start || !datePeriod.end || !datePeriod.start.isAfter(datePeriod.end);
-  const timeRangeValid =
-    !timePeriod.start || !timePeriod.end || !timePeriod.start.isAfter(timePeriod.end);
-  const canProceed = dateRangeValid && timeRangeValid;
+  const overallMaxDate = currentDateDayjs.add(20, 'years');
+
+  const getStartDateErrorMessage = (reason: DateValidationError | null): string | undefined => {
+    switch (reason) {
+      case 'invalidDate':
+        return 'Ungültiges Datum';
+      case 'maxDate':
+        return 'Datum muss vor "Bis" liegen';
+      case 'disablePast':
+        return `Datum darf nicht vor dem ${currentDateDayjs.format('DD.MM.YYYY')} liegen`;
+      default:
+        return undefined;
+    }
+  };
+
+  const getEndDateErrorMessage = (reason: DateValidationError | null): string | undefined => {
+    switch (reason) {
+      case 'invalidDate':
+        return 'Ungültiges Datum';
+      case 'minDate':
+        return 'Datum muss nach "Von" liegen';
+      case 'maxDate':
+        return `Datum darf nicht nach dem ${overallMaxDate.format('DD.MM.YYYY')} liegen`;
+      default:
+        return undefined;
+    }
+  };
+
+  const getTimeErrorMessage = (reason: TimeValidationError | null): string | undefined => {
+    switch (reason) {
+      case 'invalidDate':
+        return 'Ungültige Uhrzeit';
+      case 'minTime':
+        return 'Uhrzeit muss nach "Von" liegen';
+      case 'maxTime':
+        return 'Uhrzeit muss vor "Bis" liegen';
+      default:
+        return undefined;
+    }
+  };
+
+  const weekdaysValid = weekdays.length > 0;
+
+  const timeWindowMinutes = timePeriod.end.diff(timePeriod.start, 'minute');
+  const durationValid = durationInMinutes > 0 && durationInMinutes <= timeWindowMinutes;
+
+  const hasDateError = Boolean(dateErrors.start || dateErrors.end);
+  const hasTimeError = Boolean(timeErrors.start || timeErrors.end);
+
+  const dateRangeValid = datePeriod.start.isBefore(datePeriod.end);
+  const timeRangeValid = timePeriod.start.isBefore(timePeriod.end);
+
+  const canProceed =
+    dateRangeValid &&
+    timeRangeValid &&
+    !hasDateError &&
+    !hasTimeError &&
+    weekdaysValid &&
+    durationValid;
 
   const handleWeekdayChange = (_event: React.MouseEvent<HTMLElement>, newWeekdays: Weekday[]) => {
     setWeekdays(newWeekdays);
     updateStep('conditions', { weekdays: newWeekdays });
   };
 
-  // datePeriod / timePeriod sind verschachtelte Objekte. Der Reducer merged
-  // in FormWizardContext nur auf oberster Ebene (state.data.conditions),
-  // daher muss start/end hier lokal zusammengeführt werden, bevor das ganze
-  // "datePeriod"-Objekt an updateStep übergeben wird – sonst würde z.B. das
-  // Setzen von "start" das zuvor gesetzte "end" überschreiben.
-  const handleDatePeriodChange = (field: keyof Period, newValue: Dayjs | null) => {
-    const updated: Period = { ...datePeriod, [field]: newValue ?? undefined };
+  const handleDatePeriodChange = (field: keyof DatePeriod, newValue: Dayjs | null) => {
+    if (!newValue) return;
+    const updated: DatePeriod = { ...datePeriod, [field]: newValue };
     setDatePeriod(updated);
     updateStep('conditions', { datePeriod: updated });
   };
 
-  const handleTimePeriodChange = (field: keyof Period, newValue: Dayjs | null) => {
-    const updated: Period = { ...timePeriod, [field]: newValue ?? undefined };
+  const handleTimePeriodChange = (field: keyof TimePeriod, newValue: Dayjs | null) => {
+    if (!newValue) return;
+    const updated: TimePeriod = { ...timePeriod, [field]: newValue };
     setTimePeriod(updated);
     updateStep('conditions', { timePeriod: updated });
   };
@@ -75,8 +133,6 @@ export function Conditions() {
     updateStep('conditions', { durationInMinutes: value });
   };
 
-  // Step-Index über den Pfad statt hart codiert ermitteln, damit es
-  // unabhängig von der Position in steps.config.ts funktioniert.
   const currentStepIndex = steps.findIndex((step) => step.path === 'conditions');
   const previousStep = steps[currentStepIndex - 1];
   const nextStep = steps[currentStepIndex + 1];
@@ -92,7 +148,7 @@ export function Conditions() {
             <ToggleButtonGroup
               value={weekdays}
               onChange={handleWeekdayChange}
-              aria-label="Wochentage auswählen"
+              aria-label="Wochentage auswaehlen"
               size="medium"
             >
               {WEEKDAYS.map((day) => (
@@ -108,7 +164,7 @@ export function Conditions() {
                     '&.Mui-selected, &.Mui-selected:hover': {
                       bgcolor: 'primary.main',
                       color: 'primary.contrastText',
-                      borderColor: 'primary.main',
+                      borderColor: 'primary.secondary',
                     },
                   }}
                 >
@@ -116,9 +172,13 @@ export function Conditions() {
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>
+            {!weekdaysValid && (
+              <Typography variant="caption" color="error" sx={{ display: 'block', mt: 0.5, ml: 2 }}>
+                Bitte mindestens einen Wochentag auswählen
+              </Typography>
+            )}
           </Box>
 
-          {/* Möglicher Zeitrahmen */}
           <Box>
             <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
               Möglicher Zeitrahmen
@@ -126,23 +186,44 @@ export function Conditions() {
             <Stack spacing={2}>
               <DatePicker
                 label="Von"
-                value={datePeriod.start ?? null}
+                value={datePeriod.start}
                 onChange={(newValue) => handleDatePeriodChange('start', newValue)}
-                format="MM/DD/YYYY"
-                slotProps={{ textField: { fullWidth: true } }}
+                onError={(reason) => {
+                  console.log(reason)
+                  setDateErrors((prev) => ({ ...prev, start: reason }))}}
+                format="DD.MM.YYYY"
+                disablePast
+                maxDate={datePeriod.end}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    error: Boolean(dateErrors.start),
+                    helperText: getStartDateErrorMessage(dateErrors.start)
+                  },
+                }}
               />
               <DatePicker
                 label="Bis"
-                value={datePeriod.end ?? null}
+                value={datePeriod.end}
                 onChange={(newValue) => handleDatePeriodChange('end', newValue)}
-                format="MM/DD/YYYY"
+                onError={(reason) =>{
+                  console.log(reason)
+                  setDateErrors((prev) => ({ ...prev, end: reason }))}}
+                format="DD.MM.YYYY"
+                disablePast
                 minDate={datePeriod.start}
-                slotProps={{ textField: { fullWidth: true } }}
+                maxDate={overallMaxDate}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    error: Boolean(dateErrors.end),
+                    helperText: getEndDateErrorMessage(dateErrors.end)
+                  },
+                }}
               />
             </Stack>
           </Box>
 
-          {/* Mögliche Uhrzeit */}
           <Box>
             <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
               Mögliche Uhrzeit
@@ -150,28 +231,56 @@ export function Conditions() {
             <Stack spacing={2}>
               <TimePicker
                 label="Von"
-                value={timePeriod.start ?? null}
+                value={timePeriod.start}
                 onChange={(newValue) => handleTimePeriodChange('start', newValue)}
+                onError={(reason) => setTimeErrors((prev) => ({ ...prev, start: reason }))}
                 ampm={false}
-                slotProps={{ textField: { fullWidth: true } }}
+                maxTime={timePeriod.end}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    error: Boolean(timeErrors.start),
+                    helperText: getTimeErrorMessage(timeErrors.start),
+                  },
+                }}
               />
               <TimePicker
                 label="Bis"
-                value={timePeriod.end ?? null}
+                value={timePeriod.end}
                 onChange={(newValue) => handleTimePeriodChange('end', newValue)}
+                onError={(reason) => setTimeErrors((prev) => ({ ...prev, end: reason }))}
                 ampm={false}
                 minTime={timePeriod.start}
-                slotProps={{ textField: { fullWidth: true } }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    error: Boolean(timeErrors.end),
+                    helperText: getTimeErrorMessage(timeErrors.end),
+                  },
+                }}
               />
             </Stack>
           </Box>
 
-          {/* Dauer */}
           <Box>
             <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
               Dauer
             </Typography>
-            <TextField type="number" label="Dauer" value={durationInMinutes} onChange={handleDurationChange} fullWidth />
+            <TextField
+              type="number"
+              label="Dauer (Minuten)"
+              value={durationInMinutes}
+              onChange={handleDurationChange}
+              fullWidth
+              error={!durationValid}
+              helperText={
+                !durationValid
+                  ? durationInMinutes <= 0
+                    ? 'Dauer muss größer als 0 sein'
+                    : `Dauer passt nicht in den gewählten Zeitrahmen (max. ${timeWindowMinutes} Min.)`
+                  : undefined
+              }
+            />
           </Box>
         </Stack>
       </Paper>

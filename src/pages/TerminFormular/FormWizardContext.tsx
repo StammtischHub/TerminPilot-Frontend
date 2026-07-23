@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { type EventFormData, initialFormData } from './types';
+import { type EventFormData, initialFormData } from './formular.types.ts';
 
 export type WizardState = {
   data: EventFormData;

@@ -1,28 +1,69 @@
-import { SpeedDial, SpeedDialAction, SpeedDialIcon, Stack, useMediaQuery } from '@mui/material';
+import {
+  Card,
+  Skeleton,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
+  Stack,
+  Typography,
+  useMediaQuery
+} from '@mui/material';
 import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
 import GroupCard from '../components/GroupCard.tsx';
 import { AddBox, GroupAdd } from '@mui/icons-material';
-import { isMobile } from '../utils/ThemeHelpers.ts';
-import { useNavigate } from 'react-router';
+import {generateSeparateStyle, isMobile} from '../utils/ThemeHelpers.ts';
+import {useNavigate} from 'react-router';
+import type {Schema} from "../api/types.ts";
+import {useEffect, useState} from "react";
+import {api} from "../api/client.ts";
+import {useAuthedUser} from "../auth/useAuthedUser.ts";
+
+type UserGroupResponse = Schema<'UserGroupResponse'>
 
 const actions = [
   { icon: <AddBox />, name: 'Add new Event', path: '/event' },
-  { icon: <GroupAdd />, name: 'Add new Group', path: '' },
+  { icon: <GroupAdd />, name: 'Add new Group', path: '/' },
 ];
 
 export default function HomePage() {
+  const mobile = useMediaQuery(isMobile);
   const navigate = useNavigate();
+  const user = useAuthedUser();
+  const [groups, setGroups] = useState<UserGroupResponse[]>([]);
+  const [isLoadingGroups, setIsLoadingGroups] = useState(true);
+
+  useEffect(() => {
+    api
+      .GET('/api/users/{user-id}/user-groups', {
+        params: { path: { 'user-id': user.id } },
+      })
+      .then(({ data }) => setGroups(data ?? []))
+      .finally(() => setIsLoadingGroups(false));
+  }, [user]);
 
   return (
     <AppBarsWrapper>
+      <Typography variant="h3" component="h1" sx={{ mt: '24px', mb: '24px', textAlign: 'center' }}>
+        Hallo {user.username}
+      </Typography>
       <Stack spacing={3} sx={{ alignItems: 'center', mt: '24px', mb: '24px' }}>
-        {exampleGroups.map((group, index) => (
-          <GroupCard key={index} groupName={group.groupName} />
-        ))}
+        {isLoadingGroups ? (
+            <Card
+              sx={{ width: generateSeparateStyle('70%', '60%')}}
+            >
+              <Skeleton variant="rectangular" width="auto" height={50} sx={{margin: "16px"}}/>
+            </Card>
+        ) : groups.length === 0 ? (
+          <Typography variant="body1">Du bist noch in keiner Gruppe.</Typography>
+        ) : (
+          groups.map((group) => (
+            <GroupCard key={group.id} groupName={group.name} />
+          ))
+        )}
       </Stack>
       <SpeedDial
         ariaLabel="Add actions"
-        FabProps={{ size: useMediaQuery(isMobile) ? 'medium' : 'large' }}
+        FabProps={{ size: mobile ? 'medium' : 'large' }}
         sx={{ position: 'absolute', bottom: { xs: 62, md: 65 }, right: { xs: 2, md: 10 } }}
         icon={<SpeedDialIcon />}
       >
@@ -50,16 +91,3 @@ export default function HomePage() {
     </AppBarsWrapper>
   );
 }
-
-const exampleGroups = [
-  { groupName: 'Gruppe 1' },
-  { groupName: 'Gruppe 2' },
-  { groupName: 'Gruppe 1' },
-  { groupName: 'Gruppe 2' },
-  { groupName: 'Gruppe 1' },
-  { groupName: 'Gruppe 2' },
-  { groupName: 'Gruppe 1' },
-  { groupName: 'Gruppe 2' },
-  { groupName: 'Gruppe 1' },
-  { groupName: 'Gruppe 2' },
-];

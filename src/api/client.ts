@@ -1,8 +1,5 @@
 import createClient, { type Middleware } from 'openapi-fetch';
-import type { components, paths } from './generated/types';
-
-export type UserResponse = components['schemas']['UserResponse'];
-export type UserRole = components['schemas']['UserRole'];
+import type { paths } from './generated/schema';
 
 /** HTTP-Fehler mit Statuscode, da openapi-fetch selbst nicht wirft */
 export class ApiError extends Error {

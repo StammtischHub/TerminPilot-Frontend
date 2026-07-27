@@ -11,7 +11,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { AccountCircle, Groups, Home } from '@mui/icons-material';
+import { AccountCircle, Home } from '@mui/icons-material';
 import { type ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../auth/AuthContext.tsx';
@@ -115,7 +115,6 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
           }}
         >
           <BottomNavigationAction label="Home" icon={<Home />} onClick={() => navigate('/home')} />
-          <BottomNavigationAction label="Soziales" icon={<Groups />} />
         </BottomNavigation>
       </Paper>
     </div>

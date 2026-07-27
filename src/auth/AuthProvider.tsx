@@ -1,6 +1,9 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { api, ApiError, type UserResponse } from '../api/client';
+import { api, ApiError } from '../api/client';
 import { AuthContext } from './AuthContext';
+import type {Schema} from "../api/types.ts";
+
+type UserResponse = Schema<'UserResponse'>
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserResponse | null>(null);

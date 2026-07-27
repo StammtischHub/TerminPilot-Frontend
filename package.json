@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "generate:api": "openapi-typescript node_modules/@stammtischhub/terminpilot-api-spec/dist/openapi.bundled.yaml -o src/api/generated/types.ts",
+    "generate:api": "openapi-typescript node_modules/@stammtischhub/terminpilot-api-spec/dist/openapi.bundled.yaml -o src/api/generated/schema.ts",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\" && eslint . --fix",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"  && eslint .",
     "preview": "vite preview"
@@ -18,7 +18,7 @@
     "@mui/icons-material": "^9.0.0",
     "@mui/material": "^9.0.0",
     "@mui/x-date-pickers": "^9.10.0",
-    "@stammtischhub/terminpilot-api-spec": "0.1.0",
+    "@stammtischhub/terminpilot-api-spec": "1.1.0-pr.37.d0b0ad3",
     "dayjs": "^1.11.21",
     "openapi-fetch": "^0.17.0",
     "react": "^19.2.4",

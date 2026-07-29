@@ -1,8 +1,13 @@
 import { DesktopStepNavigation } from './DesktopStepNavigation';
 import { MobileStepNavigation } from './MobileStepNavigation';
 import { isMobile } from '../../utils/ThemeHelpers.ts';
-import { useMediaQuery } from '@mui/material';
+import {Box, useMediaQuery} from '@mui/material';
 
 export function StepNavigation() {
-  return useMediaQuery(isMobile) ? <MobileStepNavigation /> : <DesktopStepNavigation />;
+  const mobile = useMediaQuery(isMobile)
+  return (
+    <Box sx={{ height: 'auto', position: 'sticky', top: 0, zIndex: 5, bgcolor: 'background.default' }}>
+      {mobile ? <MobileStepNavigation /> : <DesktopStepNavigation />}
+    </Box>
+  )
 }

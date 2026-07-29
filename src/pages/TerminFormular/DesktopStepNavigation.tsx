@@ -11,7 +11,7 @@ export function DesktopStepNavigation() {
   const activeIndex = steps.findIndex((s) => location.pathname.endsWith(s.path));
 
   return (
-    <Stepper nonLinear activeStep={activeIndex} sx={{ padding: 1 }}>
+    <Stepper nonLinear activeStep={activeIndex} sx={{ paddingY: 1, paddingX: 2 }}>
       {steps.map((step, index) => {
         const isVisited = visitedSteps.includes(step.path);
         return (

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { Alert, Button, Container, Link, Stack, Typography, useMediaQuery } from '@mui/material';
 import { PersonAddAlt1 as RegisterIcon, PersonOutlined } from '@mui/icons-material';
 import { useAuth } from '../auth/AuthContext.tsx';
@@ -28,7 +28,6 @@ export default function RegisterPage() {
   if (isLoading) return null;
   if (user) return <Navigate to="/home" replace />;
 
-  // Spiegelt die Contract-Constraints (RegisterRequest) clientseitig
   const validate = (): boolean => {
     const errors: typeof fieldErrors = {};
     if (username.length < 3 || username.length > 50) {
@@ -46,14 +45,12 @@ export default function RegisterPage() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleRegisterSubmit = async () => {
     setError(null);
     if (!validate()) return;
     setSubmitting(true);
     try {
-      await register(username, password); // registriert + loggt automatisch ein
-      navigate('/home', { replace: true });
+      await register(username, password);
     } catch (err) {
       if (err instanceof ApiError && err.status === 409) {
         setError('Dieser Benutzername ist bereits vergeben.');
@@ -76,7 +73,10 @@ export default function RegisterPage() {
     >
       <Stack
         component="form"
-        onSubmit={handleSubmit}
+        onSubmit={(submit) => {
+          submit.preventDefault()
+          handleRegisterSubmit().then(() => navigate('/home', { replace: true }));
+        }}
         noValidate
         direction="column"
         spacing={2.5}

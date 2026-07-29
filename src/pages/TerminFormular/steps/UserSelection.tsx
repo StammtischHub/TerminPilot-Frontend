@@ -103,7 +103,7 @@ export function UserSelection() {
   };
 
   return (
-    <Stack spacing={2} sx={{ alignItems: 'center', mt: '24px', mb: '24px' }}>
+    <Stack spacing={2} sx={{ alignItems: 'center', marginY: 3 }}>
       <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), maxHeight: 500 }}>
 
         <List
@@ -136,7 +136,7 @@ export function UserSelection() {
           )}
         </List>
       </Paper>
-      <Stack direction="row" spacing={2} sx={{ mt: '16px' }}>
+      <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
         <Button
           variant="contained"
           disabled={!canProceed}

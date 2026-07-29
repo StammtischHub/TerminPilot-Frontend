@@ -40,7 +40,7 @@ export function Conditions() {
     },
   );
   const [durationInMinutes, setDurationInMinutes] = useState<number>(
-    data.conditions?.durationInMinutes ?? 30,
+    data.conditions?.durationInMinutes ?? 60,
   );
   const [dateErrors, setDateErrors] = useState<
     Record<keyof DatePeriod, DateValidationError | null>
@@ -145,7 +145,7 @@ export function Conditions() {
   const nextStep = steps[currentStepIndex + 1];
 
   return (
-    <Stack spacing={3} sx={{ alignItems: 'center', mt: '24px', mb: '24px' }}>
+    <Stack spacing={3} sx={{ alignItems: 'center', marginY: 3 }}>
       <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), p: 3 }}>
         <Stack spacing={4}>
           <Box>
@@ -188,7 +188,7 @@ export function Conditions() {
 
           <Box>
             <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
-              Möglicher Zeitrahmen
+              Möglicher Datum-Rahmen
             </Typography>
             <Stack spacing={2}>
               <DatePicker
@@ -235,7 +235,7 @@ export function Conditions() {
 
           <Box>
             <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
-              Mögliche Uhrzeit
+              Mögliche Uhrzeit-Rahmen
             </Typography>
             <Stack spacing={2}>
               <TimePicker

@@ -1,15 +1,17 @@
 import { createContext, useContext } from 'react';
-import { type EventFormData, initialFormData } from './formular.types.ts';
+import {createInitialFormData, type EventFormData} from './formular.types.ts';
 
 export type WizardState = {
   data: EventFormData;
   visitedSteps: string[];
 };
 
-export const initialState: WizardState = {
-  data: initialFormData,
-  visitedSteps: [],
-};
+export function createInitialState(): WizardState {
+  return {
+    data: createInitialFormData(),
+    visitedSteps: [],
+  };
+}
 
 export type Action =
   | {
@@ -35,7 +37,7 @@ export function reducer(state: WizardState, action: Action): WizardState {
         ? state
         : { ...state, visitedSteps: [...state.visitedSteps, action.step] };
     case 'RESET':
-      return initialState;
+      return createInitialState();
     default:
       return state;
   }

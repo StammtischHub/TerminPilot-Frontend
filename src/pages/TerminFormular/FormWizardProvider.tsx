@@ -1,19 +1,19 @@
 import { useEffect, useReducer, type ReactNode } from 'react';
 import {
   FormWizardContext,
-  initialState,
   reducer,
   type WizardState,
-  type FormWizardContextValue,
+  type FormWizardContextValue, createInitialState,
 } from './FormWizardContext';
+import {reviveEventFormDates} from "./formular.types.ts";
 
 const STORAGE_KEY = 'event-formular-wizard';
 
 export function FormWizardProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, initialState, (init) => {
+  const [state, dispatch] = useReducer(reducer, createInitialState(), (init) => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
-      return saved ? (JSON.parse(saved) as WizardState) : init;
+      return saved ? (JSON.parse(saved, reviveEventFormDates) as WizardState) : init;
     } catch {
       return init;
     }
@@ -26,6 +26,16 @@ export function FormWizardProvider({ children }: { children: ReactNode }) {
       // sessionStorage kann z. B. im Privacy-Modus fehlschlagen – bewusst ignoriert
     }
   }, [state]);
+
+  useEffect(() => {
+    return () => {
+      try {
+        sessionStorage.removeItem(STORAGE_KEY);
+      } catch {
+        // ignorieren
+      }
+    };
+  }, []);
 
   const value: FormWizardContextValue = {
     ...state,

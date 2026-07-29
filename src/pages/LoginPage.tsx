@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { Alert, Button, Container, Link, Stack, Typography, useMediaQuery } from '@mui/material';
 import { Login as LoginIcon, PersonOutlined } from '@mui/icons-material';
 import { useAuth } from '../auth/AuthContext.tsx';
@@ -22,13 +22,11 @@ export default function LoginPage() {
   if (isLoading) return null;
   if (user) return <Navigate to={from} replace />;
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleLoginSubmit = async () => {
     setError(null);
     setSubmitting(true);
     try {
       await login(username, password);
-      navigate(from, { replace: true });
     } catch {
       setError('Benutzername oder Passwort ist falsch.');
     } finally {
@@ -43,7 +41,11 @@ export default function LoginPage() {
     >
       <Stack
         component="form"
-        onSubmit={handleSubmit}
+        onSubmit={(submit) => {
+          submit.preventDefault()
+          handleLoginSubmit()
+            .then(() => navigate(from, { replace: true }));
+        }}
         noValidate
         direction="column"
         spacing={2.5}

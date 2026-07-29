@@ -136,8 +136,9 @@ export function UserSelection() {
           )}
         </List>
       </Paper>
-      <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+      <Stack direction="row" spacing={2} sx={{ justifyContent: 'center', mt: 2 }}>
         <Button
+          sx={{ width: generateSeparateStyle('40%', 'auto')}}
           variant="contained"
           disabled={!canProceed}
           onClick={() => conditionsStep && navigate(`${WIZARD_BASE_PATH}/${conditionsStep.path}`)}
@@ -145,6 +146,7 @@ export function UserSelection() {
           Terminvorschlag erhalten
         </Button>
         <Button
+          sx={{ width: generateSeparateStyle('40%', 'auto')}}
           variant="contained"
           disabled={!canProceed}
           onClick={() => eventDataStep && navigate(`${WIZARD_BASE_PATH}/${eventDataStep.path}`)}

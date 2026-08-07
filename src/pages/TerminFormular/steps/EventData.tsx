@@ -151,14 +151,12 @@ export function EventData() {
       </Paper>
 
       <Stack direction="row" spacing={2}>
-        {previousStep && (
-          <Button
-            variant="outlined"
-            onClick={() => navigate(`${WIZARD_BASE_PATH}/${previousStep.path}`)}
-          >
-            Zurück
-          </Button>
-        )}
+        <Button
+          variant="outlined"
+          onClick={() => previousStep && navigate(`${WIZARD_BASE_PATH}/${previousStep.path}`)}
+        >
+          Zurück
+        </Button>
         <Button
           variant="contained"
           disabled={!canProceed}

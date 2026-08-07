@@ -7,6 +7,7 @@ import { RequireAuth } from './auth/RequireAuth.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
 import { Constraints } from './pages/TerminFormular/steps/Constraints.tsx';
 import {EventData} from "./pages/TerminFormular/steps/EventData.tsx";
+import {Overview} from "./pages/TerminFormular/steps/Overview.tsx";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="user-selection" element={<UserSelection />} />
           <Route path="conditions" element={<Constraints />} />
           <Route path="event-data" element={<EventData />} />
+          <Route path="overview" element={<Overview />} />
         </Route>
       </Route>
 

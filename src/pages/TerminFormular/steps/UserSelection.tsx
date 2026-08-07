@@ -18,6 +18,7 @@ import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
 import type {Schema} from "../../../api/types.ts";
 import {api} from "../../../api/client.ts";
 import {useAuthedUser} from "../../../auth/useAuthedUser.ts";
+import type {FormUser} from "../formular.types.ts";
 
 type UserResponse = Schema<'UserResponse'>
 
@@ -28,16 +29,19 @@ export function UserSelection() {
 
   const [allUsers, setAllUsers] = useState<UserResponse[]>([]);
   const [isLoadingAllUsers, setIsLoadingAllUsers] = useState(true);
-  const [checkedUsers, setCheckedUsers] = useState<number[]>(() =>
-    data.userSelection.users.includes(user.id)
-      ? data.userSelection.users
-      : [...data.userSelection.users, user.id]
+
+  const isUserChecked = (users: FormUser[], userToCheck: FormUser) =>
+    users.some((checkedUser) => checkedUser.id === userToCheck.id);
+
+  const [checkedUsers, setCheckedUsers] = useState<FormUser[]>(() =>
+    isUserChecked(data.event.users, { id: user.id, name: user.username })
+      ? data.event.users
+      : [...data.event.users, { id: user.id, name: user.username }]
   );
 
-  const canProceed = data.userSelection.users.length !== 0;
+  const canProceed = data.event.users.length >= 2;
   const conditionsStep = steps.find((step) => step.path === 'conditions');
   const eventDataStep = steps.find((step) => step.path === 'event-data');
-
 
   useEffect(() => {
     api
@@ -53,28 +57,25 @@ export function UserSelection() {
   }, [visitStep]);
 
   useEffect(() => {
-    if (!data.userSelection.users.includes(user.id)) {
-      updateStep('userSelection', { users: checkedUsers });
+    const isCurrentUserIncluded = isUserChecked(checkedUsers, { id: user.id, name: user.username });
+    if (!isCurrentUserIncluded) {
+      updateStep('event', { users: checkedUsers });
     }
-  }, [data.userSelection.users, user.id, checkedUsers, updateStep]);
+  }, [data.event.users, user, checkedUsers, updateStep]);
 
   const otherUsers = useMemo(
     () => allUsers.filter((availableUser) => availableUser.id !== user.id),
     [allUsers, user.id]
   );
 
-  const handleToggle = (value: number) => () => {
-    const currentIndex = checkedUsers.indexOf(value);
-    const newChecked = [...checkedUsers];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
+  const handleToggle = (toggledUser: FormUser) => () => {
+    const exists = isUserChecked(checkedUsers, toggledUser);
+    const newChecked = exists
+      ? checkedUsers.filter((checkedUser) => checkedUser.id !== toggledUser.id)
+      : [...checkedUsers, toggledUser];
 
     setCheckedUsers(newChecked);
-    updateStep('userSelection', { users: newChecked });
+    updateStep('event', { users: newChecked });
   };
 
   const renderUserItem = (availableUser: UserResponse, disabled = false) => {
@@ -83,14 +84,14 @@ export function UserSelection() {
     return (
       <ListItem key={availableUser.id} disablePadding>
         <ListItemButton
-          onClick={handleToggle(availableUser.id)}
+          onClick={handleToggle({ id: availableUser.id, name: availableUser.username })}
           dense
           disabled={disabled}
         >
           <ListItemIcon>
             <Checkbox
               edge="end"
-              checked={disabled ? true : checkedUsers.includes(availableUser.id)}
+              checked={disabled ? true : isUserChecked(checkedUsers, { id: availableUser.id, name: availableUser.username })}
               disabled={disabled}
               disableRipple
               slotProps={{ input: { 'aria-labelledby': labelId } }}

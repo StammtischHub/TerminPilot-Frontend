@@ -12,10 +12,9 @@ export type TimePeriod = {
   end: Dayjs;
 };
 
+export type FormUser = { id: number; name: string };
+
 export type EventFormData = {
-  userSelection: {
-    users: number[];
-  };
   constraints?: {
     weekdays: Weekday[];
     datePeriod: DatePeriod;
@@ -26,6 +25,7 @@ export type EventFormData = {
     title: string;
     begin: Dayjs;
     end: Dayjs;
+    users: FormUser[];
     location?: string;
     notes?: string;
   };
@@ -43,7 +43,6 @@ export function reviveEventFormDates(key: string, value: unknown): unknown {
 
 export function createInitialFormData(): EventFormData {
   return {
-    userSelection: { users: [] },
-    event: { title: '', begin: dayjs().add(1, 'hour').minute(30), end: dayjs().add(2, 'hour').minute(30) },
+    event: { title: '', begin: dayjs().add(1, 'hour').minute(30), end: dayjs().add(2, 'hour').minute(30), users: [] },
   };
 }

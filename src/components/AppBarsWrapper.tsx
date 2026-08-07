@@ -1,17 +1,14 @@
 import {
   AppBar,
-  BottomNavigation,
-  BottomNavigationAction,
   Button,
   IconButton,
   Menu,
   MenuItem,
-  Paper,
   Toolbar,
   Tooltip,
   Typography,
 } from '@mui/material';
-import { AccountCircle, Home } from '@mui/icons-material';
+import {AccountCircle, Home} from '@mui/icons-material';
 import { type ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../auth/AuthContext.tsx';
@@ -21,7 +18,6 @@ type AppBarsWrapperProps = {
 };
 
 export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
-  const [value, setValue] = useState(0);
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -50,7 +46,6 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
             aria-label="home"
             sx={{ textTransform: 'none', margin: '2px 0 2px 0' }}
             onClick={() => {
-              setValue(0);
               navigate('/home');
             }}
           >
@@ -106,17 +101,6 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
         </Toolbar>
       </AppBar>
       <div style={{ height: '100%', overflowY: 'auto' }}>{children}</div>
-      <Paper sx={{ position: 'sticky', bottom: 0 }} elevation={6}>
-        <BottomNavigation
-          showLabels
-          value={value}
-          onChange={(_event, newValue) => {
-            setValue(newValue);
-          }}
-        >
-          <BottomNavigationAction label="Home" icon={<Home />} onClick={() => navigate('/home')} />
-        </BottomNavigation>
-      </Paper>
     </div>
   );
 }

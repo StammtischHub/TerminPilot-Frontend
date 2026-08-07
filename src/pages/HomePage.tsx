@@ -5,13 +5,12 @@ import {
   SpeedDialAction,
   SpeedDialIcon,
   Stack,
-  Typography,
-  useMediaQuery
+  Typography
 } from '@mui/material';
 import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
 import GroupCard from '../components/GroupCard.tsx';
 import { AddBox, GroupAdd } from '@mui/icons-material';
-import {generateSeparateStyle, isMobile} from '../utils/ThemeHelpers.ts';
+import {generateSeparateStyle} from '../utils/ThemeHelpers.ts';
 import {useNavigate} from 'react-router';
 import type {Schema} from "../api/types.ts";
 import {useEffect, useState} from "react";
@@ -26,7 +25,6 @@ const actions = [
 ];
 
 export default function HomePage() {
-  const mobile = useMediaQuery(isMobile);
   const navigate = useNavigate();
   const user = useAuthedUser();
   const [groups, setGroups] = useState<UserGroupResponse[]>([]);
@@ -63,8 +61,8 @@ export default function HomePage() {
       </Stack>
       <SpeedDial
         ariaLabel="Add actions"
-        FabProps={{ size: mobile ? 'medium' : 'large' }}
-        sx={{ position: 'absolute', bottom: { xs: 62, md: 65 }, right: { xs: 2, md: 10 } }}
+        FabProps={{ size: 'large' }}
+        sx={{ position: 'absolute', bottom: generateSeparateStyle(10, 15), right: generateSeparateStyle(10, 15) }}
         icon={<SpeedDialIcon />}
       >
         {actions.map((action) => (

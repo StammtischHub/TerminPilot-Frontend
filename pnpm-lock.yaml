@@ -27,8 +27,8 @@ importers:
         specifier: ^9.10.0
         version: 9.10.0(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.7))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.7))(@types/react@19.2.17)(react@19.2.7))(@mui/material@9.2.0(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.7))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.7))(@types/react@19.2.17)(react@19.2.7))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@mui/system@9.2.0(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.7))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.7))(@types/react@19.2.17)(react@19.2.7))(@types/react@19.2.17)(react@19.2.7))(@types/react@19.2.17)(dayjs@1.11.21)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@stammtischhub/terminpilot-api-spec':
-        specifier: 1.1.0-pr.37.d0b0ad3
-        version: 1.1.0-pr.37.d0b0ad3
+        specifier: 1.3.0-pr.37.018d137
+        version: 1.3.0-pr.37.018d137
       dayjs:
         specifier: ^1.11.21
         version: 1.11.21
@@ -605,8 +605,8 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@stammtischhub/terminpilot-api-spec@1.1.0-pr.37.d0b0ad3':
-    resolution: {integrity: sha512-iLIEP2AxSEHtiM+hPlH/d+P2wbsGfKoJUqEshJ/dKFktXvrBPQb2XBeciyEJS4QkA3YMVYErJcMpz8vVpDqayg==, tarball: https://npm.pkg.github.com/download/@stammtischhub/terminpilot-api-spec/1.1.0-pr.37.d0b0ad3/77819d9b87088fd7b800fdd35176a65eb3edad2d}
+  '@stammtischhub/terminpilot-api-spec@1.3.0-pr.37.018d137':
+    resolution: {integrity: sha512-D/LWgclCFo525v+l3Iai8aV3tOqe8nbBHl1AP2Y5+5AhR6AuJghLk4FD6RHGFHVxbnZamuawVQ5NcbKsi0eFqQ==, tarball: https://npm.pkg.github.com/download/@stammtischhub/terminpilot-api-spec/1.3.0-pr.37.018d137/9a81b9e44a381a2e8f39b6d57767c9848d0416e1}
 
   '@tybys/wasm-util@0.10.3':
     resolution: {integrity: sha512-F3fo1MYrRJYL3zER0OUOmkutjr1Vp23m7OsSgp7nq4SP6OqX6C/56XFIPAl5bt3zaBRjmW7SGz3u/6LwFpYcOg==}
@@ -2019,7 +2019,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@stammtischhub/terminpilot-api-spec@1.1.0-pr.37.d0b0ad3': {}
+  '@stammtischhub/terminpilot-api-spec@1.3.0-pr.37.018d137': {}
 
   '@tybys/wasm-util@0.10.3':
     dependencies:

@@ -94,6 +94,11 @@ export function EventData() {
                 value={beginDate}
                 onChange={(newValue) => handleBeginDateChange(newValue)}
                 format="DD.MM.YYYY HH:mm"
+                slotProps={{
+                  textField: {
+                    required: true,
+                  },
+                }}
               />
               <DateTimePicker
                 ampm={false}
@@ -102,6 +107,11 @@ export function EventData() {
                 onChange={(newValue) => handleEndDateChange(newValue)}
                 format="DD.MM.YYYY HH:mm"
                 minDate={beginDate}
+                slotProps={{
+                  textField: {
+                    required: true,
+                  },
+                }}
               />
             </Stack>
           </Box>

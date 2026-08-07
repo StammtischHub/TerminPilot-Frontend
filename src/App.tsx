@@ -5,7 +5,7 @@ import { TerminFormularLayout } from './pages/TerminFormular/TerminFormularLayou
 import { UserSelection } from './pages/TerminFormular/steps/UserSelection.tsx';
 import { RequireAuth } from './auth/RequireAuth.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
-import { Conditions } from './pages/TerminFormular/steps/Conditions.tsx';
+import { Constraints } from './pages/TerminFormular/steps/Constraints.tsx';
 import {EventData} from "./pages/TerminFormular/steps/EventData.tsx";
 
 export default function App() {
@@ -19,7 +19,7 @@ export default function App() {
         <Route path="event" element={<TerminFormularLayout />}>
           <Route index element={<Navigate to="user-selection" replace />} />
           <Route path="user-selection" element={<UserSelection />} />
-          <Route path="conditions" element={<Conditions />} />
+          <Route path="conditions" element={<Constraints />} />
           <Route path="event-data" element={<EventData />} />
         </Route>
       </Route>

@@ -16,7 +16,7 @@ export type EventFormData = {
   userSelection: {
     users: number[];
   };
-  conditions?: {
+  constraints?: {
     weekdays: Weekday[];
     datePeriod: DatePeriod;
     timePeriod: TimePeriod;

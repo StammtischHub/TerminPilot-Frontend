@@ -18,7 +18,7 @@ const currentDateDayjs = dayjs().hour(0).minute(0).second(0).millisecond(0);
 
 const unixEpochTimeDayjs = dayjs(0).hour(0).minute(0).second(0).millisecond(0);
 
-export function Conditions() {
+export function Constraints() {
   const { data, updateStep, visitStep } = useFormWizard();
   const navigate = useNavigate();
 
@@ -26,21 +26,21 @@ export function Conditions() {
     visitStep('conditions');
   }, [visitStep]);
 
-  const [weekdays, setWeekdays] = useState<Weekday[]>(data.conditions?.weekdays ?? WEEKDAYS);
+  const [weekdays, setWeekdays] = useState<Weekday[]>(data.constraints?.weekdays ?? WEEKDAYS);
   const [datePeriod, setDatePeriod] = useState<DatePeriod>(
-    data.conditions?.datePeriod ?? {
+    data.constraints?.datePeriod ?? {
       start: currentDateDayjs,
       end: currentDateDayjs.add(3, 'months'),
     },
   );
   const [timePeriod, setTimePeriod] = useState<TimePeriod>(
-    data.conditions?.timePeriod ?? {
+    data.constraints?.timePeriod ?? {
       start: unixEpochTimeDayjs,
       end: unixEpochTimeDayjs.hour(23).minute(59),
     },
   );
   const [durationInMinutes, setDurationInMinutes] = useState<number>(
-    data.conditions?.durationInMinutes ?? 60,
+    data.constraints?.durationInMinutes ?? 60,
   );
   const [dateErrors, setDateErrors] = useState<
     Record<keyof DatePeriod, DateValidationError | null>
@@ -117,27 +117,27 @@ export function Conditions() {
 
   const handleWeekdayChange = (_event: React.MouseEvent<HTMLElement>, newWeekdays: Weekday[]) => {
     setWeekdays(newWeekdays);
-    updateStep('conditions', { weekdays: newWeekdays });
+    updateStep('constraints', { weekdays: newWeekdays });
   };
 
   const handleDatePeriodChange = (field: keyof DatePeriod, newValue: Dayjs | null) => {
     if (!newValue) return;
     const updated: DatePeriod = { ...datePeriod, [field]: newValue };
     setDatePeriod(updated);
-    updateStep('conditions', { datePeriod: updated });
+    updateStep('constraints', { datePeriod: updated });
   };
 
   const handleTimePeriodChange = (field: keyof TimePeriod, newValue: Dayjs | null) => {
     if (!newValue) return;
     const updated: TimePeriod = { ...timePeriod, [field]: newValue };
     setTimePeriod(updated);
-    updateStep('conditions', { timePeriod: updated });
+    updateStep('constraints', { timePeriod: updated });
   };
 
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(event.target.value);
     setDurationInMinutes(value);
-    updateStep('conditions', { durationInMinutes: value });
+    updateStep('constraints', { durationInMinutes: value });
   };
 
   const currentStepIndex = steps.findIndex((step) => step.path === 'conditions');

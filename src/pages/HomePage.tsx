@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   Skeleton,
   SpeedDial,
@@ -52,7 +53,10 @@ export default function HomePage() {
               <Skeleton variant="rectangular" width="auto" height={50} sx={{margin: "16px"}}/>
             </Card>
         ) : groups.length === 0 ? (
-          <Typography variant="body1">Du bist noch in keiner Gruppe.</Typography>
+          <>
+            <Typography variant="body1">Du bist noch in keiner Gruppe.</Typography>
+            <Button variant="contained" onClick={() => navigate("/create-group")}>Neue Gruppe erstellen</Button>
+          </>
         ) : (
           groups.map((group) => (
             <GroupCard key={group.id} groupName={group.name} />

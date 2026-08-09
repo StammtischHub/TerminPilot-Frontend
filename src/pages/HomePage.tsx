@@ -20,8 +20,8 @@ import {useAuthedUser} from "../auth/useAuthedUser.ts";
 type UserGroupResponse = Schema<'UserGroupResponse'>
 
 const actions = [
-  { icon: <AddBox />, name: 'Add new Event', path: '/event' },
-  { icon: <GroupAdd />, name: 'Add new Group', path: '/' },
+  { icon: <AddBox />, name: 'Neues Ereignis erstellen', path: '/event' },
+  { icon: <GroupAdd />, name: 'Neue Gruppe erstellen', path: '/create-group' },
 ];
 
 export default function HomePage() {

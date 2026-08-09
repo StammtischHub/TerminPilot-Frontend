@@ -8,6 +8,7 @@ import RegisterPage from './pages/RegisterPage.tsx';
 import { Constraints } from './pages/TerminFormular/steps/Constraints.tsx';
 import {EventData} from "./pages/TerminFormular/steps/EventData.tsx";
 import {Overview} from "./pages/TerminFormular/steps/Overview.tsx";
+import CreateGroupPage from "./pages/CreateGroupPage.tsx";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
 
       <Route element={<RequireAuth />}>
         <Route path="/home" element={<HomePage />} />
+        <Route path="/create-group" element={<CreateGroupPage />} />
         <Route path="event" element={<TerminFormularLayout />}>
           <Route index element={<Navigate to="user-selection" replace />} />
           <Route path="user-selection" element={<UserSelection />} />

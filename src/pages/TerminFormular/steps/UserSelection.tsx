@@ -5,22 +5,38 @@ import Stack from '@mui/material/Stack';
 import { useFormWizard } from '../FormWizardContext';
 import { steps, WIZARD_BASE_PATH } from '../steps.config';
 import {
+  Avatar,
+  Box,
   Checkbox,
   Divider,
   List,
   ListItem,
+  ListItemAvatar,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
-  Paper, Skeleton, Typography,
+  ListSubheader,
+  Paper,
+  Skeleton,
+  Typography,
 } from '@mui/material';
 import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
-import type {Schema} from "../../../api/types.ts";
-import {api} from "../../../api/client.ts";
-import {useAuthedUser} from "../../../auth/useAuthedUser.ts";
-import type {FormUser} from "../formular.types.ts";
+import type { Schema } from '../../../api/types.ts';
+import { api } from '../../../api/client.ts';
+import { useAuthedUser } from '../../../auth/useAuthedUser.ts';
+import type { FormUser } from '../formular.types.ts';
+import GroupOffIcon from '@mui/icons-material/GroupOff';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
 type UserResponse = Schema<'UserResponse'>
+
+const getInitials = (name: string) =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
 
 export function UserSelection() {
   const user = useAuthedUser();
@@ -80,55 +96,105 @@ export function UserSelection() {
 
   const renderUserItem = (availableUser: UserResponse, disabled = false) => {
     const labelId = `checkbox-list-label-${availableUser.id}`;
+    const formUser = { id: availableUser.id, name: availableUser.username };
+    const checked = disabled ? true : isUserChecked(checkedUsers, formUser);
 
     return (
-      <ListItem key={availableUser.id} disablePadding>
-        <ListItemButton
-          onClick={handleToggle({ id: availableUser.id, name: availableUser.username })}
-          dense
-          disabled={disabled}
-        >
-          <ListItemIcon>
-            <Checkbox
-              edge="end"
-              checked={disabled ? true : isUserChecked(checkedUsers, { id: availableUser.id, name: availableUser.username })}
-              disabled={disabled}
-              disableRipple
-              slotProps={{ input: { 'aria-labelledby': labelId } }}
-            />
-          </ListItemIcon>
-          <ListItemText id={labelId} primary={`${availableUser.username}`} />
+      <ListItem
+        key={availableUser.id}
+        disablePadding
+        secondaryAction={
+          <Checkbox
+            edge="end"
+            checked={checked}
+            disabled={disabled}
+            onChange={handleToggle(formUser)}
+            disableRipple
+            slotProps={{ input: { 'aria-labelledby': labelId } }}
+          />
+        }
+      >
+        <ListItemButton onClick={handleToggle(formUser)} dense disabled={disabled}>
+          <ListItemAvatar>
+            <Avatar
+              sx={{
+                width: 36,
+                height: 36,
+                fontSize: 14,
+                bgcolor: disabled ? 'primary.main' : 'grey.400',
+              }}
+            >
+              {getInitials(availableUser.username)}
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText id={labelId} primary={availableUser.username} />
         </ListItemButton>
       </ListItem>
     );
   };
 
   return (
-    <Stack spacing={2} sx={{ alignItems: 'center', marginY: 3 }}>
-      <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), maxHeight: 500 }}>
+    <Stack spacing={3} sx={{ alignItems: 'center', marginY: 3 }}>
+      <Paper
+        elevation={4}
+        sx={{
+          width: generateSeparateStyle('80%', '60%'),
+          maxHeight: 'calc(100vh - 260px)',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
+      >
+        <Box sx={{ p: 3, pb: 2, flexShrink: 0 }}>
+          <Typography variant="overline" color="text.secondary">
+            Neuer Termin
+          </Typography>
+          <Typography variant="h4">
+            Teilnehmer auswählen
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            {checkedUsers.length} ausgewählt · mindestens 2 nötig
+          </Typography>
+        </Box>
+
+        <Divider />
 
         <List
           sx={{
             bgcolor: 'background.paper',
             width: '100%',
-            maxHeight: 'inherit',
-            overflow: 'auto',
+            flex: 1,
+            minHeight: 0,
+            overflowY: 'auto',
           }}
         >
           {isLoadingAllUsers ? (
-            <ListItem>
-              <Skeleton variant="rectangular" width="100%" height={40} />
-            </ListItem>
+            Array.from({ length: 5 }).map((_, index) => (
+              <ListItem key={index}>
+                <Skeleton variant="circular" width={36} height={36} sx={{ mr: 2 }} />
+                <Skeleton variant="text" width="60%" />
+              </ListItem>
+            ))
           ) : (
             <>
+              <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12 }}>
+                Organisator
+              </ListSubheader>
               {renderUserItem(user, true)}
+
               <Divider component="li" />
 
+              <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12 }}>
+                Weitere Teilnehmer
+              </ListSubheader>
               {otherUsers.length === 0 ? (
-                <ListItem>
-                  <Typography variant="body1" sx={{ width: '100%', textAlign: 'center' }}>
-                    Keine weiteren verfügbaren Benutzer gefunden.
-                  </Typography>
+                <ListItem sx={{ py: 4 }}>
+                  <Stack spacing={1} sx={{ width: '100%', alignItems: 'center' }}>
+                    <GroupOffIcon color="disabled" fontSize="large" />
+                    <Typography variant="body2" color="text.secondary">
+                      Keine weiteren verfügbaren Benutzer gefunden.
+                    </Typography>
+                  </Stack>
                 </ListItem>
               ) : (
                 otherUsers.map((availableUser) => renderUserItem(availableUser))
@@ -137,18 +203,25 @@ export function UserSelection() {
           )}
         </List>
       </Paper>
-      <Stack direction="row" spacing={2} sx={{ justifyContent: 'center', mt: 2 }}>
+
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={2}
+        sx={{ justifyContent: 'center', mt: 1, width: generateSeparateStyle('80%', '60%') }}
+      >
         <Button
-          sx={{ width: generateSeparateStyle('40%', 'auto')}}
+          fullWidth
           variant="contained"
+          startIcon={<AutoAwesomeIcon />}
           disabled={!canProceed}
           onClick={() => conditionsStep && navigate(`${WIZARD_BASE_PATH}/${conditionsStep.path}`)}
         >
           Terminvorschlag erhalten
         </Button>
         <Button
-          sx={{ width: generateSeparateStyle('40%', 'auto')}}
-          variant="contained"
+          fullWidth
+          variant="outlined"
+          startIcon={<EditCalendarIcon />}
           disabled={!canProceed}
           onClick={() => eventDataStep && navigate(`${WIZARD_BASE_PATH}/${eventDataStep.path}`)}
         >

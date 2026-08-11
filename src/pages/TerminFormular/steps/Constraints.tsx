@@ -4,19 +4,51 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { useFormWizard } from '../FormWizardContext';
 import { steps, WIZARD_BASE_PATH } from '../steps.config';
-import { Box, Paper, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import {
+  Box,
+  Divider,
+  InputAdornment,
+  Paper,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs, { type Dayjs } from 'dayjs';
 import type { DatePeriod, TimePeriod, Weekday } from '../formular.types.ts';
 import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
 import type { DateValidationError, TimeValidationError } from '@mui/x-date-pickers';
+import type { ReactNode } from 'react';
+import EventRepeatIcon from '@mui/icons-material/EventRepeat';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
 const WEEKDAYS: Weekday[] = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
 const currentDateDayjs = dayjs().hour(0).minute(0).second(0).millisecond(0);
 
 const unixEpochTimeDayjs = dayjs(0).hour(0).minute(0).second(0).millisecond(0);
+
+type DatePeriodErrors = Record<keyof DatePeriod, DateValidationError | null>;
+type TimePeriodErrors = Record<keyof TimePeriod, TimeValidationError | null>;
+
+function SectionLabel({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+  return (
+    <Stack direction="row" spacing={1} sx={{ mb: 1.5, alignItems: 'center' }}>
+      {icon}
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
+      >
+        {children}
+      </Typography>
+    </Stack>
+  );
+}
 
 export function Constraints() {
   const { data, updateStep, visitStep } = useFormWizard();
@@ -42,15 +74,12 @@ export function Constraints() {
   const [durationInMinutes, setDurationInMinutes] = useState<number>(
     data.constraints?.durationInMinutes ?? 60,
   );
-  const [dateErrors, setDateErrors] = useState<
-    Record<keyof DatePeriod, DateValidationError | null>
-  >({
+
+  const [dateErrors, setDateErrors] = useState<DatePeriodErrors>({
     start: null,
     end: null,
   });
-  const [timeErrors, setTimeErrors] = useState<
-    Record<keyof TimePeriod, TimeValidationError | null>
-  >({
+  const [timeErrors, setTimeErrors] = useState<TimePeriodErrors>({
     start: null,
     end: null,
   });
@@ -146,17 +175,32 @@ export function Constraints() {
 
   return (
     <Stack spacing={3} sx={{ alignItems: 'center', marginY: 3 }}>
-      <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), p: 3 }}>
+      <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), p: 4 }}>
         <Stack spacing={4}>
           <Box>
-            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
-              Wochentage
+            <Typography variant="overline" color="text.secondary">
+              Neuer Termin
             </Typography>
+            <Typography variant="h4">
+              Rahmenbedingungen
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              Lege fest, in welchem Rahmen ein passender Termin gesucht werden soll.
+            </Typography>
+          </Box>
+
+          <Divider />
+
+          <Box>
+            <SectionLabel icon={<EventRepeatIcon color="action" fontSize="small" />}>
+              Wochentage
+            </SectionLabel>
             <ToggleButtonGroup
               value={weekdays}
               onChange={handleWeekdayChange}
               aria-label="Wochentage auswaehlen"
               size="medium"
+              sx={{ flexWrap: 'wrap' }}
             >
               {WEEKDAYS.map((day) => (
                 <ToggleButton
@@ -180,23 +224,22 @@ export function Constraints() {
               ))}
             </ToggleButtonGroup>
             {!weekdaysValid && (
-              <Typography variant="caption" color="error" sx={{ display: 'block', mt: 0.5, ml: 2 }}>
+              <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1 }}>
                 Bitte mindestens einen Wochentag auswählen
               </Typography>
             )}
           </Box>
 
           <Box>
-            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
+            <SectionLabel icon={<DateRangeIcon color="action" fontSize="small" />}>
               Möglicher Datum-Rahmen
-            </Typography>
-            <Stack spacing={2}>
+            </SectionLabel>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <DatePicker
                 label="Von"
                 value={datePeriod.start}
                 onChange={(newValue) => handleDatePeriodChange('start', newValue)}
                 onError={(reason) => {
-                  console.log(reason);
                   setDateErrors((prev) => ({ ...prev, start: reason }));
                 }}
                 format="DD.MM.YYYY"
@@ -215,7 +258,6 @@ export function Constraints() {
                 value={datePeriod.end}
                 onChange={(newValue) => handleDatePeriodChange('end', newValue)}
                 onError={(reason) => {
-                  console.log(reason);
                   setDateErrors((prev) => ({ ...prev, end: reason }));
                 }}
                 format="DD.MM.YYYY"
@@ -234,10 +276,10 @@ export function Constraints() {
           </Box>
 
           <Box>
-            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
+            <SectionLabel icon={<AccessTimeIcon color="action" fontSize="small" />}>
               Mögliche Uhrzeit-Rahmen
-            </Typography>
-            <Stack spacing={2}>
+            </SectionLabel>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <TimePicker
                 label="Von"
                 value={timePeriod.start}
@@ -272,12 +314,12 @@ export function Constraints() {
           </Box>
 
           <Box>
-            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
+            <SectionLabel icon={<HourglassBottomIcon color="action" fontSize="small" />}>
               Dauer
-            </Typography>
+            </SectionLabel>
             <TextField
               type="number"
-              label="Dauer (Minuten)"
+              label="Dauer"
               value={durationInMinutes}
               onChange={handleDurationChange}
               fullWidth
@@ -289,6 +331,11 @@ export function Constraints() {
                     : `Dauer passt nicht in den gewählten Zeitrahmen (max. ${timeWindowMinutes} Min.)`
                   : undefined
               }
+              slotProps={{
+                input: {
+                  endAdornment: <InputAdornment position="end">Min.</InputAdornment>,
+                },
+              }}
             />
           </Box>
         </Stack>

@@ -4,10 +4,12 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { useFormWizard } from '../FormWizardContext';
 import { steps, WIZARD_BASE_PATH } from '../steps.config';
-import { Box, Paper, TextField, Typography } from '@mui/material';
+import { Box, Divider, Paper, TextField, Typography } from '@mui/material';
 import { type Dayjs } from 'dayjs';
 import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
-import {DateTimePicker} from '@mui/x-date-pickers';
+import { DateTimePicker } from '@mui/x-date-pickers';
+import EventIcon from '@mui/icons-material/Event';
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 export function EventData() {
   const { data, visitedSteps, updateStep, visitStep } = useFormWizard();
@@ -18,10 +20,10 @@ export function EventData() {
   }, [visitStep]);
 
   const [title, setTitle] = useState(data.event.title ?? '');
-  const [beginDate, setBeginDate] = useState<Dayjs >(
+  const [beginDate, setBeginDate] = useState<Dayjs>(
     data.event.begin
   );
-  const [endDate, setEndDate] = useState<Dayjs >(
+  const [endDate, setEndDate] = useState<Dayjs>(
     data.event.end
   );
   const [location, setLocation] = useState(data.event.location ?? '');
@@ -65,29 +67,44 @@ export function EventData() {
 
   return (
     <Stack spacing={3} sx={{ alignItems: 'center', marginY: 3 }}>
-      <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), p: 3 }}>
+      <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), p: 4 }}>
         <Stack spacing={4}>
           <Box>
-            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
-              Titel
+            <Typography variant="overline" color="text.secondary">
+              Neuer Termin
             </Typography>
-            <TextField
-              id="title-input"
-              placeholder="Titel"
-              required
-              value={title}
-              onChange={(event) => handleTitleChange(event.target.value)}
-              variant="outlined"
-              label="Titel"
-              fullWidth
-            />
+            <Typography variant="h4">
+              Termindetails
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              Lege weitere Informationen zum Termin fest.
+            </Typography>
           </Box>
 
+          <Divider />
+
+          <TextField
+            id="title-input"
+            label="Titel"
+            required
+            value={title}
+            onChange={(event) => handleTitleChange(event.target.value)}
+            variant="outlined"
+            fullWidth
+          />
+
           <Box>
-            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
-              Daten
-            </Typography>
-            <Stack spacing={2}>
+            <Stack direction="row" spacing={1} sx={{ mb: 1.5, alignItems: 'center' }}>
+              <EventIcon color="action" fontSize="small" />
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
+              >
+                Zeitraum
+              </Typography>
+            </Stack>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <DateTimePicker
                 ampm={false}
                 label="Beginn"
@@ -97,6 +114,7 @@ export function EventData() {
                 slotProps={{
                   textField: {
                     required: true,
+                    fullWidth: true,
                   },
                 }}
               />
@@ -110,43 +128,37 @@ export function EventData() {
                 slotProps={{
                   textField: {
                     required: true,
+                    fullWidth: true,
                   },
                 }}
               />
             </Stack>
           </Box>
 
-          <Box>
-            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
-              Ort
-            </Typography>
-            <TextField
-              id="location-input"
-              placeholder="Ort"
-              value={location}
-              onChange={(event) => handleLocationChange(event.target.value)}
-              variant="outlined"
-              label="Ort"
-              fullWidth
-            />
-          </Box>
+          <TextField
+            id="location-input"
+            label={
+              <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center' }}>
+                <LocationOnIcon fontSize="small" sx={{ display: 'block' }} />
+                <span>Ort</span>
+              </Box>
+            }
+            value={location}
+            onChange={(event) => handleLocationChange(event.target.value)}
+            variant="outlined"
+            fullWidth
+          />
 
-          <Box>
-            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
-              Notizen
-            </Typography>
-            <TextField
-              id="notes-input"
-              placeholder="Notizen"
-              multiline
-              minRows={4}
-              value={notes}
-              onChange={(event) => handleNotesChange(event.target.value)}
-              variant="outlined"
-              label="Notizen"
-              fullWidth
-            />
-          </Box>
+          <TextField
+            id="notes-input"
+            label="Notizen"
+            multiline
+            minRows={4}
+            value={notes}
+            onChange={(event) => handleNotesChange(event.target.value)}
+            variant="outlined"
+            fullWidth
+          />
         </Stack>
       </Paper>
 

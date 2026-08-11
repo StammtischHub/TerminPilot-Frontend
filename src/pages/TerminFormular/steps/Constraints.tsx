@@ -277,7 +277,7 @@ export function Constraints() {
 
           <Box>
             <SectionLabel icon={<AccessTimeIcon color="action" fontSize="small" />}>
-              Mögliche Uhrzeit-Rahmen
+              Möglicher Uhrzeit-Rahmen
             </SectionLabel>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <TimePicker

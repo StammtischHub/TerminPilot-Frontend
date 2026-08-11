@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import {useNavigate, useSearchParams} from 'react-router';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { useFormWizard } from '../FormWizardContext';
@@ -39,10 +39,13 @@ const getInitials = (name: string) =>
     .join('');
 
 export function UserSelection() {
-  const user = useAuthedUser();
-  const { data, updateStep, visitStep } = useFormWizard();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const userGroupId = searchParams.get('userGroupId');
 
+  const authenticatedUser = useAuthedUser();
+
+  const { data, visitedSteps ,updateStep, visitStep } = useFormWizard();
   const [allUsers, setAllUsers] = useState<UserResponse[]>([]);
   const [isLoadingAllUsers, setIsLoadingAllUsers] = useState(true);
 
@@ -50,9 +53,9 @@ export function UserSelection() {
     users.some((checkedUser) => checkedUser.id === userToCheck.id);
 
   const [checkedUsers, setCheckedUsers] = useState<FormUser[]>(() =>
-    isUserChecked(data.event.users, { id: user.id, name: user.username })
+    isUserChecked(data.event.users, { id: authenticatedUser.id, name: authenticatedUser.username })
       ? data.event.users
-      : [...data.event.users, { id: user.id, name: user.username }]
+      : [...data.event.users, { id: authenticatedUser.id, name: authenticatedUser.username }]
   );
 
   const canProceed = data.event.users.length >= 2;
@@ -68,20 +71,44 @@ export function UserSelection() {
       .finally(() => setIsLoadingAllUsers(false));
   }, []);
 
+  // useEffect(() => {
+  //   if (!userGroupId && visitedSteps.includes("user-selection")) return
+  //
+  //   api
+  //     .GET('/api/users/{user-id}/user-groups', {
+  //       params: {
+  //         path: {"user-id": authenticatedUser.id},
+  //         query: {userGroupId: authenticatedUser.id}
+  //       }
+  //     })
+  //     .then(({data}) => {
+  //       const uniqueMemberIds = [
+  //         ...new Set(data?.flatMap(group => group["member-ids"]) ?? [])
+  //       ];
+  //       const uniqueMemberIdsWithName = uniqueMemberIds.map(id => {
+  //         return {
+  //           id,
+  //           name: "KP"
+  //         };
+  //       });
+  //       setCheckedUsers(uniqueMemberIdsWithName);
+  //     })
+  // }, [authenticatedUser.id, userGroupId, visitedSteps])
+
   useEffect(() => {
     visitStep('user-selection');
   }, [visitStep]);
 
   useEffect(() => {
-    const isCurrentUserIncluded = isUserChecked(checkedUsers, { id: user.id, name: user.username });
+    const isCurrentUserIncluded = isUserChecked(checkedUsers, { id: authenticatedUser.id, name: authenticatedUser.username });
     if (!isCurrentUserIncluded) {
       updateStep('event', { users: checkedUsers });
     }
-  }, [data.event.users, user, checkedUsers, updateStep]);
+  }, [data.event.users, authenticatedUser, checkedUsers, updateStep]);
 
   const otherUsers = useMemo(
-    () => allUsers.filter((availableUser) => availableUser.id !== user.id),
-    [allUsers, user.id]
+    () => allUsers.filter((availableUser) => availableUser.id !== authenticatedUser.id),
+    [allUsers, authenticatedUser.id]
   );
 
   const handleToggle = (toggledUser: FormUser) => () => {
@@ -180,8 +207,7 @@ export function UserSelection() {
               <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12 }}>
                 Organisator
               </ListSubheader>
-              {renderUserItem(user, true)}
-
+              {renderUserItem(authenticatedUser, true)}
               <Divider component="li" />
 
               <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12 }}>

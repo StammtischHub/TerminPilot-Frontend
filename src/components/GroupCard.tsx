@@ -4,14 +4,18 @@ import { generateSeparateStyle } from '../utils/ThemeHelpers.ts';
 
 type GroupCardProps = {
   groupName: string;
+
+  onGroupNameClick: () => void;
+
+  onSettingsClick: () => void;
 };
 
-export default function GroupCard({ groupName }: GroupCardProps) {
+export default function GroupCard({ groupName, onGroupNameClick, onSettingsClick }: GroupCardProps) {
   return (
     <Card
       sx={{ width: generateSeparateStyle('70%', '60%'), display: 'flex', flexDirection: 'row' }}
     >
-      <CardActionArea>
+      <CardActionArea onClick={onGroupNameClick}>
         <CardContent sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Group fontSize="large" />
           <Typography variant="h5" component="div" sx={{ marginLeft: '10px' }}>
@@ -19,7 +23,7 @@ export default function GroupCard({ groupName }: GroupCardProps) {
           </Typography>
         </CardContent>
       </CardActionArea>
-      <CardActionArea sx={{ width: 'auto' }}>
+      <CardActionArea sx={{ width: 'auto' }} onClick={onSettingsClick}>
         <CardContent>
           <Settings />
         </CardContent>

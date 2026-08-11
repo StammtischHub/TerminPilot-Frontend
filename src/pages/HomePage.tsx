@@ -55,12 +55,16 @@ export default function HomePage() {
         ) : groups.length === 0 ? (
           <>
             <Typography variant="body1">Du bist noch in keiner Gruppe.</Typography>
+            <Typography>Erstelle eine neue Gruppe, sodass du auf einen Klick ein neues Ereignisse für bestimmte Personen erstellen kannst.</Typography>
             <Button variant="contained" onClick={() => navigate("/create-group")}>Neue Gruppe erstellen</Button>
           </>
         ) : (
-          groups.map((group) => (
-            <GroupCard key={group.id} groupName={group.name} />
-          ))
+          <>
+            <Typography variant="body1">Erstelle ein Ereignis für eine spezielle Personengruppe...</Typography>
+            {groups.map((group) => (
+              <GroupCard key={group.id} groupName={group.name} onGroupNameClick={() => navigate(`/event/user-selection?userGroupId=${group.id}`)} onSettingsClick={() => {}}/>
+              ))}
+          </>
         )}
       </Stack>
       <SpeedDial

@@ -121,10 +121,10 @@ export function UserSelection() {
     updateStep('event', { users: newChecked });
   };
 
-  const renderUserItem = (availableUser: UserResponse, disabled = false) => {
+  const renderUserItem = (availableUser: UserResponse, organizer = false) => {
     const labelId = `checkbox-list-label-${availableUser.id}`;
     const formUser = { id: availableUser.id, name: availableUser.username };
-    const checked = disabled ? true : isUserChecked(checkedUsers, formUser);
+    const checked = organizer ? true : isUserChecked(checkedUsers, formUser);
 
     return (
       <ListItem
@@ -134,27 +134,27 @@ export function UserSelection() {
           <Checkbox
             edge="end"
             checked={checked}
-            disabled={disabled}
+            disabled={organizer}
             onChange={handleToggle(formUser)}
             disableRipple
             slotProps={{ input: { 'aria-labelledby': labelId } }}
           />
         }
       >
-        <ListItemButton onClick={handleToggle(formUser)} dense disabled={disabled}>
+        <ListItemButton onClick={handleToggle(formUser)} disabled={organizer}>
           <ListItemAvatar>
             <Avatar
               sx={{
                 width: 36,
                 height: 36,
                 fontSize: 14,
-                bgcolor: disabled ? 'primary.main' : 'grey.400',
+                bgcolor: organizer ? 'primary.main' : 'grey.400',
               }}
             >
               {getInitials(availableUser.username)}
             </Avatar>
           </ListItemAvatar>
-          <ListItemText id={labelId} primary={availableUser.username} />
+          <ListItemText id={labelId} primary={organizer ? `${availableUser.username} (Du)` : availableUser.username} />
         </ListItemButton>
       </ListItem>
     );
@@ -166,68 +166,71 @@ export function UserSelection() {
         elevation={4}
         sx={{
           width: generateSeparateStyle('80%', '60%'),
-          maxHeight: 'calc(100vh - 260px)',
+          maxHeight: 'calc(100vh - 220px)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
+          p: 4
         }}
       >
-        <Box sx={{ p: 3, pb: 2, flexShrink: 0 }}>
-          <Typography variant="overline" color="text.secondary">
-            Neuer Termin
-          </Typography>
-          <Typography variant="h4">
-            Teilnehmer auswählen
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            {checkedUsers.length} ausgewählt · mindestens 2 nötig
-          </Typography>
-        </Box>
+          <Box sx={{ flexShrink: 0 }}>
+            <Typography variant="overline" color="text.secondary">
+              Neuer Termin
+            </Typography>
+            <Typography variant="h4">
+              Teilnehmer auswählen
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              {checkedUsers.length} ausgewählt · mindestens 2 nötig
+            </Typography>
+          </Box>
 
-        <Divider />
+          <Divider sx={{ mt: 3, mb: 2 }}/>
 
-        <List
-          sx={{
-            bgcolor: 'background.paper',
-            width: '100%',
-            flex: 1,
-            minHeight: 0,
-            overflowY: 'auto',
-          }}
-        >
-          {isLoadingAllUsers ? (
-            Array.from({ length: 5 }).map((_, index) => (
-              <ListItem key={index}>
-                <Skeleton variant="circular" width={36} height={36} sx={{ mr: 2 }} />
-                <Skeleton variant="text" width="60%" />
-              </ListItem>
-            ))
-          ) : (
-            <>
-              <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12 }}>
-                Organisator
-              </ListSubheader>
-              {renderUserItem(authenticatedUser, true)}
-              <Divider component="li" />
-
-              <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12 }}>
-                Weitere Teilnehmer
-              </ListSubheader>
-              {otherUsers.length === 0 ? (
-                <ListItem sx={{ py: 4 }}>
-                  <Stack spacing={1} sx={{ width: '100%', alignItems: 'center' }}>
-                    <GroupOffIcon color="disabled" fontSize="large" />
-                    <Typography variant="body2" color="text.secondary">
-                      Keine weiteren verfügbaren Benutzer gefunden.
-                    </Typography>
-                  </Stack>
+          <List
+            sx={{
+              bgcolor: 'background.paper',
+              width: '100%',
+              flex: 1,
+              minHeight: 0,
+              overflowY: 'auto',
+              py: 0,
+              mt: 0
+            }}
+          >
+            {isLoadingAllUsers ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <ListItem key={index}>
+                  <Skeleton variant="circular" width={36} height={36} sx={{ mr: 2 }} />
+                  <Skeleton variant="text" width="60%" />
                 </ListItem>
-              ) : (
-                otherUsers.map((availableUser) => renderUserItem(availableUser))
-              )}
-            </>
-          )}
-        </List>
+              ))
+            ) : (
+              <>
+                <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12, lineHeight: 'normal', mt: 1, pl: 0 }}>
+                  Organisator
+                </ListSubheader>
+                {renderUserItem(authenticatedUser, true)}
+                <Divider component="li" sx={{ mt: 1 }} />
+
+                <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12, lineHeight: 'normal', mt: 1, mb: 0.5, pl: 0 }}>
+                  Weitere Teilnehmer
+                </ListSubheader>
+                {otherUsers.length === 0 ? (
+                  <ListItem sx={{ py: 4 }}>
+                    <Stack spacing={1} sx={{ width: '100%', alignItems: 'center' }}>
+                      <GroupOffIcon color="disabled" fontSize="large" />
+                      <Typography variant="body2" color="text.secondary">
+                        Keine weiteren verfügbaren Benutzer gefunden.
+                      </Typography>
+                    </Stack>
+                  </ListItem>
+                ) : (
+                  otherUsers.map((availableUser) => renderUserItem(availableUser))
+                )}
+              </>
+            )}
+          </List>
       </Paper>
 
       <Stack

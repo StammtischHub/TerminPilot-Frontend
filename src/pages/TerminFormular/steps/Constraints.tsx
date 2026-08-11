@@ -176,7 +176,7 @@ export function Constraints() {
   return (
     <Stack spacing={3} sx={{ alignItems: 'center', marginY: 3 }}>
       <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), p: 4 }}>
-        <Stack spacing={4}>
+        <Stack spacing={3}>
           <Box>
             <Typography variant="overline" color="text.secondary">
               Neuer Termin

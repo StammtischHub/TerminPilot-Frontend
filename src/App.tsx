@@ -9,6 +9,7 @@ import { Constraints } from './pages/TerminFormular/steps/Constraints.tsx';
 import {EventData} from "./pages/TerminFormular/steps/EventData.tsx";
 import {Overview} from "./pages/TerminFormular/steps/Overview.tsx";
 import CreateGroupPage from "./pages/CreateGroupPage.tsx";
+import {EventSuggestions} from "./pages/TerminFormular/steps/EventSuggestions.tsx";
 
 export default function App() {
   return (
@@ -22,7 +23,8 @@ export default function App() {
         <Route path="event" element={<TerminFormularLayout />}>
           <Route index element={<Navigate to="user-selection" replace />} />
           <Route path="user-selection" element={<UserSelection />} />
-          <Route path="conditions" element={<Constraints />} />
+          <Route path="constraints" element={<Constraints />} />
+          <Route path="event-suggestions" element={<EventSuggestions />} />
           <Route path="event-data" element={<EventData />} />
           <Route path="overview" element={<Overview />} />
         </Route>

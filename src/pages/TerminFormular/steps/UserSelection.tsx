@@ -60,7 +60,7 @@ export function UserSelection() {
   );
 
   const canProceed = data.event.users.length >= 2;
-  const conditionsStep = steps.find((step) => step.path === 'conditions');
+  const constraintsStep = steps.find((step) => step.path === 'constraints');
   const eventDataStep = steps.find((step) => step.path === 'event-data');
 
   useEffect(() => {
@@ -244,7 +244,7 @@ export function UserSelection() {
           variant="contained"
           startIcon={<AutoAwesomeIcon />}
           disabled={!canProceed}
-          onClick={() => conditionsStep && navigate(`${WIZARD_BASE_PATH}/${conditionsStep.path}`)}
+          onClick={() => constraintsStep && navigate(`${WIZARD_BASE_PATH}/${constraintsStep.path}`)}
         >
           Terminvorschlag erhalten
         </Button>

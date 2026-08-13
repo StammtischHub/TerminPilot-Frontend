@@ -169,7 +169,7 @@ export function Constraints() {
     updateStep('constraints', { durationInMinutes: value });
   };
 
-  const currentStepIndex = steps.findIndex((step) => step.path === 'conditions');
+  const currentStepIndex = steps.findIndex((step) => step.path === 'constraints');
   const previousStep = steps[currentStepIndex - 1];
   const nextStep = steps[currentStepIndex + 1];
 

@@ -1,12 +1,16 @@
 import AppBarsWrapper from "../components/AppBarsWrapper.tsx";
 import {
+  Avatar,
   Box,
-  Checkbox, Divider, List,
+  Checkbox,
+  Divider,
+  List,
   ListItem,
+  ListItemAvatar,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
-  Paper, Skeleton,
+  Paper,
+  Skeleton,
   TextField,
   Typography
 } from "@mui/material";
@@ -19,8 +23,19 @@ import {api} from "../api/client.ts";
 import type {Schema} from "../api/types.ts";
 import {useAuthedUser} from "../auth/useAuthedUser.ts";
 import {useNavigate} from "react-router";
+import GroupIcon from "@mui/icons-material/Group";
+import GroupOffIcon from "@mui/icons-material/GroupOff";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 
 type UserResponse = Schema<'UserResponse'>
+
+const getInitials = (name: string) =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
 
 export default function CreateGroupPage () {
   const navigate = useNavigate();
@@ -44,7 +59,7 @@ export default function CreateGroupPage () {
 
   const [checkedUsers, setCheckedUsers] = useState<FormUser[]>([{id: user.id, name: user.username}]);
 
-  const canProceed = checkedUsers.length >= 2 && groupName.length > 0;
+  const canProceed = checkedUsers.length >= 2 && groupName.trim().length > 0;
 
   const otherUsers = useMemo(
     () => allUsers.filter((availableUser) => availableUser.id !== user.id),
@@ -61,8 +76,8 @@ export default function CreateGroupPage () {
   };
 
   const handleSubmit = () => {
-    api.
-      POST('/api/user-groups', {
+    api
+      .POST('/api/user-groups', {
         body: {
           name: groupName,
           "member-ids": checkedUsers.map((user) => user.id),
@@ -72,26 +87,40 @@ export default function CreateGroupPage () {
       .finally(() => navigate("/home"));
   }
 
-  const renderUserItem = (availableUser: UserResponse, disabled = false) => {
+  const renderUserItem = (availableUser: UserResponse, organizer = false) => {
     const labelId = `checkbox-list-label-${availableUser.id}`;
+    const formUser = { id: availableUser.id, name: availableUser.username };
+    const checked = organizer ? true : isUserChecked(checkedUsers, formUser);
 
     return (
-      <ListItem key={availableUser.id} disablePadding>
-        <ListItemButton
-          onClick={handleToggle({ id: availableUser.id, name: availableUser.username })}
-          dense
-          disabled={disabled}
-        >
-          <ListItemIcon>
-            <Checkbox
-              edge="end"
-              checked={disabled ? true : isUserChecked(checkedUsers, { id: availableUser.id, name: availableUser.username })}
-              disabled={disabled}
-              disableRipple
-              slotProps={{ input: { 'aria-labelledby': labelId } }}
-            />
-          </ListItemIcon>
-          <ListItemText id={labelId} primary={`${availableUser.username}`} />
+      <ListItem
+        key={availableUser.id}
+        disablePadding
+        secondaryAction={
+          <Checkbox
+            edge="end"
+            checked={checked}
+            disabled={organizer}
+            onChange={handleToggle(formUser)}
+            disableRipple
+            slotProps={{ input: { 'aria-labelledby': labelId } }}
+          />
+        }
+      >
+        <ListItemButton onClick={handleToggle(formUser)} disabled={organizer}>
+          <ListItemAvatar>
+            <Avatar
+              sx={{
+                width: 36,
+                height: 36,
+                fontSize: 14,
+                bgcolor: organizer ? 'primary.main' : 'grey.400',
+              }}
+            >
+              {getInitials(availableUser.username)}
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText id={labelId} primary={organizer ? `${availableUser.username} (Du)` : availableUser.username} />
         </ListItemButton>
       </ListItem>
     );
@@ -100,67 +129,102 @@ export default function CreateGroupPage () {
   return (
     <AppBarsWrapper>
       <Stack spacing={3} sx={{ alignItems: 'center', marginY: 3 }}>
-        <Typography variant="h4" component="h1" sx={{ mt: '24px', mb: '24px', textAlign: 'center' }}>
-          Neue Gruppe erstellen
-        </Typography>
-        <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), p: 3 }}>
-          <Stack spacing={4}>
-            <Box>
-              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
-                Gruppenname
-              </Typography>
-              <TextField
-                id="group-name-input"
-                required
-                value={groupName}
-                onChange={(event) => setGroupName(event.target.value)}
-                variant="outlined"
-                label="Gruppenname"
-                fullWidth
-              />
-            </Box>
+        <Paper
+          elevation={4}
+          sx={{
+            width: generateSeparateStyle('80%', '60%'),
+            maxHeight: 'calc(100vh - 220px)',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            p: 4
+          }}
+        >
+          <Box sx={{ flexShrink: 0 }}>
+            <Typography variant="overline" color="text.secondary">
+              Neue Gruppe
+            </Typography>
+            <Typography variant="h4">
+              Gruppendetails
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              {checkedUsers.length} Mitglied(er) ausgewählt · mindestens 2 nötig
+            </Typography>
+          </Box>
 
-            <Box>
-              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
+          <Divider sx={{ my: 3 }} />
+
+          <Box sx={{ flexShrink: 0, mb: 3 }}>
+            <TextField
+              id="group-name-input"
+              label="Gruppenname"
+              required
+              value={groupName}
+              onChange={(event) => setGroupName(event.target.value)}
+              variant="outlined"
+              fullWidth
+            />
+          </Box>
+
+          <Box sx={{ flexShrink: 0, mb: 1.5 }}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+              <GroupIcon color="action" fontSize="small" />
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
+              >
                 Mitglieder
               </Typography>
-              <List
-                sx={{
-                  bgcolor: 'background.paper',
-                  width: '100%',
-                  maxHeight: 'inherit',
-                  overflow: 'auto',
-                }}
-              >
-                {isLoadingAllUsers ? (
-                  <ListItem>
-                    <Skeleton variant="rectangular" width="100%" height={40} />
+            </Stack>
+          </Box>
+
+          <List
+            sx={{
+              bgcolor: 'background.paper',
+              width: '100%',
+              flex: 1,
+              minHeight: 0,
+              overflowY: 'auto',
+              py: 0,
+              mt: 0
+            }}
+          >
+            {isLoadingAllUsers ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <ListItem key={index}>
+                  <Skeleton variant="circular" width={36} height={36} sx={{ mr: 2 }} />
+                  <Skeleton variant="text" width="60%" />
+                </ListItem>
+              ))
+            ) : (
+              <>
+                {renderUserItem(user, true)}
+                <Divider component="li" sx={{ my: 1 }} />
+
+                {otherUsers.length === 0 ? (
+                  <ListItem sx={{ py: 4 }}>
+                    <Stack spacing={1} sx={{ width: '100%', alignItems: 'center' }}>
+                      <GroupOffIcon color="disabled" fontSize="large" />
+                      <Typography variant="body2" color="text.secondary">
+                        Keine weiteren verfügbaren Benutzer gefunden.
+                      </Typography>
+                    </Stack>
                   </ListItem>
                 ) : (
-                  <>
-                    {renderUserItem(user, true)}
-                    <Divider component="li" />
-
-                    {otherUsers.length === 0 ? (
-                      <ListItem>
-                        <Typography variant="body1" sx={{ width: '100%', textAlign: 'center' }}>
-                          Keine weiteren verfügbaren Benutzer gefunden.
-                        </Typography>
-                      </ListItem>
-                    ) : (
-                      otherUsers.map((availableUser) => renderUserItem(availableUser))
-                    )}
-                  </>
+                  otherUsers.map((availableUser) => renderUserItem(availableUser))
                 )}
-              </List>
-            </Box>
-          </Stack>
+              </>
+            )}
+          </List>
         </Paper>
 
         <Button
           variant="contained"
+          startIcon={<GroupAddIcon />}
           disabled={!canProceed}
-          onClick={() => {handleSubmit()}}
+          onClick={() => handleSubmit()}
+          sx={{ width: generateSeparateStyle('50%', '30%') }}
         >
           Gruppe erstellen
         </Button>

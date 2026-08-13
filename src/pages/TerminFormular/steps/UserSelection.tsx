@@ -17,9 +17,9 @@ import {
   ListSubheader,
   Paper,
   Skeleton,
-  Typography,
+  Typography, useMediaQuery,
 } from '@mui/material';
-import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
+import {generateSeparateStyle, isMobile} from '../../../utils/ThemeHelpers.ts';
 import type { Schema } from '../../../api/types.ts';
 import { api } from '../../../api/client.ts';
 import { useAuthedUser } from '../../../auth/useAuthedUser.ts';
@@ -39,6 +39,7 @@ const getInitials = (name: string) =>
     .join('');
 
 export function UserSelection() {
+  const mobile = useMediaQuery(isMobile)
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const userGroupId = searchParams.get('userGroupId');
@@ -161,12 +162,12 @@ export function UserSelection() {
   };
 
   return (
-    <Stack spacing={3} sx={{ alignItems: 'center', marginY: 3 }}>
+    <Stack spacing={3} sx={{ alignItems: 'center', my: 3 }}>
       <Paper
         elevation={4}
         sx={{
           width: generateSeparateStyle('80%', '60%'),
-          maxHeight: 'calc(100vh - 220px)',
+          maxHeight: mobile ? 'calc(100vh - 220px)' : 'calc(100vh - 280px)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
@@ -181,11 +182,11 @@ export function UserSelection() {
               Teilnehmer auswählen
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {checkedUsers.length} ausgewählt · mindestens 2 nötig
+              {checkedUsers.length} Teilnehmer ausgewählt · mindestens 2 nötig
             </Typography>
           </Box>
 
-          <Divider sx={{ mt: 3, mb: 2 }}/>
+          <Divider sx={{ my: 3 }}/>
 
           <List
             sx={{
@@ -207,13 +208,13 @@ export function UserSelection() {
               ))
             ) : (
               <>
-                <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12, lineHeight: 'normal', mt: 1, pl: 0 }}>
+                <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12, lineHeight: 'normal', pl: 0 }}>
                   Organisator
                 </ListSubheader>
                 {renderUserItem(authenticatedUser, true)}
-                <Divider component="li" sx={{ mt: 1 }} />
+                <Divider component="li" sx={{ mt: 2, mb: 3 }} />
 
-                <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12, lineHeight: 'normal', mt: 1, mb: 0.5, pl: 0 }}>
+                <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12, lineHeight: 'normal', pl: 0 }}>
                   Weitere Teilnehmer
                 </ListSubheader>
                 {otherUsers.length === 0 ? (
@@ -234,7 +235,7 @@ export function UserSelection() {
       </Paper>
 
       <Stack
-        direction={{ xs: 'column', sm: 'row' }}
+        direction={mobile ? 'column' : 'row'}
         spacing={2}
         sx={{ justifyContent: 'center', mt: 1, width: generateSeparateStyle('80%', '60%') }}
       >

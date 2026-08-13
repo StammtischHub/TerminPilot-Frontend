@@ -46,3 +46,44 @@ export function createInitialFormData(): EventFormData {
     event: { title: '', begin: dayjs().add(1, 'hour').minute(30), end: dayjs().add(2, 'hour').minute(30), users: [] },
   };
 }
+
+// export type Weekday = 'Mo' | 'Di' | 'Mi' | 'Do' | 'Fr' | 'Sa' | 'So';
+//
+// export type DatePeriod = {
+//   start: Temporal.PlainDate;
+//   end: Temporal.PlainDate;
+// };
+//
+// export type TimePeriod = {
+//   start: Temporal.PlainTime;
+//   end: Temporal.PlainTime;
+// };
+//
+// export type FormUser = { id: number; name: string };
+//
+// export type EventFormData = {
+//   constraints?: {
+//     weekdays: Weekday[];
+//     datePeriod: DatePeriod;
+//     timePeriod: TimePeriod;
+//     durationInMinutes: number;
+//   };
+//   event: {
+//     title: string;
+//     begin: Temporal.PlainDateTime;
+//     end: Temporal.PlainDateTime;
+//     users: FormUser[];
+//     location?: string;
+//     notes?: string;
+//   };
+// };
+//
+// export function reviveTypesFromJsonData(key: string, value: unknown): unknown {
+//   return value;
+// }
+//
+// export function createInitialFormData(): EventFormData {
+//   return {
+//     event: { title: '', begin: Temporal.Now.plainDateTimeISO(), end: Temporal.Now.plainDateTimeISO(), users: [] },
+//   };
+// }

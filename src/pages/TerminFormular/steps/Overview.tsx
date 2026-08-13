@@ -12,6 +12,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import NotesIcon from "@mui/icons-material/Notes";
 import GroupIcon from "@mui/icons-material/Group";
+import {useAuthedUser} from "../../../auth/useAuthedUser.ts";
 
 function OverviewRow({icon, label, children}: { icon: ReactNode; label: string; children: ReactNode }) {
   return (
@@ -33,6 +34,7 @@ function OverviewRow({icon, label, children}: { icon: ReactNode; label: string; 
 
 export function Overview() {
   const { data, visitedSteps, visitStep } = useFormWizard();
+  const { id } = useAuthedUser();
   const navigate = useNavigate();
 
   const beginDate = data.event.begin.format('DD.MM.YYYY');
@@ -94,7 +96,7 @@ export function Overview() {
             {data.event.users.length > 0 ? (
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {data.event.users.map((checkedUser) => (
-                  <Chip key={checkedUser.id} label={checkedUser.name} size="small" />
+                  <Chip key={checkedUser.id} label={checkedUser.id === id ? `${checkedUser.name} (Du)` : checkedUser.name} size="small" />
                 ))}
               </Box>
             ) : (

@@ -4,7 +4,7 @@ import { PersonAddAlt1 as RegisterIcon, PersonOutlined } from '@mui/icons-materi
 import { useAuth } from '../auth/AuthContext.tsx';
 import { ApiError } from '../api/client.ts';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router';
-import { isMobile } from '../utils/ThemeHelpers.ts';
+import {generateSeparateStyle, isMobile} from '../utils/ThemeHelpers.ts';
 import PasswordTextField from '../components/textFields/PasswordTextField.tsx';
 import TextFieldWithIcon from '../components/textFields/TextFieldWithIcon.tsx';
 
@@ -69,8 +69,14 @@ export default function RegisterPage() {
   return (
     <Container
       maxWidth="xs"
-      sx={{ height: '100dvh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+      sx={{ height: '100dvh', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
     >
+      <Stack direction="column" sx={{ justifyContent: 'center', alignItems: 'center', width: '100%', mb: 4}}>
+        <img src="../../assets/TerminPilot.png" alt="TerminPilot Logo" style={{ width: mobile ? 300 : 400 }} />
+        <Typography variant={mobile ? 'h4' : 'h3'} component="h1" sx={{ mt: 0 }}>
+          TerminPilot
+        </Typography>
+      </Stack>
       <Stack
         component="form"
         onSubmit={(submit) => {
@@ -79,13 +85,9 @@ export default function RegisterPage() {
         }}
         noValidate
         direction="column"
-        spacing={2.5}
+        spacing={2}
         sx={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}
       >
-        <Typography variant={mobile ? 'h3' : 'h1'} component="h1">
-          TerminPilot
-        </Typography>
-
         {error && (
           <Alert severity="error" sx={{ width: '100%' }}>
             {error}

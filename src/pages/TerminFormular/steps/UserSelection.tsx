@@ -46,7 +46,7 @@ export function UserSelection() {
 
   const authenticatedUser = useAuthedUser();
 
-  const { data, visitedSteps ,updateStep, visitStep } = useFormWizard();
+  const { data, updateStep, visitStep } = useFormWizard();
   const [allUsers, setAllUsers] = useState<UserResponse[]>([]);
   const [isLoadingAllUsers, setIsLoadingAllUsers] = useState(true);
 
@@ -71,30 +71,6 @@ export function UserSelection() {
       })
       .finally(() => setIsLoadingAllUsers(false));
   }, []);
-
-  // useEffect(() => {
-  //   if (!userGroupId && visitedSteps.includes("user-selection")) return
-  //
-  //   api
-  //     .GET('/api/users/{user-id}/user-groups', {
-  //       params: {
-  //         path: {"user-id": authenticatedUser.id},
-  //         query: {userGroupId: authenticatedUser.id}
-  //       }
-  //     })
-  //     .then(({data}) => {
-  //       const uniqueMemberIds = [
-  //         ...new Set(data?.flatMap(group => group["member-ids"]) ?? [])
-  //       ];
-  //       const uniqueMemberIdsWithName = uniqueMemberIds.map(id => {
-  //         return {
-  //           id,
-  //           name: "KP"
-  //         };
-  //       });
-  //       setCheckedUsers(uniqueMemberIdsWithName);
-  //     })
-  // }, [authenticatedUser.id, userGroupId, visitedSteps])
 
   useEffect(() => {
     visitStep('user-selection');

@@ -8,7 +8,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import {AccountCircle, Home} from '@mui/icons-material';
+import {AccountCircle} from '@mui/icons-material';
 import { type ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../auth/AuthContext.tsx';
@@ -49,7 +49,7 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
               navigate('/home');
             }}
           >
-            <Home fontSize="large" sx={{ mr: 2 }} />
+            <img src="../../assets/TerminPilotWeiss.png" alt="TerminPilot Logo" style={{ width: 50, marginRight: 10 }} />
             <Typography variant="h4" component="div">
               TerminPilot
             </Typography>

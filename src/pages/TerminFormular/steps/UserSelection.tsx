@@ -70,7 +70,7 @@ export function UserSelection() {
 
 
   useEffect(() => {
-    if (!state.userGroupId && visitedSteps.includes("user-selection")) return
+    if (!state.userGroupId || visitedSteps.includes("user-selection")) return
 
     api
       .GET('/api/users/{user-id}/user-groups', {
@@ -80,9 +80,13 @@ export function UserSelection() {
         }
       })
       .then(({data}) => {
-        const uniqueMembers = [
-          ...new Set(data?.flatMap(group => group.members) ?? [])
-        ];
+        const uniqueMembers = Array.from(
+          new Map(
+            (data ?? [])
+              .flatMap((group) => group.members)
+              .map((member) => [member.id, member])
+          ).values()
+        );
         setCheckedUsers(uniqueMembers);
       })
   }, [authenticatedUser.id, state.userGroupId, visitedSteps])

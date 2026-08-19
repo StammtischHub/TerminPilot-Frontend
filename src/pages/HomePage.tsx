@@ -62,7 +62,7 @@ export default function HomePage() {
           <>
             <Typography variant="body1">Erstelle ein Ereignis für eine spezielle Personengruppe...</Typography>
             {groups.map((group) => (
-              <GroupCard key={group.id} groupName={group.name} onGroupNameClick={() => navigate(`/event/user-selection?userGroupId=${group.id}`)} onSettingsClick={() => {}}/>
+              <GroupCard key={group.id} groupName={group.name} onGroupNameClick={() => navigate(`/event/user-selection`, {state: {userGroupId: group.id}})} onSettingsClick={() => {}}/>
               ))}
           </>
         )}

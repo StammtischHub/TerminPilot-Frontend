@@ -1,11 +1,12 @@
-import { useEffect, useReducer, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, type ReactNode } from 'react';
 import {
   FormWizardContext,
   reducer,
   type WizardState,
-  type FormWizardContextValue, createInitialState,
+  type FormWizardContextValue,
+  createInitialState,
 } from './FormWizardContext';
-import {reviveEventFormDates} from "./formular.types.ts";
+import { reviveTemporalTypes, replaceTemporalTypes } from './formular.types.ts';
 
 const STORAGE_KEY = 'event-formular-wizard';
 
@@ -13,7 +14,7 @@ export function FormWizardProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, createInitialState(), (init) => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
-      return saved ? (JSON.parse(saved, reviveEventFormDates) as WizardState) : init;
+      return saved ? (JSON.parse(saved, reviveTemporalTypes) as WizardState) : init;
     } catch {
       return init;
     }
@@ -21,7 +22,7 @@ export function FormWizardProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state, replaceTemporalTypes));
     } catch {
       // sessionStorage kann z. B. im Privacy-Modus fehlschlagen – bewusst ignoriert
     }
@@ -37,12 +38,20 @@ export function FormWizardProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const value: FormWizardContextValue = {
-    ...state,
-    updateStep: (step, payload) => dispatch({ type: 'UPDATE_STEP', step, payload }),
-    visitStep: (step) => dispatch({ type: 'VISIT_STEP', step }),
-    reset: () => dispatch({ type: 'RESET' }),
-  };
+  const updateStep = useCallback<FormWizardContextValue['updateStep']>(
+    (step, payload) => dispatch({ type: 'UPDATE_STEP', step, payload }),
+    []
+  );
+  const visitStep = useCallback<FormWizardContextValue['visitStep']>(
+    (step) => dispatch({ type: 'VISIT_STEP', step }),
+    []
+  );
+  const reset = useCallback(() => dispatch({ type: 'RESET' }), []);
+
+  const value = useMemo<FormWizardContextValue>(
+    () => ({ ...state, updateStep, visitStep, reset }),
+    [state, updateStep, visitStep, reset]
+  );
 
   return <FormWizardContext.Provider value={value}>{children}</FormWizardContext.Provider>;
 }

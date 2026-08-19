@@ -72,7 +72,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/evet/suggestions": {
+    "/api/events": {
         parameters: {
             query?: never;
             header?: never;
@@ -81,8 +81,25 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Receive suggestions for the event by the given constraints */
-        post: operations["suggestions"];
+        /** Create a Event for the given participants */
+        post: operations["createEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/events/suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Get suggestions for the event by the given constraints */
+        post: operations["getSuggestions"];
         delete?: never;
         options?: never;
         head?: never;
@@ -233,6 +250,71 @@ export interface components {
              */
             password: string;
         };
+        EventCore: {
+            /**
+             * @description Name of the Event
+             * @example Dinner with the Simpsons
+             */
+            title: string;
+            /**
+             * Format: date-time
+             * @description Event start time
+             * @example 2026-08-12T19:00:00
+             */
+            start: string;
+            /**
+             * Format: date-time
+             * @description Event end time. Must be strictly greater than `start`.
+             * @example 2026-08-12T20:30:00
+             */
+            end: string;
+            /**
+             * @description The place where the Event takes place
+             * @example 742 Evergreen Terrace, Springfield
+             */
+            location?: string;
+            /**
+             * @description Free‑text field for additional comments, instructions, or contextual information related to this item.
+             * @example Bring some Duff-Beer
+             */
+            notes?: string;
+        };
+        /**
+         * Format: int64
+         * @description Unique identifier of a participant
+         * @example 1234
+         */
+        UserId: number;
+        CreateEventRequest: components["schemas"]["EventCore"] & {
+            participants: components["schemas"]["UserId"][];
+        };
+        User: {
+            id: components["schemas"]["UserId"];
+            /**
+             * @description Display name of the participant
+             * @example Homer Simpson
+             */
+            name: string;
+        };
+        CreateEventResponse: components["schemas"]["EventCore"] & {
+            participants: components["schemas"]["User"][];
+        };
+        CalendarAccessFailure: {
+            participantId: components["schemas"]["UserId"];
+            /**
+             * @description - not_connected: participant has never authorized calendar access.
+             *     - reauth_required: refresh token is invalid or has been revoked.
+             *     - provider_unavailable: calendar provider returned an error.
+             *     - timeout: calendar provider did not respond in time.
+             * @enum {string}
+             */
+            reason: "not_connected" | "reauth_required" | "provider_unavailable" | "timeout";
+        };
+        /**
+         * @description The day of the week
+         * @enum {string}
+         */
+        Weekday: "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY";
         DateRange: {
             /**
              * Format: date
@@ -252,7 +334,7 @@ export interface components {
             end: string;
         };
         Constraints: {
-            weekdays: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
+            weekdays: components["schemas"]["Weekday"][];
             dateRange: components["schemas"]["DateRange"];
             timeRange: components["schemas"]["TimeRange"];
             /** @example 30 */
@@ -260,7 +342,7 @@ export interface components {
         };
         SuggestionsRequest: {
             constraints: components["schemas"]["Constraints"];
-            participants: unknown[];
+            participants: components["schemas"]["UserId"][];
         };
         Coverage: {
             /** @example 3 */
@@ -272,12 +354,12 @@ export interface components {
              *       56
              *     ]
              */
-            availableParticipantIds: number[];
+            availableParticipantIds: components["schemas"]["UserId"][];
             /**
              * @description Participants not available at this slot; empty array for a full match
              * @example []
              */
-            missingParticipantIds: number[];
+            missingParticipantIds: components["schemas"]["UserId"][];
         };
         Suggestion: {
             /**
@@ -299,27 +381,12 @@ export interface components {
             /** @description Top-N suggestions, ordered best first (ranking is implicit in array order) */
             suggestions: components["schemas"]["Suggestion"][];
         };
-        CalendarAccessFailure: {
-            /**
-             * Format: int64
-             * @example 42
-             */
-            participantId: number;
-            /**
-             * @description - not_connected: participant has never authorized calendar access.
-             *     - reauth_required: refresh token is invalid or has been revoked.
-             *     - provider_unavailable: calendar provider returned an error.
-             *     - timeout: calendar provider did not respond in time.
-             * @enum {string}
-             */
-            reason: "not_connected" | "reauth_required" | "provider_unavailable" | "timeout";
-        };
         /** @description Request schema for creating a user group */
         CreateUserGroupRequest: {
             /** @description The name of the user group */
             name: string;
             /** @description List of user IDs to be added to the group */
-            "member-ids": number[];
+            memberIds: number[];
         };
         /** @description User group information */
         UserGroupResponse: {
@@ -330,8 +397,8 @@ export interface components {
             id: number;
             /** @description The name of the group */
             name: string;
-            /** @description The list of user IDs that are members of the group */
-            "member-ids": number[];
+            /** @description The list of users that are members of the group */
+            members: components["schemas"]["User"][];
         };
         /** @description Request schema for updating a user group */
         UpdateUserGroupRequest: {
@@ -343,11 +410,18 @@ export interface components {
             /** @description The new name of the user group (optional) */
             name?: string;
             /** @description List of user IDs to be added or removed from the group (optional) */
-            "member-ids"?: number[];
+            memberIds?: number[];
         };
     };
     responses: never;
-    parameters: never;
+    parameters: {
+        /** @description The ID of the user group */
+        "user-group-id": number;
+        /** @description The ID of the user */
+        "user-id": number;
+        /** @description The ID of the user group */
+        "user-group-id-2": number;
+    };
     requestBodies: never;
     headers: never;
     pathItems: never;
@@ -399,6 +473,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
+        /** @description Login Request */
         requestBody: {
             content: {
                 "application/json": components["schemas"]["LoginRequest"];
@@ -468,7 +543,77 @@ export interface operations {
             };
         };
     };
-    suggestions: {
+    createEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateEventRequest"];
+            };
+        };
+        responses: {
+            /** @description Successfully created the event; all participant calendars were loaded */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateEventResponse"];
+                };
+            };
+            /** @description Validation failed – request body is structurally invalid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Caller is not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description At least one of the given participant IDs does not exist in the system */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Request body is structurally valid but not logically satisfiable (e.g. duration exceeds the time range) */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Calendar access failed for at least one participant (not connected, authorization expired, or provider error) */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarAccessFailure"];
+                };
+            };
+            /** @description Timed out while fetching a participant's calendar */
+            504: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarAccessFailure"];
+                };
+            };
+        };
+    };
+    getSuggestions: {
         parameters: {
             query?: never;
             header?: never;
@@ -631,8 +776,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description The ID of the user group to delete */
-                "user-group-id": number;
+                /** @description The ID of the user group */
+                "user-group-id": components["parameters"]["user-group-id"];
             };
             cookie?: never;
         };
@@ -652,8 +797,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description The ID of the user group to update */
-                "user-group-id": number;
+                /** @description The ID of the user group */
+                "user-group-id": components["parameters"]["user-group-id"];
             };
             cookie?: never;
         };
@@ -697,13 +842,13 @@ export interface operations {
     getUserGroupsByUserId: {
         parameters: {
             query?: {
-                /** @description The IDs of the user groups to filter */
-                userGroupId?: number;
+                /** @description The ID of the user group */
+                "user-group-id"?: components["parameters"]["user-group-id-2"];
             };
             header?: never;
             path: {
-                /** @description The ID of the user whose groups are to be retrieved */
-                "user-id": number;
+                /** @description The ID of the user */
+                "user-id": components["parameters"]["user-id"];
             };
             cookie?: never;
         };

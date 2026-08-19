@@ -27,11 +27,11 @@ importers:
         specifier: ^9.10.0
         version: 9.11.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@mui/material@9.3.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@mui/system@9.3.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(dayjs@1.11.21)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@stammtischhub/terminpilot-api-spec':
-        specifier: 1.4.0-pr.57.38042d1
-        version: 1.4.0-pr.57.38042d1
-      dayjs:
-        specifier: ^1.11.21
-        version: 1.11.21
+        specifier: 1.6.0-pr.65.sha08a1fe3
+        version: 1.6.0-pr.65.sha08a1fe3
+      mui-temporal-pickers:
+        specifier: ^1.2.1
+        version: 1.2.1(@mui/x-date-pickers@9.11.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@mui/material@9.3.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@mui/system@9.3.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(dayjs@1.11.21)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       openapi-fetch:
         specifier: ^0.17.0
         version: 0.17.0
@@ -588,8 +588,8 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@stammtischhub/terminpilot-api-spec@1.4.0-pr.57.38042d1':
-    resolution: {integrity: sha512-UgVffZV0L3LG95g1jdBoOQg/gJzvNe+ray9wDBIcm+LBPSTS32vwSYiXv7C+r1enBeoAVeu+24wvoY76JCaFgg==, tarball: https://npm.pkg.github.com/download/@stammtischhub/terminpilot-api-spec/1.4.0-pr.57.38042d1/8dd9af89446c098107787a3a77269af8a27d24f1}
+  '@stammtischhub/terminpilot-api-spec@1.6.0-pr.65.sha08a1fe3':
+    resolution: {integrity: sha512-1Grt41CRhpisUwsag8VzyqJ/y35bhcT0uKutx3h1/6mejqKh3tIfVCcSs84Klcad1jphRKKuoi3GbrLxybnE3w==, tarball: https://npm.pkg.github.com/download/@stammtischhub/terminpilot-api-spec/1.6.0-pr.65.sha08a1fe3/68337a4e3d12525793c701ecc8b5d419af65c51a}
 
   '@types/esrecurse@4.3.1':
     resolution: {integrity: sha512-xJBAbDifo5hpffDBuHl0Y8ywswbiAp/Wi7Y/GtAgSlZyIABppyurxVueOPE8LUQOxdlgi6Zqce7uoEpqNTeiUw==}
@@ -1152,6 +1152,13 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
+  mui-temporal-pickers@1.2.1:
+    resolution: {integrity: sha512-Inf0zKBolOOoSQg9DtXaxqAVVkY3Oukl/xlEJH+a+EpXk9Uu5dxV/Uaat7H8Z4EJlQMHQR1OJB3gs2WJQGn14g==}
+    peerDependencies:
+      '@mui/x-date-pickers': ^8.5.2 || ^9.0.0
+      react: ^19.1.0
+      react-dom: ^19.1.0
+
   nanoid@3.3.18:
     resolution: {integrity: sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -1348,6 +1355,9 @@ packages:
   synckit@0.11.13:
     resolution: {integrity: sha512-eNRKgb3z66Yp3D2CixVujOUvXLFUTij/zVnV8KRyvFdQwpz7I5DS8UfRkTeLzb64u+dkzDSdelE24izu+zSSUg==}
     engines: {node: ^14.18.0 || >=16.0.0}
+
+  temporal-extra@1.6.0:
+    resolution: {integrity: sha512-hrHYRiWi2aV4apOxLMtpvxxtyaQVnOyNyChZb65hlPUiv4AzWR2/pIVBPeaHmAZMp8FlHcKJPvbzDpCs2AloiA==}
 
   temporal-polyfill@1.0.3:
     resolution: {integrity: sha512-U8vuzZBc+dfMIfl8wXWcedfI7AJCxJjjVBIRpJUvIz5+UAp555UJDHguKsfZqHWaHRSdVUThm7mqqIWhN/xPBQ==}
@@ -1975,7 +1985,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@stammtischhub/terminpilot-api-spec@1.4.0-pr.57.38042d1': {}
+  '@stammtischhub/terminpilot-api-spec@1.6.0-pr.65.sha08a1fe3': {}
 
   '@types/esrecurse@4.3.1': {}
 
@@ -2178,7 +2188,8 @@ snapshots:
 
   csstype@3.2.3: {}
 
-  dayjs@1.11.21: {}
+  dayjs@1.11.21:
+    optional: true
 
   debug@4.4.3(supports-color@10.2.2):
     dependencies:
@@ -2494,6 +2505,13 @@ snapshots:
 
   ms@2.1.3: {}
 
+  mui-temporal-pickers@1.2.1(@mui/x-date-pickers@9.11.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@mui/material@9.3.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@mui/system@9.3.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(dayjs@1.11.21)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+    dependencies:
+      '@mui/x-date-pickers': 9.11.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@mui/material@9.3.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@mui/system@9.3.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(dayjs@1.11.21)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      temporal-extra: 1.6.0
+
   nanoid@3.3.18: {}
 
   natural-compare@1.4.0: {}
@@ -2673,6 +2691,8 @@ snapshots:
   synckit@0.11.13:
     dependencies:
       '@pkgr/core': 0.3.6
+
+  temporal-extra@1.6.0: {}
 
   temporal-polyfill@1.0.3:
     dependencies:

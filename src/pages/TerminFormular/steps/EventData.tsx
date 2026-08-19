@@ -5,11 +5,11 @@ import Stack from '@mui/material/Stack';
 import { useFormWizard } from '../FormWizardContext';
 import { steps, WIZARD_BASE_PATH } from '../steps.config';
 import { Box, Divider, Paper, TextField, Typography } from '@mui/material';
-import { type Dayjs } from 'dayjs';
 import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
-import { DateTimePicker } from '@mui/x-date-pickers';
+import {DateTimePicker, renderTimeViewClock} from '@mui/x-date-pickers';
 import EventIcon from '@mui/icons-material/Event';
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import {TemporalPlainDateTimeProvider} from "mui-temporal-pickers";
 
 export function EventData() {
   const { data, visitedSteps, updateStep, visitStep } = useFormWizard();
@@ -20,34 +20,34 @@ export function EventData() {
   }, [visitStep]);
 
   const [title, setTitle] = useState(data.event.title ?? '');
-  const [beginDate, setBeginDate] = useState<Dayjs>(
+  const [beginDateTime, setBeginDateTime] = useState<Temporal.PlainDateTime>(
     data.event.begin
   );
-  const [endDate, setEndDate] = useState<Dayjs>(
+  const [endDateTime, setEndDateTime] = useState<Temporal.PlainDateTime>(
     data.event.end
   );
   const [location, setLocation] = useState(data.event.location ?? '');
   const [notes, setNotes] = useState(data.event.notes ?? '');
 
-  const dateTimeRangeValid = beginDate && endDate && beginDate.isBefore(endDate);
+  const dateTimeRangeValid = beginDateTime.until(endDateTime).total('minutes') > 0;
 
   const canProceed =
-    dateTimeRangeValid && title.trim() !== '' && beginDate && endDate;
+    dateTimeRangeValid && title.trim() !== '' && beginDateTime && endDateTime;
 
   const handleTitleChange = (newTitle: string) => {
     setTitle(newTitle);
     updateStep('event', { title: newTitle });
   };
 
-  const handleBeginDateChange = (newBeginDate: Dayjs | null) => {
+  const handleBeginDateChange = (newBeginDate: Temporal.PlainDateTime | null) => {
     if (!newBeginDate) return;
-    setBeginDate(newBeginDate);
+    setBeginDateTime(newBeginDate);
     updateStep('event', { begin: newBeginDate });
   };
 
-  const handleEndDateChange = (newEndDate: Dayjs | null) => {
+  const handleEndDateChange = (newEndDate: Temporal.PlainDateTime | null) => {
     if (!newEndDate) return;
-    setEndDate(newEndDate);
+    setEndDateTime(newEndDate);
     updateStep('event', { end: newEndDate });
   }
 
@@ -105,33 +105,47 @@ export function EventData() {
               </Typography>
             </Stack>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <DateTimePicker
-                ampm={false}
-                label="Beginn"
-                value={beginDate}
-                onChange={(newValue) => handleBeginDateChange(newValue)}
-                format="DD.MM.YYYY HH:mm"
-                slotProps={{
-                  textField: {
-                    required: true,
-                    fullWidth: true,
-                  },
-                }}
-              />
-              <DateTimePicker
-                ampm={false}
-                label="Bis"
-                value={endDate}
-                onChange={(newValue) => handleEndDateChange(newValue)}
-                format="DD.MM.YYYY HH:mm"
-                minDate={beginDate}
-                slotProps={{
-                  textField: {
-                    required: true,
-                    fullWidth: true,
-                  },
-                }}
-              />
+              <TemporalPlainDateTimeProvider>
+                <DateTimePicker
+                  ampm={false}
+                  label="Start"
+                  key="begin-date-time-picker"
+                  value={beginDateTime}
+                  onChange={(newValue) => handleBeginDateChange(newValue)}
+                  format="dd.MM.yyyy HH:mm"
+                  viewRenderers={{
+                    hours: renderTimeViewClock,
+                    minutes: renderTimeViewClock,
+                    seconds: renderTimeViewClock,
+                  }}
+                  slotProps={{
+                    textField: {
+                      required: true,
+                      fullWidth: true,
+                    },
+                  }}
+                />
+                <DateTimePicker
+                  ampm={false}
+                  label="Ende"
+                  key="end-date-time-picker"
+                  value={endDateTime}
+                  onChange={(newValue) => handleEndDateChange(newValue)}
+                  format="dd.MM.yyyy HH:mm"
+                  minDate={beginDateTime}
+                  viewRenderers={{
+                    hours: renderTimeViewClock,
+                    minutes: renderTimeViewClock,
+                    seconds: renderTimeViewClock,
+                  }}
+                  slotProps={{
+                    textField: {
+                      required: true,
+                      fullWidth: true,
+                    },
+                  }}
+                />
+              </TemporalPlainDateTimeProvider>
             </Stack>
           </Box>
 

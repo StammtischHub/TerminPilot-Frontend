@@ -21,7 +21,6 @@ import {
 import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
 import { api } from '../../../api/client.ts';
 import type { Schema } from '../../../api/types.ts';
-import dayjs, { type Dayjs } from 'dayjs';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
@@ -30,8 +29,8 @@ type Suggestion = Schema<'Suggestion'>;
 
 type EventProposal = {
   id: string;
-  begin: Dayjs;
-  end: Dayjs;
+  start: Temporal.PlainDateTime;
+  end: Temporal.PlainDateTime;
 };
 
 export function EventSuggestions() {
@@ -40,13 +39,13 @@ export function EventSuggestions() {
 
   const [proposals, setProposals] = useState<EventProposal[]>([{
     id: '1',
-    begin: dayjs('2024-01-01T17:00:00'),
-    end: dayjs('2024-01-01T18:00:00'),
+    start: Temporal.PlainDateTime.from('2024-01-01T17:00:00'),
+    end: Temporal.PlainDateTime.from('2024-01-01T18:00:00'),
   },
     {
       id: '2',
-      begin: dayjs('2024-01-02T17:00:00'),
-      end: dayjs('2024-01-02T18:00:00'),
+      start: Temporal.PlainDateTime.from('2024-01-02T17:00:00'),
+      end: Temporal.PlainDateTime.from('2024-01-02T18:00:00'),
     }]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -55,42 +54,42 @@ export function EventSuggestions() {
     visitStep('event-suggestions');
   }, [visitStep]);
 
-  // useEffect(() => {
-  //   api
-  //     .POST('/api/event/suggestions', {
-  //       body: {
-  //         constraints: {
-  //           weekdays: ["MONDAY"],
-  //           dateRange: {
-  //             start: '2024-01-01',
-  //             end: '2024-12-31',
-  //           },
-  //           timeRange: {
-  //             start: '17:00',
-  //             end: '20:00',
-  //           },
-  //           durationMinutes: data.constraints?.durationInMinutes
-  //         },
-  //         participants: data.event.users.map((user) => user.id),
-  //       },
-  //     })
-  //     .then(({ data }) => {
-  //       const mapped: EventProposal[] = (data ?? []).map(
-  //         (suggestion: Suggestion, index: number) => ({
-  //           id: String(index),
-  //           begin: dayjs(suggestion.start),
-  //           end: dayjs(suggestion.end),
-  //         }),
-  //       );
-  //       setProposals(mapped);
-  //     })
-  //     .finally(() => setIsLoading(false));
-  // }, [data]);
+  useEffect(() => {
+    api
+      .POST('/api/events/suggestions', {
+        body: {
+          constraints: {
+            weekdays: data.constraints.weekdays,
+            dateRange: {
+              start: data.constraints.datePeriod.start.toString(),
+              end: data.constraints.datePeriod.end.toString(),
+            },
+            timeRange: {
+              start: data.constraints.timePeriod.start.toString(),
+              end: data.constraints.timePeriod.end.toString(),
+            },
+            durationMinutes: data.constraints.durationInMinutes
+          },
+          participants: data.event.users.map((user) => user.id),
+        },
+      })
+      .then(({ data }) => {
+        const mapped: EventProposal[] = (data?.suggestions ?? []).map(
+          (suggestion: Suggestion, index: number) => ({
+            id: String(index),
+            start: Temporal.PlainDateTime.from(suggestion.start),
+            end: Temporal.PlainDateTime.from(suggestion.end),
+          }),
+        );
+        setProposals(mapped);
+      })
+      .finally(() => setIsLoading(false));
+  }, [data]);
 
   const groupedProposals = useMemo(() => {
     const groups = new Map<string, EventProposal[]>();
     proposals.forEach((proposal) => {
-      const key = proposal.begin.format('YYYY-MM-DD');
+      const key = proposal.start.toString().split('T')[0];
       groups.set(key, [...(groups.get(key) ?? []), proposal]);
     });
     return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b));
@@ -104,7 +103,7 @@ export function EventSuggestions() {
 
   const handleConfirm = () => {
     if (!selectedProposal || !nextStep) return;
-    updateStep('event', { begin: selectedProposal.begin, end: selectedProposal.end });
+    updateStep('event', { begin: selectedProposal.start, end: selectedProposal.end });
     navigate(`${WIZARD_BASE_PATH}/${nextStep.path}`);
   };
 
@@ -180,13 +179,13 @@ export function EventSuggestions() {
                     mb: 0.5,
                   }}
                 >
-                  {proposalsOfDay[0].begin.format('dddd, DD.MM.YYYY')}
+                  {proposalsOfDay[0].start.toString()}
                 </ListSubheader>
 
                 <Stack spacing={1}>
                   {proposalsOfDay.map((proposal) => {
                     const isSelected = proposal.id === selectedId;
-                    const durationMinutes = proposal.end.diff(proposal.begin, 'minute');
+                    const durationMinutes = proposal.start.until(proposal.end, { largestUnit: 'minutes' }).minutes;
 
                     return (
                       <ListItem
@@ -200,7 +199,7 @@ export function EventSuggestions() {
                             name="event-proposal"
                             slotProps={{
                               input: {
-                                'aria-label': `Vorschlag ${proposal.begin.format('dddd DD.MM.YYYY HH:mm')} auswählen`,
+                                'aria-label': `Vorschlag ${proposal.start.toString()} auswählen`,
                               },
                             }}
                           />
@@ -218,7 +217,7 @@ export function EventSuggestions() {
                             <AccessTimeIcon color={isSelected ? 'primary' : 'action'} />
                           </ListItemIcon>
                           <ListItemText
-                            primary={`${proposal.begin.format('HH:mm')} – ${proposal.end.format('HH:mm')} Uhr`}
+                            primary={`${proposal.start.toString().split('T')[1].slice(0, 5)} – ${proposal.end.toString().split('T')[1].slice(0, 5)} Uhr`}
                             secondary={`${durationMinutes} Min.`}
                           />
                         </ListItemButton>

@@ -37,11 +37,11 @@ export function Overview() {
   const { id } = useAuthedUser();
   const navigate = useNavigate();
 
-  const beginDate = data.event.begin.format('DD.MM.YYYY');
-  const endDate = data.event.end.format('DD.MM.YYYY') === beginDate ? null : data.event.end.format('DD.MM.YYYY');
+  const beginDate = data.event.begin.toString();
+  const endDate = data.event.end.equals(data.event.begin) ? null : data.event.end.toString();
 
-  const beginTime = data.event.begin.format('HH:mm');
-  const endTime = data.event.end.format('HH:mm');
+  const beginTime = data.event.begin.toString();
+  const endTime = data.event.end.toString();
 
   useEffect(() => {
     visitStep('overview');

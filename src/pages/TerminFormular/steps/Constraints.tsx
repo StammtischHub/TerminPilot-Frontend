@@ -16,8 +16,7 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import dayjs, { type Dayjs } from 'dayjs';
-import type { DatePeriod, TimePeriod, Weekday } from '../formular.types.ts';
+import {ALL_WEEKDAYS, type Weekday} from '../formular.types.ts';
 import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
 import type { DateValidationError, TimeValidationError } from '@mui/x-date-pickers';
 import type { ReactNode } from 'react';
@@ -25,15 +24,7 @@ import EventRepeatIcon from '@mui/icons-material/EventRepeat';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
-
-const WEEKDAYS: Weekday[] = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-
-const currentDateDayjs = dayjs().hour(0).minute(0).second(0).millisecond(0);
-
-const unixEpochTimeDayjs = dayjs(0).hour(0).minute(0).second(0).millisecond(0);
-
-type DatePeriodErrors = Record<keyof DatePeriod, DateValidationError | null>;
-type TimePeriodErrors = Record<keyof TimePeriod, TimeValidationError | null>;
+import {TemporalPlainDateProvider, TemporalPlainTimeProvider} from "mui-temporal-pickers";
 
 function SectionLabel({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
@@ -58,22 +49,20 @@ export function Constraints() {
     visitStep('conditions');
   }, [visitStep]);
 
-  const [weekdays, setWeekdays] = useState<Weekday[]>(data.constraints?.weekdays ?? WEEKDAYS);
-  const [datePeriod, setDatePeriod] = useState<DatePeriod>(
-    data.constraints?.datePeriod ?? {
-      start: currentDateDayjs,
-      end: currentDateDayjs.add(3, 'months'),
-    },
-  );
-  const [timePeriod, setTimePeriod] = useState<TimePeriod>(
-    data.constraints?.timePeriod ?? {
-      start: unixEpochTimeDayjs,
-      end: unixEpochTimeDayjs.hour(23).minute(59),
-    },
-  );
+  const currentPlainDate = Temporal.Now.plainDateISO();
+  const overallMaxDate = currentPlainDate.add({ years: 10 });
+
+  const [weekdays, setWeekdays] = useState<Weekday[]>(data.constraints.weekdays);
+  const [startDate, setStartDate] = useState<Temporal.PlainDate>(data.constraints.datePeriod.start);
+  const [endDate, setEndDate] = useState<Temporal.PlainDate>(data.constraints.datePeriod.end);
+  const [startTime, setStartTime] = useState<Temporal.PlainTime>(data.constraints.timePeriod.start);
+  const [endTime, setEndTime] = useState<Temporal.PlainTime>(data.constraints.timePeriod.end);
   const [durationInMinutes, setDurationInMinutes] = useState<number>(
     data.constraints?.durationInMinutes ?? 60,
   );
+
+  type DatePeriodErrors = Record<keyof typeof data.constraints.datePeriod, DateValidationError | null>;
+  type TimePeriodErrors = Record<keyof typeof data.constraints.timePeriod, TimeValidationError | null>;
 
   const [dateErrors, setDateErrors] = useState<DatePeriodErrors>({
     start: null,
@@ -84,8 +73,6 @@ export function Constraints() {
     end: null,
   });
 
-  const overallMaxDate = currentDateDayjs.add(20, 'years');
-
   const getStartDateErrorMessage = (reason: DateValidationError | null): string | undefined => {
     switch (reason) {
       case 'invalidDate':
@@ -93,7 +80,7 @@ export function Constraints() {
       case 'maxDate':
         return 'Datum muss vor "Bis" liegen';
       case 'disablePast':
-        return `Datum darf nicht vor dem ${currentDateDayjs.format('DD.MM.YYYY')} liegen`;
+        return `Datum darf nicht vor dem ${currentPlainDate.toString()} liegen`;
       default:
         return undefined;
     }
@@ -106,7 +93,7 @@ export function Constraints() {
       case 'minDate':
         return 'Datum muss nach "Von" liegen';
       case 'maxDate':
-        return `Datum darf nicht nach dem ${overallMaxDate.format('DD.MM.YYYY')} liegen`;
+        return `Datum darf nicht nach dem ${overallMaxDate.toString()} liegen`;
       default:
         return undefined;
     }
@@ -127,14 +114,14 @@ export function Constraints() {
 
   const weekdaysValid = weekdays.length > 0;
 
-  const timeWindowMinutes = timePeriod.end.diff(timePeriod.start, 'minute');
+  const timeWindowMinutes = startTime.until(endTime, { largestUnit: 'minutes' }).total('minutes');
   const durationValid = durationInMinutes > 0 && durationInMinutes <= timeWindowMinutes;
 
   const hasDateError = Boolean(dateErrors.start || dateErrors.end);
   const hasTimeError = Boolean(timeErrors.start || timeErrors.end);
 
-  const dateRangeValid = datePeriod.start.isBefore(datePeriod.end);
-  const timeRangeValid = timePeriod.start.isBefore(timePeriod.end);
+  const dateRangeValid = startDate.until(endDate, { largestUnit: 'days' }).total('days') >= 0;
+  const timeRangeValid = startTime.until(endTime, { largestUnit: 'minutes' }).total('minutes') > 0;
 
   const canProceed =
     dateRangeValid &&
@@ -144,29 +131,38 @@ export function Constraints() {
     weekdaysValid &&
     durationValid;
 
-  const handleWeekdayChange = (_event: React.MouseEvent<HTMLElement>, newWeekdays: Weekday[]) => {
+  const handleWeekdayChange = (newWeekdays: Weekday[]) => {
     setWeekdays(newWeekdays);
     updateStep('constraints', { weekdays: newWeekdays });
   };
 
-  const handleDatePeriodChange = (field: keyof DatePeriod, newValue: Dayjs | null) => {
+  const handleStartDateChange = (newValue: Temporal.PlainDate | null) => {
     if (!newValue) return;
-    const updated: DatePeriod = { ...datePeriod, [field]: newValue };
-    setDatePeriod(updated);
-    updateStep('constraints', { datePeriod: updated });
+    setStartDate(newValue);
+    updateStep('constraints', { datePeriod: { ...data.constraints.datePeriod , start: newValue } });
   };
 
-  const handleTimePeriodChange = (field: keyof TimePeriod, newValue: Dayjs | null) => {
+  const handleEndDateChange = (newValue: Temporal.PlainDate | null) => {
     if (!newValue) return;
-    const updated: TimePeriod = { ...timePeriod, [field]: newValue };
-    setTimePeriod(updated);
-    updateStep('constraints', { timePeriod: updated });
+    setEndDate(newValue);
+    updateStep('constraints', { datePeriod: { ...data.constraints.datePeriod, end: newValue } });
   };
 
-  const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(event.target.value);
-    setDurationInMinutes(value);
-    updateStep('constraints', { durationInMinutes: value });
+  const handleStartTimeChange = (newValue: Temporal.PlainTime | null) => {
+    if (!newValue) return;
+    setStartTime(newValue);
+    updateStep('constraints', { timePeriod: { ...data.constraints.timePeriod, start: newValue } });
+  };
+
+  const handleEndTimeChange = (newValue: Temporal.PlainTime | null) => {
+    if (!newValue) return;
+    setEndTime(newValue);
+    updateStep('constraints', { timePeriod: { ...data.constraints.timePeriod, end: newValue } });
+  };
+
+  const handleDurationChange = (newValue: number) => {
+    setDurationInMinutes(newValue);
+    updateStep('constraints', { durationInMinutes: newValue });
   };
 
   const currentStepIndex = steps.findIndex((step) => step.path === 'constraints');
@@ -197,12 +193,12 @@ export function Constraints() {
             </SectionLabel>
             <ToggleButtonGroup
               value={weekdays}
-              onChange={handleWeekdayChange}
+              onChange={(_, value) => handleWeekdayChange(value)}
               aria-label="Wochentage auswaehlen"
               size="medium"
               sx={{ flexWrap: 'wrap' }}
             >
-              {WEEKDAYS.map((day) => (
+              {ALL_WEEKDAYS.map((day) => (
                 <ToggleButton
                   key={day}
                   value={day}
@@ -235,43 +231,45 @@ export function Constraints() {
               Möglicher Datum-Rahmen
             </SectionLabel>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <DatePicker
-                label="Von"
-                value={datePeriod.start}
-                onChange={(newValue) => handleDatePeriodChange('start', newValue)}
-                onError={(reason) => {
-                  setDateErrors((prev) => ({ ...prev, start: reason }));
-                }}
-                format="DD.MM.YYYY"
-                disablePast
-                maxDate={datePeriod.end}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                    error: Boolean(dateErrors.start),
-                    helperText: getStartDateErrorMessage(dateErrors.start),
-                  },
-                }}
-              />
-              <DatePicker
-                label="Bis"
-                value={datePeriod.end}
-                onChange={(newValue) => handleDatePeriodChange('end', newValue)}
-                onError={(reason) => {
-                  setDateErrors((prev) => ({ ...prev, end: reason }));
-                }}
-                format="DD.MM.YYYY"
-                disablePast
-                minDate={datePeriod.start}
-                maxDate={overallMaxDate}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                    error: Boolean(dateErrors.end),
-                    helperText: getEndDateErrorMessage(dateErrors.end),
-                  },
-                }}
-              />
+              <TemporalPlainDateProvider>
+                <DatePicker
+                  label="Von"
+                  value={startDate}
+                  onChange={(newValue) => handleStartDateChange(newValue)}
+                  onError={(reason) => {
+                    setDateErrors((prev) => ({ ...prev, start: reason }));
+                  }}
+                  format="dd.MM.yyyy"
+                  disablePast
+                  maxDate={endDate}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      error: Boolean(dateErrors.start),
+                      helperText: getStartDateErrorMessage(dateErrors.start),
+                    },
+                  }}
+                />
+                <DatePicker
+                  label="Bis"
+                  value={endDate}
+                  onChange={(newValue) => handleEndDateChange(newValue)}
+                  onError={(reason) => {
+                    setDateErrors((prev) => ({ ...prev, end: reason }));
+                  }}
+                  format="dd.MM.yyyy"
+                  disablePast
+                  minDate={startDate}
+                  maxDate={overallMaxDate}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      error: Boolean(dateErrors.end),
+                      helperText: getEndDateErrorMessage(dateErrors.end),
+                    },
+                  }}
+                />
+              </TemporalPlainDateProvider>
             </Stack>
           </Box>
 
@@ -280,36 +278,38 @@ export function Constraints() {
               Möglicher Uhrzeit-Rahmen
             </SectionLabel>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <TimePicker
-                label="Von"
-                value={timePeriod.start}
-                onChange={(newValue) => handleTimePeriodChange('start', newValue)}
-                onError={(reason) => setTimeErrors((prev) => ({ ...prev, start: reason }))}
-                ampm={false}
-                maxTime={timePeriod.end}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                    error: Boolean(timeErrors.start),
-                    helperText: getTimeErrorMessage(timeErrors.start),
-                  },
-                }}
-              />
-              <TimePicker
-                label="Bis"
-                value={timePeriod.end}
-                onChange={(newValue) => handleTimePeriodChange('end', newValue)}
-                onError={(reason) => setTimeErrors((prev) => ({ ...prev, end: reason }))}
-                ampm={false}
-                minTime={timePeriod.start}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                    error: Boolean(timeErrors.end),
-                    helperText: getTimeErrorMessage(timeErrors.end),
-                  },
-                }}
-              />
+              <TemporalPlainTimeProvider>
+                <TimePicker
+                  label="Von"
+                  value={startTime}
+                  onChange={(newValue) => handleStartTimeChange(newValue)}
+                  onError={(reason) => setTimeErrors((prev) => ({ ...prev, start: reason }))}
+                  ampm={false}
+                  maxTime={endTime}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      error: Boolean(timeErrors.start),
+                      helperText: getTimeErrorMessage(timeErrors.start),
+                    },
+                  }}
+                />
+                <TimePicker
+                  label="Bis"
+                  value={endTime}
+                  onChange={(newValue) => handleEndTimeChange(newValue)}
+                  onError={(reason) => setTimeErrors((prev) => ({ ...prev, end: reason }))}
+                  ampm={false}
+                  minTime={startTime}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      error: Boolean(timeErrors.end),
+                      helperText: getTimeErrorMessage(timeErrors.end),
+                    },
+                  }}
+                />
+              </TemporalPlainTimeProvider>
             </Stack>
           </Box>
 
@@ -321,7 +321,7 @@ export function Constraints() {
               type="number"
               label="Dauer"
               value={durationInMinutes}
-              onChange={handleDurationChange}
+              onChange={(event) => handleDurationChange(Number(event.target.value))}
               fullWidth
               error={!durationValid}
               helperText={

@@ -80,7 +80,7 @@ export default function CreateGroupPage () {
       .POST('/api/user-groups', {
         body: {
           name: groupName,
-          "member-ids": checkedUsers.map((user) => user.id),
+          memberIds: checkedUsers.map((user) => user.id),
         },
       })
       .then(() => {})
@@ -133,10 +133,6 @@ export default function CreateGroupPage () {
           elevation={4}
           sx={{
             width: generateSeparateStyle('80%', '60%'),
-            maxHeight: 'calc(100vh - 220px)',
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
             p: 4
           }}
         >
@@ -184,7 +180,8 @@ export default function CreateGroupPage () {
               bgcolor: 'background.paper',
               width: '100%',
               flex: 1,
-              minHeight: 0,
+              minHeight: 175,
+              maxHeight: 360,
               overflowY: 'auto',
               py: 0,
               mt: 0

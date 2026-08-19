@@ -1,8 +1,8 @@
 import { createContext, useContext } from 'react';
-import {createInitialFormData, type EventFormData} from './formular.types.ts';
+import {createInitialFormData, type FormData} from './formular.types.ts';
 
 export type WizardState = {
-  data: EventFormData;
+  data: FormData;
   visitedSteps: string[];
 };
 
@@ -16,8 +16,8 @@ export function createInitialState(): WizardState {
 export type Action =
   | {
       type: 'UPDATE_STEP';
-      step: keyof EventFormData;
-      payload: Partial<EventFormData[keyof EventFormData]>;
+      step: keyof FormData;
+      payload: Partial<FormData[keyof FormData]>;
     }
   | { type: 'VISIT_STEP'; step: string }
   | { type: 'RESET' };
@@ -45,8 +45,8 @@ export function reducer(state: WizardState, action: Action): WizardState {
 
 export type FormWizardContextValue = WizardState & {
   updateStep: (
-    step: keyof EventFormData,
-    payload: Partial<EventFormData[keyof EventFormData]>,
+    step: keyof FormData,
+    payload: Partial<FormData[keyof FormData]>,
   ) => void;
   visitStep: (step: string) => void;
   reset: () => void;

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import {useNavigate, useSearchParams} from 'react-router';
+import {useLocation, useNavigate} from 'react-router';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { useFormWizard } from '../FormWizardContext';
@@ -40,13 +40,13 @@ const getInitials = (name: string) =>
 
 export function UserSelection() {
   const mobile = useMediaQuery(isMobile)
+  const location = useLocation();
+  const state = location.state || {};
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const userGroupId = searchParams.get('userGroupId');
 
   const authenticatedUser = useAuthedUser();
 
-  const { data, updateStep, visitStep } = useFormWizard();
+  const { data, visitedSteps, updateStep, visitStep } = useFormWizard();
   const [allUsers, setAllUsers] = useState<UserResponse[]>([]);
   const [isLoadingAllUsers, setIsLoadingAllUsers] = useState(true);
 
@@ -59,10 +59,6 @@ export function UserSelection() {
       : [...data.event.users, { id: authenticatedUser.id, name: authenticatedUser.username }]
   );
 
-  const canProceed = data.event.users.length >= 2;
-  const constraintsStep = steps.find((step) => step.path === 'constraints');
-  const eventDataStep = steps.find((step) => step.path === 'event-data');
-
   useEffect(() => {
     api
       .GET('/api/users', {})
@@ -72,21 +68,38 @@ export function UserSelection() {
       .finally(() => setIsLoadingAllUsers(false));
   }, []);
 
+
+  useEffect(() => {
+    if (!state.userGroupId && visitedSteps.includes("user-selection")) return
+
+    api
+      .GET('/api/users/{user-id}/user-groups', {
+        params: {
+          path: {"user-id": authenticatedUser.id},
+          query: {"user-group-id": state.userGroupId}
+        }
+      })
+      .then(({data}) => {
+        const uniqueMembers = [
+          ...new Set(data?.flatMap(group => group.members) ?? [])
+        ];
+        setCheckedUsers(uniqueMembers);
+      })
+  }, [authenticatedUser.id, state.userGroupId, visitedSteps])
+
   useEffect(() => {
     visitStep('user-selection');
   }, [visitStep]);
 
   useEffect(() => {
-    const isCurrentUserIncluded = isUserChecked(checkedUsers, { id: authenticatedUser.id, name: authenticatedUser.username });
-    if (!isCurrentUserIncluded) {
-      updateStep('event', { users: checkedUsers });
-    }
-  }, [data.event.users, authenticatedUser, checkedUsers, updateStep]);
+    updateStep('event', { users: checkedUsers });
+  }, [checkedUsers, updateStep])
 
   const otherUsers = useMemo(
     () => allUsers.filter((availableUser) => availableUser.id !== authenticatedUser.id),
     [allUsers, authenticatedUser.id]
   );
+
 
   const handleToggle = (toggledUser: FormUser) => () => {
     const exists = isUserChecked(checkedUsers, toggledUser);
@@ -95,8 +108,11 @@ export function UserSelection() {
       : [...checkedUsers, toggledUser];
 
     setCheckedUsers(newChecked);
-    updateStep('event', { users: newChecked });
   };
+
+  const canProceed = data.event.users.length >= 2;
+  const constraintsStep = steps.find((step) => step.path === 'constraints');
+  const eventDataStep = steps.find((step) => step.path === 'event-data');
 
   const renderUserItem = (availableUser: UserResponse, organizer = false) => {
     const labelId = `checkbox-list-label-${availableUser.id}`;
@@ -143,10 +159,6 @@ export function UserSelection() {
         elevation={4}
         sx={{
           width: generateSeparateStyle('80%', '60%'),
-          maxHeight: mobile ? 'calc(100vh - 220px)' : 'calc(100vh - 280px)',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
           p: 4
         }}
       >
@@ -169,7 +181,8 @@ export function UserSelection() {
               bgcolor: 'background.paper',
               width: '100%',
               flex: 1,
-              minHeight: 0,
+              minHeight: 175,
+              maxHeight: 420,
               overflowY: 'auto',
               py: 0,
               mt: 0

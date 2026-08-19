@@ -46,7 +46,7 @@ export function Constraints() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    visitStep('conditions');
+    visitStep('constraints');
   }, [visitStep]);
 
   const currentPlainDate = Temporal.Now.plainDateISO();

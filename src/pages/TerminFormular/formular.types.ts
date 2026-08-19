@@ -1,7 +1,7 @@
 import { Temporal } from "temporal-polyfill";
 import type {Schema} from "../../api/types.ts";
 
-type Weekday = Schema<'Weekday'>;
+export type Weekday = Schema<'Weekday'>;
 
 export const ALL_WEEKDAYS: Weekday[] = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
 

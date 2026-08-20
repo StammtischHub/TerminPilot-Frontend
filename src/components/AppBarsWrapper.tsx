@@ -87,7 +87,7 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
                 handleClose();
               }}
             >
-              Settings
+              Einstellungen
             </MenuItem>
             <MenuItem
               onClick={() => {
@@ -95,7 +95,7 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
                 handleClose();
               }}
             >
-              Logout
+              Ausloggen
             </MenuItem>
           </Menu>
         </Toolbar>

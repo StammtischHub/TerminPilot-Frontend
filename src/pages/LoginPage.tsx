@@ -97,7 +97,7 @@ export default function LoginPage() {
           startIcon={<LoginIcon />}
           loading={submitting}
         >
-          Login
+          Einloggen
         </Button>
       </Stack>
     </Container>

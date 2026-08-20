@@ -4,7 +4,7 @@ import { PersonAddAlt1 as RegisterIcon, PersonOutlined } from '@mui/icons-materi
 import { useAuth } from '../auth/AuthContext.tsx';
 import { ApiError } from '../api/client.ts';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router';
-import {generateSeparateStyle, isMobile} from '../utils/ThemeHelpers.ts';
+import {isMobile} from '../utils/ThemeHelpers.ts';
 import PasswordTextField from '../components/textFields/PasswordTextField.tsx';
 import TextFieldWithIcon from '../components/textFields/TextFieldWithIcon.tsx';
 

@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
 import GroupCard from '../components/GroupCard.tsx';
+import EditGroupDialog from '../components/dialogs/EditGroupDialog.tsx';
 import { AddBox, GroupAdd } from '@mui/icons-material';
 import {generateSeparateStyle} from '../utils/ThemeHelpers.ts';
 import {useNavigate} from 'react-router';
@@ -30,6 +31,8 @@ export default function HomePage() {
   const user = useAuthedUser();
   const [groups, setGroups] = useState<UserGroupResponse[]>([]);
   const [isLoadingGroups, setIsLoadingGroups] = useState(true);
+  const [editingGroup, setEditingGroup] = useState<UserGroupResponse | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   useEffect(() => {
     api
@@ -40,6 +43,14 @@ export default function HomePage() {
       .finally(() => setIsLoadingGroups(false));
   }, [user]);
 
+  const handleGroupSaved = (updatedGroup: UserGroupResponse) => {
+    setGroups((prev) => prev.map((group) => (group.id === updatedGroup.id ? updatedGroup : group)));
+  };
+
+  const handleGroupDeleted = (groupId: number) => {
+    setGroups((prev) => prev.filter((group) => group.id !== groupId));
+  };
+
   return (
     <AppBarsWrapper>
       <Typography variant="h3" component="h1" sx={{ mt: '24px', mb: '24px', textAlign: 'center' }}>
@@ -47,11 +58,11 @@ export default function HomePage() {
       </Typography>
       <Stack spacing={3} sx={{ alignItems: 'center', mt: '24px', mb: '24px' }}>
         {isLoadingGroups ? (
-            <Card
-              sx={{ width: generateSeparateStyle('70%', '60%')}}
-            >
-              <Skeleton variant="rectangular" width="auto" height={50} sx={{margin: "16px"}}/>
-            </Card>
+          <Card
+            sx={{ width: generateSeparateStyle('70%', '60%')}}
+          >
+            <Skeleton variant="rectangular" width="auto" height={50} sx={{margin: "16px"}}/>
+          </Card>
         ) : groups.length === 0 ? (
           <>
             <Typography variant="body1">Du bist noch in keiner Gruppe.</Typography>
@@ -62,8 +73,16 @@ export default function HomePage() {
           <>
             <Typography variant="body1">Erstelle ein Ereignis für eine spezielle Personengruppe...</Typography>
             {groups.map((group) => (
-              <GroupCard key={group.id} groupName={group.name} onGroupNameClick={() => navigate(`/event/user-selection`, {state: {userGroupId: group.id}})} onSettingsClick={() => {}}/>
-              ))}
+              <GroupCard
+                key={group.id}
+                groupName={group.name}
+                onGroupNameClick={() => navigate(`/event/user-selection`, {state: {userGroupId: group.id}})}
+                onSettingsClick={() => {
+                  setEditingGroup(group)
+                  setIsEditDialogOpen(true)
+                }}
+              />
+            ))}
           </>
         )}
       </Stack>
@@ -94,6 +113,18 @@ export default function HomePage() {
           />
         ))}
       </SpeedDial>
+
+      <EditGroupDialog
+        key={editingGroup?.id ?? 'none'}
+        open={isEditDialogOpen}
+        group={editingGroup}
+        onClose={() => {
+          setEditingGroup(null);
+          setIsEditDialogOpen(false);
+        }}
+        onSaved={handleGroupSaved}
+        onDeleted={handleGroupDeleted}
+      />
     </AppBarsWrapper>
   );
 }

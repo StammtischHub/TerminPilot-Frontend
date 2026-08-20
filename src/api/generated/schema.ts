@@ -224,17 +224,19 @@ export interface components {
             password: string;
         };
         /**
+         * Format: int64
+         * @description Unique identifier of a participant
+         * @example 1234
+         */
+        EntityId: number;
+        /**
          * @description A role of a user
          * @enum {string}
          */
         UserRole: "admin" | "user";
         /** @description User information */
         UserResponse: {
-            /**
-             * Format: int64
-             * @description The unique identifier of the logged in user
-             */
-            id: number;
+            id: components["schemas"]["EntityId"];
             /** @description The username of the logged in user */
             username: string;
             /** @description The roles assigned to the logged in user */
@@ -279,17 +281,11 @@ export interface components {
              */
             notes?: string;
         };
-        /**
-         * Format: int64
-         * @description Unique identifier of a participant
-         * @example 1234
-         */
-        UserId: number;
         CreateEventRequest: components["schemas"]["EventCore"] & {
-            participants: components["schemas"]["UserId"][];
+            participants: components["schemas"]["EntityId"][];
         };
         User: {
-            id: components["schemas"]["UserId"];
+            id: components["schemas"]["EntityId"];
             /**
              * @description Display name of the participant
              * @example Homer Simpson
@@ -300,7 +296,7 @@ export interface components {
             participants: components["schemas"]["User"][];
         };
         CalendarAccessFailure: {
-            participantId: components["schemas"]["UserId"];
+            participantId: components["schemas"]["EntityId"];
             /**
              * @description - not_connected: participant has never authorized calendar access.
              *     - reauth_required: refresh token is invalid or has been revoked.
@@ -342,7 +338,7 @@ export interface components {
         };
         SuggestionsRequest: {
             constraints: components["schemas"]["Constraints"];
-            participants: components["schemas"]["UserId"][];
+            participants: components["schemas"]["EntityId"][];
         };
         Coverage: {
             /** @example 3 */
@@ -354,12 +350,12 @@ export interface components {
              *       56
              *     ]
              */
-            availableParticipantIds: components["schemas"]["UserId"][];
+            availableParticipantIds: components["schemas"]["EntityId"][];
             /**
              * @description Participants not available at this slot; empty array for a full match
              * @example []
              */
-            missingParticipantIds: components["schemas"]["UserId"][];
+            missingParticipantIds: components["schemas"]["EntityId"][];
         };
         Suggestion: {
             /**
@@ -386,15 +382,11 @@ export interface components {
             /** @description The name of the user group */
             name: string;
             /** @description List of user IDs to be added to the group */
-            memberIds: number[];
+            memberIds: components["schemas"]["EntityId"][];
         };
         /** @description User group information */
         UserGroupResponse: {
-            /**
-             * Format: int64
-             * @description The unique identifier of the user group
-             */
-            id: number;
+            id: components["schemas"]["EntityId"];
             /** @description The name of the group */
             name: string;
             /** @description The list of users that are members of the group */
@@ -402,25 +394,20 @@ export interface components {
         };
         /** @description Request schema for updating a user group */
         UpdateUserGroupRequest: {
-            /**
-             * Format: int64
-             * @description The unique identifier of the user group to be updated
-             */
-            id: number;
             /** @description The new name of the user group (optional) */
             name?: string;
             /** @description List of user IDs to be added or removed from the group (optional) */
-            memberIds?: number[];
+            memberIds?: components["schemas"]["EntityId"][];
         };
     };
     responses: never;
     parameters: {
         /** @description The ID of the user group */
-        "user-group-id": number;
+        "user-group-id": components["schemas"]["EntityId"];
         /** @description The ID of the user */
-        "user-id": number;
+        "user-id": components["schemas"]["EntityId"];
         /** @description The ID of the user group */
-        "user-group-id-2": number;
+        "user-group-id-2": components["schemas"]["EntityId"];
     };
     requestBodies: never;
     headers: never;

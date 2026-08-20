@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  CardContent,
   Skeleton,
   SpeedDial,
   SpeedDialAction,
@@ -58,11 +59,20 @@ export default function HomePage() {
       </Typography>
       <Stack spacing={3} sx={{ alignItems: 'center', mt: '24px', mb: '24px' }}>
         {isLoadingGroups ? (
-          <Card
-            sx={{ width: generateSeparateStyle('70%', '60%')}}
-          >
-            <Skeleton variant="rectangular" width="auto" height={50} sx={{margin: "16px"}}/>
-          </Card>
+          Array.from({ length: 3 }).map((_, index) => (
+            <Card
+              key={index}
+              sx={{ width: generateSeparateStyle('70%', '60%'), display: 'flex', flexDirection: 'row' }}
+            >
+              <CardContent sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                <Skeleton variant="circular" width={40} height={40} />
+                <Skeleton variant="text" width="50%" height={32} sx={{ marginLeft: '10px' }} />
+              </CardContent>
+              <CardContent sx={{ display: 'flex', alignItems: 'center' }}>
+                <Skeleton variant="circular" width={32} height={32} />
+              </CardContent>
+            </Card>
+          ))
         ) : groups.length === 0 ? (
           <>
             <Typography variant="body1">Du bist noch in keiner Gruppe.</Typography>
@@ -71,7 +81,7 @@ export default function HomePage() {
           </>
         ) : (
           <>
-            <Typography variant="body1">Erstelle ein Ereignis für eine spezielle Personengruppe...</Typography>
+            <Typography variant="body1">Erstelle ein Ereignis für eine deiner Gruppen...</Typography>
             {groups.map((group) => (
               <GroupCard
                 key={group.id}

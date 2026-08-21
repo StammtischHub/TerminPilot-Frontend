@@ -1,6 +1,6 @@
 import {
   AppBar,
-  Button,
+  Button, Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -8,7 +8,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import {AccountCircle} from '@mui/icons-material';
+import {AccountCircle, Logout} from '@mui/icons-material';
 import { type ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../auth/AuthContext.tsx';
@@ -23,8 +23,8 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleMenu = (target: EventTarget & HTMLButtonElement) => {
+    setAnchorEl(target);
   };
 
   const handleClose = () => {
@@ -54,14 +54,14 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
               TerminPilot
             </Typography>
           </Button>
-          <Tooltip title="Account settings">
+          <Tooltip title="Benutzer verwalten">
             <IconButton
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               color="inherit"
-              onClick={handleMenu}
+              onClick={(event) => handleMenu(event.currentTarget)}
               sx={{ marginLeft: 'auto' }}
             >
               <AccountCircle />
@@ -91,11 +91,21 @@ export default function AppBarsWrapper({ children }: AppBarsWrapperProps) {
             </MenuItem>
             <MenuItem
               onClick={() => {
+                handleClose();
+              }}
+            >
+              Kalendar verwalten
+            </MenuItem>
+
+            <Divider component="li" />
+
+            <MenuItem
+              onClick={() => {
                 handleLogout().then();
                 handleClose();
               }}
             >
-              Ausloggen
+              <Logout fontSize="small"/>Ausloggen
             </MenuItem>
           </Menu>
         </Toolbar>

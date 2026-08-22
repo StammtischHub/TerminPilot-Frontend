@@ -40,7 +40,7 @@ const getInitials = (name: string) =>
 export default function CreateGroupPage () {
   const navigate = useNavigate();
 
-  const user = useAuthedUser();
+  const authenticatedUser = useAuthedUser();
   const [groupName, setGroupName] = useState("");
   const [allUsers, setAllUsers] = useState<UserResponse[]>([]);
   const [isLoadingAllUsers, setIsLoadingAllUsers] = useState(true);
@@ -62,8 +62,8 @@ export default function CreateGroupPage () {
   const canProceed = checkedMembers.length >= 1 && groupName.trim().length > 0;
 
   const otherUsers = useMemo(
-    () => allUsers.filter((availableUser) => availableUser.id !== user.id),
-    [allUsers, user.id]
+    () => allUsers.filter((availableUser) => availableUser.id !== authenticatedUser.id),
+    [allUsers, authenticatedUser.id]
   );
 
   const handleToggle = (toggledUser: FormUser) => () => {
@@ -80,7 +80,7 @@ export default function CreateGroupPage () {
       .POST('/api/user-groups', {
         body: {
           name: groupName,
-          creatorId: user.id,
+          creatorId: authenticatedUser.id,
           memberIds: checkedMembers.map((user) => user.id),
         },
       })
@@ -197,7 +197,7 @@ export default function CreateGroupPage () {
               ))
             ) : (
               <>
-                {renderUserItem(user, true)}
+                {renderUserItem(authenticatedUser, true)}
                 <Divider component="li" sx={{ my: 1 }} />
 
                 {otherUsers.length === 0 ? (

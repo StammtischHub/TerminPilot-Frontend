@@ -58,14 +58,11 @@ export default function EditGroupDialog({ open, group, onClose, onSaved, onDelet
   const [groupName, setGroupName] = useState(group?.name ?? '');
   const [allUsers, setAllUsers] = useState<UserResponse[]>([]);
   const [isLoadingAllUsers, setIsLoadingAllUsers] = useState(true);
-  const [checkedUserIds, setCheckedUserIds] = useState<number[]>(group?.members.map((member) => member.id) ?? []);
+  const [checkedUserIds, setCheckedUserIds] = useState<number[]>(group ? [...group.members.map((member) => member.id), group.creator.id] : []);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  console.log(groupName)
-  console.log(checkedUserIds)
 
   useEffect(() => {
     if (!open) return;

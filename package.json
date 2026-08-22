@@ -19,7 +19,7 @@
     "@mui/icons-material": "^9.0.0",
     "@mui/material": "^9.0.0",
     "@mui/x-date-pickers": "^9.10.0",
-    "@stammtischhub/terminpilot-api-spec": "2.0.0",
+    "@stammtischhub/terminpilot-api-spec": "2.0.0-pr.70.sha43b85c7",
     "mui-temporal-pickers": "^1.2.1",
     "openapi-fetch": "^0.17.0",
     "react": "^19.2.4",

@@ -27,8 +27,8 @@ importers:
         specifier: ^9.10.0
         version: 9.11.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@mui/material@9.3.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@mui/system@9.3.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(dayjs@1.11.21)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@stammtischhub/terminpilot-api-spec':
-        specifier: 2.0.0
-        version: 2.0.0
+        specifier: 2.0.0-pr.70.sha43b85c7
+        version: 2.0.0-pr.70.sha43b85c7
       mui-temporal-pickers:
         specifier: ^1.2.1
         version: 1.2.1(@mui/x-date-pickers@9.11.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@mui/material@9.3.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@mui/system@9.3.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(dayjs@1.11.21)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -588,8 +588,8 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@stammtischhub/terminpilot-api-spec@2.0.0':
-    resolution: {integrity: sha512-p0wNztccNB/N3uiGt3oMI/6EIC0AcaIx68mOsrThZlKKQa+KhdHSbUGFgxdlZeo7Pu7erCtpslpORoF8DywTbQ==, tarball: https://npm.pkg.github.com/download/@stammtischhub/terminpilot-api-spec/2.0.0/3b07cd2baceb87bef0a1ad1ea4b1e00afa0eeb97}
+  '@stammtischhub/terminpilot-api-spec@2.0.0-pr.70.sha43b85c7':
+    resolution: {integrity: sha512-doVlU92bx3AonDzSzdQ9LZ/ivRMDwGYSo4yhaMjz1BX2srIIleV0KAtLBGKTfC6aKP+UHqlF2i9pZXccuVKukQ==, tarball: https://npm.pkg.github.com/download/@stammtischhub/terminpilot-api-spec/2.0.0-pr.70.sha43b85c7/226eae3809986eb67ebb8c67b65c17728a8eeef2}
 
   '@types/esrecurse@4.3.1':
     resolution: {integrity: sha512-xJBAbDifo5hpffDBuHl0Y8ywswbiAp/Wi7Y/GtAgSlZyIABppyurxVueOPE8LUQOxdlgi6Zqce7uoEpqNTeiUw==}
@@ -1985,7 +1985,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@stammtischhub/terminpilot-api-spec@2.0.0': {}
+  '@stammtischhub/terminpilot-api-spec@2.0.0-pr.70.sha43b85c7': {}
 
   '@types/esrecurse@4.3.1': {}
 

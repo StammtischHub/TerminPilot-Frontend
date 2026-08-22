@@ -381,7 +381,9 @@ export interface components {
         CreateUserGroupRequest: {
             /** @description The name of the user group */
             name: string;
-            /** @description List of user IDs to be added to the group */
+            /** @description The ID of the user who created the group */
+            creatorId: components["schemas"]["EntityId"];
+            /** @description List of user IDs to be added to the group as members */
             memberIds: components["schemas"]["EntityId"][];
         };
         /** @description User group information */
@@ -389,6 +391,8 @@ export interface components {
             id: components["schemas"]["EntityId"];
             /** @description The name of the group */
             name: string;
+            /** @description The user that created the group */
+            creator: components["schemas"]["User"];
             /** @description The list of users that are members of the group */
             members: components["schemas"]["User"][];
         };

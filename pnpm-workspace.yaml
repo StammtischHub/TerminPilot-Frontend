@@ -1,2 +1,2 @@
 minimumReleaseAgeExclude:
-  - '@stammtischhub/terminpilot-api-spec@1.4.0-pr.57.0d238e3 || 1.4.0-pr.57.38042d1 || 1.6.0-pr.65.sha08a1fe3 || 1.6.0-pr.65.shaa643038 || 2.0.0-pr.69.sha2e9e6bd || 2.0.0'
+  - '@stammtischhub/terminpilot-api-spec@1.4.0-pr.57.0d238e3 || 1.4.0-pr.57.38042d1 || 1.6.0-pr.65.sha08a1fe3 || 1.6.0-pr.65.shaa643038 || 2.0.0-pr.69.sha2e9e6bd || 2.0.0-pr.70.sha43b85c7 || 2.0.0'

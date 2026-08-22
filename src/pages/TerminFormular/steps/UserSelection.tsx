@@ -59,7 +59,7 @@ export function UserSelection() {
       : [...data.event.users, { id: authenticatedUser.id, name: authenticatedUser.username }]
   );
 
-  useEffect(() => {
+  useMemo(() => {
     api
       .GET('/api/users', {})
       .then(({ data }) => {
@@ -69,7 +69,7 @@ export function UserSelection() {
   }, []);
 
 
-  useEffect(() => {
+  useMemo(() => {
     if (!state.userGroupId || visitedSteps.includes("user-selection")) return
 
     api
@@ -87,9 +87,9 @@ export function UserSelection() {
               .map((member) => [member.id, member])
           ).values()
         );
-        setCheckedUsers(uniqueMembers);
+        setCheckedUsers([...uniqueMembers, { id: authenticatedUser.id, name: authenticatedUser.username }]);
       })
-  }, [authenticatedUser.id, state.userGroupId, visitedSteps])
+  }, [authenticatedUser, state.userGroupId, visitedSteps])
 
   useEffect(() => {
     visitStep('user-selection');

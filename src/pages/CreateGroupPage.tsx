@@ -57,9 +57,9 @@ export default function CreateGroupPage () {
   const isUserChecked = (users: FormUser[], userToCheck: FormUser) =>
     users.some((checkedUser) => checkedUser.id === userToCheck.id);
 
-  const [checkedUsers, setCheckedUsers] = useState<FormUser[]>([{id: user.id, name: user.username}]);
+  const [checkedMembers, setCheckedMembers] = useState<FormUser[]>([]);
 
-  const canProceed = checkedUsers.length >= 2 && groupName.trim().length > 0;
+  const canProceed = checkedMembers.length >= 1 && groupName.trim().length > 0;
 
   const otherUsers = useMemo(
     () => allUsers.filter((availableUser) => availableUser.id !== user.id),
@@ -67,12 +67,12 @@ export default function CreateGroupPage () {
   );
 
   const handleToggle = (toggledUser: FormUser) => () => {
-    const exists = isUserChecked(checkedUsers, toggledUser);
+    const exists = isUserChecked(checkedMembers, toggledUser);
     const newChecked = exists
-      ? checkedUsers.filter((checkedUser) => checkedUser.id !== toggledUser.id)
-      : [...checkedUsers, toggledUser];
+      ? checkedMembers.filter((checkedUser) => checkedUser.id !== toggledUser.id)
+      : [...checkedMembers, toggledUser];
 
-    setCheckedUsers(newChecked);
+    setCheckedMembers(newChecked);
   };
 
   const handleSubmit = () => {
@@ -80,7 +80,8 @@ export default function CreateGroupPage () {
       .POST('/api/user-groups', {
         body: {
           name: groupName,
-          memberIds: checkedUsers.map((user) => user.id),
+          creatorId: user.id,
+          memberIds: checkedMembers.map((user) => user.id),
         },
       })
       .then(() => {})
@@ -90,7 +91,7 @@ export default function CreateGroupPage () {
   const renderUserItem = (availableUser: UserResponse, organizer = false) => {
     const labelId = `checkbox-list-label-${availableUser.id}`;
     const formUser = { id: availableUser.id, name: availableUser.username };
-    const checked = organizer ? true : isUserChecked(checkedUsers, formUser);
+    const checked = organizer ? true : isUserChecked(checkedMembers, formUser);
 
     return (
       <ListItem
@@ -144,7 +145,7 @@ export default function CreateGroupPage () {
               Gruppendetails
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {checkedUsers.length} Mitglied(er) ausgewählt · mindestens 2 nötig
+              {checkedMembers.length + 1} Mitglied(er) ausgewählt · mindestens 2 nötig
             </Typography>
           </Box>
 

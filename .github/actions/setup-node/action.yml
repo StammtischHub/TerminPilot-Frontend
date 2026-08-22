@@ -1,0 +1,20 @@
+name: Setup Node
+description: Checkout independent setup of pnpm, Node, Registry-Auth and installation
+inputs:
+  github-token:
+    required: true
+    description: GitHub token to use for authentication to GitHub Packages
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v6
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: package.json
+        cache: pnpm
+    - name: Configure npm registry auth
+      shell: bash
+      run: pnpm config set "//npm.pkg.github.com/:_authToken" "${{ inputs.github-token }}"
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile

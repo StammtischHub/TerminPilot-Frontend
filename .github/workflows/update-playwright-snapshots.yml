@@ -1,0 +1,25 @@
+name: Update Playwright Snapshots
+on:
+  workflow_dispatch:
+
+jobs:
+  update-snapshots:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Update snapshots
+        run: pnpm test:e2e:update
+      - name: Commit updated snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add e2e/**/*.png
+          git diff --staged --quiet || git commit -m "chore: update playwright snapshots"
+          git push

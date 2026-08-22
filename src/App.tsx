@@ -1,12 +1,11 @@
-import { Button, Typography, Stack } from '@mui/material';
+import { Routes, Route, Navigate } from 'react-router';
+import HomePage from "./pages/HomePage.tsx";
 
-function App() {
-  return (
-    <Stack spacing={2} sx={{ p: 4 }}>
-      <Typography variant="h4">Hello Material UI 🎉</Typography>
-      <Button variant="contained">Klick mich</Button>
-    </Stack>
-  );
+export default function App() {
+    return (
+        <Routes>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="*" element={<Navigate to="/home" replace />} />
+        </Routes>
+    )
 }
-
-export default App;

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "main"
+  workflow_dispatch:
 
 jobs:
   dependency-check:
@@ -79,7 +80,7 @@ jobs:
         run: pnpm tsc --noEmit
 
   unit_test:
-    name: Unit tests (Vitest)
+    name: Unit tests
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -99,8 +100,8 @@ jobs:
           path: coverage/
           retention-days: 7
 
-  e2e_test:
-    name: E2E tests (Playwright)
+  playwright_test:
+    name: Playwright tests
     runs-on: ubuntu-latest
     permissions:
       contents: read

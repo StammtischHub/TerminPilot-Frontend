@@ -9,8 +9,13 @@
     "generate:api": "openapi-typescript node_modules/@stammtischhub/terminpilot-api-spec/dist/openapi.bundled.yaml -o src/api/types.ts",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\" && eslint . --fix",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"  && eslint .",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -26,6 +31,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.0",
+    "@playwright/test": "^1.62.1",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.5",

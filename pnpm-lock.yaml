@@ -21,8 +21,8 @@ importers:
         specifier: ^9.0.0
         version: 9.3.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@stammtischhub/terminpilot-api-spec':
-        specifier: 1.5.0
-        version: 1.5.0
+        specifier: 1.5.1
+        version: 1.5.1
       openapi-fetch:
         specifier: ^0.17.0
         version: 0.17.0
@@ -491,8 +491,8 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@stammtischhub/terminpilot-api-spec@1.5.0':
-    resolution: {integrity: sha512-3ei9HSdLWv3UvwDON/CGXfVkJHT6BXzjPYgio9qPo0BoY6VoZ87Ace5+EQ2XiKy29C5FDACdA7OaZrlP1Qgh7A==, tarball: https://npm.pkg.github.com/download/@stammtischhub/terminpilot-api-spec/1.5.0/c63d81b6a2c26fcd29e169e8a56705b9b00bd716}
+  '@stammtischhub/terminpilot-api-spec@1.5.1':
+    resolution: {integrity: sha512-PTe/rRZrdpJFy47FbD/40aFs5VZcS60QIvaaWyFv9zoP80XC32GKqZArc4cVlkSNv4Jc8WFsxEyxj07eTTq0MA==, tarball: https://npm.pkg.github.com/download/@stammtischhub/terminpilot-api-spec/1.5.1/fa1f6e5be1628e481ab9afecdd146346b3dda216}
 
   '@types/esrecurse@4.3.1':
     resolution: {integrity: sha512-xJBAbDifo5hpffDBuHl0Y8ywswbiAp/Wi7Y/GtAgSlZyIABppyurxVueOPE8LUQOxdlgi6Zqce7uoEpqNTeiUw==}
@@ -1786,7 +1786,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@stammtischhub/terminpilot-api-spec@1.5.0': {}
+  '@stammtischhub/terminpilot-api-spec@1.5.1': {}
 
   '@types/esrecurse@4.3.1': {}
 

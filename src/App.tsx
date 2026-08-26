@@ -1,10 +1,15 @@
 import { Routes, Route, Navigate } from 'react-router';
-import HomePage from './pages/HomePage.tsx';
+import Home from './pages/Home.tsx';
+import Login from "./pages/Login.tsx";
+import {RequireAuth} from "./auth/RequireAuth.tsx";
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/home" element={<HomePage />} />
+      <Route path="/login" element={<Login />} />
+      <Route element={<RequireAuth />}>
+        <Route path="/home" element={<Home />} />
+      </Route>
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );

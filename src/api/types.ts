@@ -8,8 +8,8 @@ export type Schema<Name extends keyof components['schemas']> = components['schem
 
 /** Extrahiert den 200-JSON-Response-Body einer Operation */
 type SuccessBody<Op> = Op extends {
-    responses: { 200: { content: { 'application/json': infer R } } };
-  }
+  responses: { 200: { content: { 'application/json': infer R } } };
+}
   ? R
   : never;
 
@@ -19,5 +19,6 @@ type SuccessBody<Op> = Op extends {
  * oder eine Projektion).
  * @example type Groups = GetResponse<'/api/users/{user-id}/user-groups'>;
  */
-export type GetResponse<Path extends keyof paths> =
-  paths[Path] extends { get: infer Op } ? SuccessBody<Op> : never;
+export type GetResponse<Path extends keyof paths> = paths[Path] extends { get: infer Op }
+  ? SuccessBody<Op>
+  : never;

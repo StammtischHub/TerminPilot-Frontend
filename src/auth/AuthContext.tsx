@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
-import type {Schema} from "../api/types.ts";
+import type { Schema } from '../api/types.ts';
 
-type UserResponse = Schema<'UserResponse'>
+type UserResponse = Schema<'UserResponse'>;
 
 type AuthContextProps = {
   user: UserResponse | null;

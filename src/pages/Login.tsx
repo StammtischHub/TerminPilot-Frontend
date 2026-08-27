@@ -19,7 +19,7 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false);
 
   if (isLoading) return null;
-  if (user) return <Navigate to='/home'  replace />;
+  if (user) return <Navigate to="/home" replace />;
 
   const handleLoginSubmit = async () => {
     setError(null);
@@ -36,10 +36,23 @@ export default function Login() {
   return (
     <Container
       maxWidth="xs"
-      sx={{ height: '100dvh', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
+      sx={{
+        height: '100dvh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+      }}
     >
-      <Stack direction="column" sx={{ justifyContent: 'center', alignItems: 'center', width: '100%', mb: 4}}>
-        <img src="/public/assets/TerminPilot.png" alt="TerminPilot Logo" style={{ width: mobile ? 300 : 400, textAlign: 'center' }} />
+      <Stack
+        direction="column"
+        sx={{ justifyContent: 'center', alignItems: 'center', width: '100%', mb: 4 }}
+      >
+        <img
+          src="/public/assets/TerminPilot.png"
+          alt="TerminPilot Logo"
+          style={{ width: mobile ? 300 : 400, textAlign: 'center' }}
+        />
         <Typography variant={mobile ? 'h4' : 'h3'} component="h1" sx={{ mt: 0 }}>
           TerminPilot
         </Typography>
@@ -47,9 +60,8 @@ export default function Login() {
       <Stack
         component="form"
         onSubmit={(submit) => {
-          submit.preventDefault()
-          handleLoginSubmit()
-            .then(() => navigate('/home', { replace: true }));
+          submit.preventDefault();
+          handleLoginSubmit().then(() => navigate('/home', { replace: true }));
         }}
         noValidate
         direction="column"

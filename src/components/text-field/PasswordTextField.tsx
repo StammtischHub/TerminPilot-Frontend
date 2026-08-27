@@ -11,9 +11,7 @@ export default function PasswordTextField({ ...props }: PasswordTextFieldProps):
 
   return (
     <TextFieldWithIcon
-      icon={
-        inFocus ? <LockOpenOutlined fontSize="small" /> : <LockOutlined fontSize="small" />
-      }
+      icon={inFocus ? <LockOpenOutlined fontSize="small" /> : <LockOutlined fontSize="small" />}
       type={showPassword ? 'text' : 'password'}
       onFocus={() => setInFocus(true)}
       onBlur={() => setInFocus(false)}

@@ -1,4 +1,4 @@
-import {useAuth} from "./AuthContext.tsx";
+import { useAuth } from './AuthContext.tsx';
 
 export function useAuthedUser() {
   const { user } = useAuth();

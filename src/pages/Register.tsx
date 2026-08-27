@@ -4,7 +4,7 @@ import { PersonAddAlt1 as RegisterIcon, PersonOutlined } from '@mui/icons-materi
 import { useAuth } from '../auth/AuthContext.tsx';
 import { ApiError } from '../api/client.ts';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router';
-import {isMobile} from '../utils/ThemeHelpers.ts';
+import { isMobile } from '../utils/ThemeHelpers.ts';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
 import TextFieldWithIcon from '../components/text-field/TextFieldWithIcon.tsx';
 
@@ -32,43 +32,58 @@ export default function Register() {
 
   const validateUsername = () => {
     if (username.length < 3) {
-      setFieldErrors({...fieldErrors, username: 'Der Benutzername muss mindesten 3 Zeichen lang sein.'})
+      setFieldErrors({
+        ...fieldErrors,
+        username: 'Der Benutzername muss mindesten 3 Zeichen lang sein.',
+      });
     } else if (username.length > 50) {
-      setFieldErrors({...fieldErrors, username: 'Der Benutzername darf maximal 50 Zeichen lang sein.'})
+      setFieldErrors({
+        ...fieldErrors,
+        username: 'Der Benutzername darf maximal 50 Zeichen lang sein.',
+      });
     } else if (!USERNAME_PATTERN.test(username)) {
-      setFieldErrors({ ...fieldErrors, username: 'Erlaubt sind Buchstaben, Zahlen sowie . _ -'})
-    } else if (fieldErrors.username){
-      setFieldErrors({ ...fieldErrors, username: undefined})
+      setFieldErrors({ ...fieldErrors, username: 'Erlaubt sind Buchstaben, Zahlen sowie . _ -' });
+    } else if (fieldErrors.username) {
+      setFieldErrors({ ...fieldErrors, username: undefined });
     }
     return Object.keys(fieldErrors).length === 0;
-  }
+  };
 
   const validatePassword = () => {
     if (password.length < 12) {
-      setFieldErrors({...fieldErrors, password: 'Das Passwort muss mindestens 12 Zeichen lang sein.'})
+      setFieldErrors({
+        ...fieldErrors,
+        password: 'Das Passwort muss mindestens 12 Zeichen lang sein.',
+      });
     } else if (password.length > 72) {
-      setFieldErrors({...fieldErrors, password: 'Das Passwort darf maximal 72 Zeichen lang sein.'})
-    } else if (fieldErrors.password){
-      setFieldErrors({ ...fieldErrors, password: undefined})
+      setFieldErrors({
+        ...fieldErrors,
+        password: 'Das Passwort darf maximal 72 Zeichen lang sein.',
+      });
+    } else if (fieldErrors.password) {
+      setFieldErrors({ ...fieldErrors, password: undefined });
     }
     return Object.keys(fieldErrors).length === 0;
-  }
+  };
 
   const validatePasswordConfirmation = () => {
     if (passwordConfirmation !== password) {
-      setFieldErrors({...fieldErrors, passwordConfirmation: 'Die Passwörter stimmen nicht überein.'})
-    } else if (fieldErrors.passwordConfirmation){
-      setFieldErrors({ ...fieldErrors, passwordConfirmation: undefined})
+      setFieldErrors({
+        ...fieldErrors,
+        passwordConfirmation: 'Die Passwörter stimmen nicht überein.',
+      });
+    } else if (fieldErrors.passwordConfirmation) {
+      setFieldErrors({ ...fieldErrors, passwordConfirmation: undefined });
     }
     return Object.keys(fieldErrors).length === 0;
-  }
+  };
 
-  const formValid = Object.values(fieldErrors).every((value) => (value === undefined));
+  const formValid = Object.values(fieldErrors).every((value) => value === undefined);
 
   const handleRegisterSubmit = async () => {
     setSubmitError(null);
     if (!formValid) {
-      setSubmitError('Nicht alle Eingabefelder sind korrekt ausgefüllt.')
+      setSubmitError('Nicht alle Eingabefelder sind korrekt ausgefüllt.');
       return;
     }
     setSubmitting(true);
@@ -76,7 +91,9 @@ export default function Register() {
       .then(() => navigate('/home', { replace: true }))
       .catch((error) => {
         if (!(error instanceof ApiError)) {
-          setSubmitError('Unbekannter Fehler bei der Registrierung. Bitte versuche es später erneut.');
+          setSubmitError(
+            'Unbekannter Fehler bei der Registrierung. Bitte versuche es später erneut.',
+          );
           return;
         }
         switch (error.status) {
@@ -85,7 +102,9 @@ export default function Register() {
             break;
           }
           default: {
-            setSubmitError('Unbekannter Fehler bei der Registrierung. Bitte versuche es später erneut.');
+            setSubmitError(
+              'Unbekannter Fehler bei der Registrierung. Bitte versuche es später erneut.',
+            );
           }
         }
       })
@@ -95,10 +114,23 @@ export default function Register() {
   return (
     <Container
       maxWidth="xs"
-      sx={{ height: '100dvh', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
+      sx={{
+        height: '100dvh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+      }}
     >
-      <Stack direction="column" sx={{ justifyContent: 'center', alignItems: 'center', width: '100%', mb: 4}}>
-        <img src="/public/assets/TerminPilot.png" alt="TerminPilot Logo" style={{ width: mobile ? 300 : 400 }} />
+      <Stack
+        direction="column"
+        sx={{ justifyContent: 'center', alignItems: 'center', width: '100%', mb: 4 }}
+      >
+        <img
+          src="/public/assets/TerminPilot.png"
+          alt="TerminPilot Logo"
+          style={{ width: mobile ? 300 : 400 }}
+        />
         <Typography variant={mobile ? 'h4' : 'h3'} component="h1" sx={{ mt: 0 }}>
           TerminPilot
         </Typography>
@@ -106,8 +138,8 @@ export default function Register() {
       <Stack
         component="form"
         onSubmit={async (submit) => {
-          submit.preventDefault()
-          await handleRegisterSubmit()
+          submit.preventDefault();
+          await handleRegisterSubmit();
         }}
         noValidate
         direction="column"

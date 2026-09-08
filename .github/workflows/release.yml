@@ -6,6 +6,7 @@ on:
         description: 'Ignore dependency vulnerabilities and proceed with release (not recommended)'
         required: false
         default: 'false'
+        type: string
 
 permissions:
   contents: read
@@ -50,55 +51,20 @@ jobs:
             }
             console.log(`✅ ${context.actor} is eligible (${perm.permission})`);
 
-  dependency-check:
-    name: Dependency Check
-    runs-on: ubuntu-latest
-    continue-on-error: ${{ github.event.inputs.ignore_dependencies_vulnerabilities == 'true' }}
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Run Trivy Vulnerability Scan
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          scan-type: fs
-          image-ref: '.'
-          format: json
-          output: trivy-results.json
-          severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
-          exit-code: '0'
-
-      - name: Evaluate Vulnerabilities
-        run: |
-          count=$(jq '[.Results[]?.Vulnerabilities[]?] | length' trivy-results.json)
-
-          cat trivy-results.json | jq -r '
-            .Results[]?.Vulnerabilities[]? |
-            "\(.Severity)|\(.PkgName)|\(.InstalledVersion)|\(.FixedVersion // "no fix")|\(.VulnerabilityID)"
-          ' | while IFS="|" read -r severity pkg installed fixed cve; do
-            case "$severity" in
-              CRITICAL) color="\e[35m" ;;  # Magenta
-              HIGH)     color="\e[31m" ;;  # rot
-              MEDIUM)   color="\e[33m" ;;  # gelb
-              LOW)      color="\e[34m" ;;  # blau
-            esac
-            link="https://nvd.nist.gov/vuln/detail/${cve}"
-            echo -e "${color}[${severity}]\e[0m ${pkg}\n\t${installed} -> ${fixed}\n\t${cve} (${link})"
-          done
-
-          if [ "$count" -gt 0 ]; then
-            echo "::warning::Found $count vulnerabilities. See report above."
-            exit 1
-          else
-            echo "No vulnerabilities found."
-          fi
+  vite_react_typescript:
+    name: Vite React TypeScript
+    needs:
+      - check-permissions
+    uses: ./.github/workflows/vite-react-typescript.yml
+    with:
+      ignore_dependencies_vulnerabilities: ${{ github.event.inputs.ignore_dependencies_vulnerabilities }}
 
   version_release:
     name: Version Release
     runs-on: ubuntu-latest
     needs:
       - check-permissions
-      - dependency-check
+      - vite_react_typescript
     permissions:
       contents: write
       packages: read

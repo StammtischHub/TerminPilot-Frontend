@@ -4,12 +4,19 @@ on:
   push:
     branches:
       - "main"
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      ignore_dependencies_vulnerabilities:
+        description: 'Ignore dependency vulnerabilities and proceed with release (not recommended)'
+        required: false
+        default: "false"
+        type: string
 
 jobs:
   trivy-scan:
     name: Trivy Dependency Scan
     runs-on: ubuntu-latest
+    continue-on-error: ${{ github.event.inputs.ignore_dependencies_vulnerabilities == 'true' }}
 
     steps:
       - uses: actions/checkout@v7
@@ -119,10 +126,10 @@ jobs:
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Install Playwright (mit Browser-Download)
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium webkit
       - name: Install Playwright (nur OS-Deps)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium
+        run: pnpm exec playwright install-deps chromium webkit
       - name: Run E2E tests
         run: pnpm test:e2e
       - name: Upload Playwright report

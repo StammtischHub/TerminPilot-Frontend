@@ -11,7 +11,7 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <AuthProvider>
         <ThemeProvider theme={theme}>
-          <CssBaseline /> {}
+          <CssBaseline />
           <App />
         </ThemeProvider>
       </AuthProvider>

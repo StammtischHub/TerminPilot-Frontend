@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router';
 import { describe, it, expect, vi } from 'vitest';
 import App from './App';
 import { AuthContext } from './auth/AuthContext';
-import type {Schema} from "./api/types.ts";
+import type { Schema } from './api/types.ts';
 
 type User = Schema<'UserResponse'>;
 

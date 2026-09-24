@@ -5,7 +5,7 @@ import { useAuth } from '../auth/AuthContext.tsx';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router';
 import { isMobile } from '../utils/ThemeHelpers.ts';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
-import TextFieldWithIcon from '../components/text-field/TextFieldWithIcon.tsx';
+import IconTextField from '../components/text-field/IconTextField.tsx';
 
 export default function Login() {
   const mobile = useMediaQuery(isMobile);
@@ -16,52 +16,50 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (isLoading) return null;
   if (user) return <Navigate to="/home" replace />;
 
   const handleLoginSubmit = async () => {
     setError(null);
-    setSubmitting(true);
-    try {
-      await login(username, password);
-    } catch {
-      setError('Benutzername oder Passwort ist falsch.');
-    } finally {
-      setSubmitting(false);
-    }
+    setIsSubmitting(true);
+    await login(username, password)
+      .then(() => {
+        navigate('/home');
+      })
+      .catch(() => {
+        setError('Die Kombination aus Benutzername oder Passwort ist falsch!');
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   return (
     <Container
-      maxWidth="xs"
+      maxWidth="sm"
       sx={{
-        height: '100dvh',
+        height: '100vh',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
       }}
     >
-      <Stack
-        direction="column"
-        sx={{ justifyContent: 'center', alignItems: 'center', width: '100%', mb: 4 }}
-      >
-        <img
-          src="/public/assets/TerminPilot.png"
-          alt="TerminPilot Logo"
-          style={{ width: mobile ? 300 : 400, textAlign: 'center' }}
-        />
-        <Typography variant={mobile ? 'h4' : 'h3'} component="h1" sx={{ mt: 0 }}>
-          TerminPilot
-        </Typography>
-      </Stack>
+      <img
+        src="/assets/TerminPilot.png"
+        alt="TerminPilot Logo"
+        style={{ width: mobile ? 300 : 450, textAlign: 'center' }}
+      />
+      <Typography variant={mobile ? 'h4' : 'h2'} component="h1" sx={{ mt: 0, mb: 4 }}>
+        TerminPilot
+      </Typography>
       <Stack
         component="form"
         onSubmit={(submit) => {
           submit.preventDefault();
-          handleLoginSubmit().then(() => navigate('/home', { replace: true }));
+          void handleLoginSubmit();
         }}
         noValidate
         direction="column"
@@ -74,7 +72,7 @@ export default function Login() {
           </Alert>
         )}
 
-        <TextFieldWithIcon
+        <IconTextField
           id="username-input"
           label="Benutzername"
           icon={<PersonOutlined fontSize="small" />}
@@ -107,7 +105,7 @@ export default function Login() {
           variant="contained"
           sx={{ width: '80%' }}
           startIcon={<LoginIcon />}
-          loading={submitting}
+          loading={isSubmitting}
         >
           Einloggen
         </Button>

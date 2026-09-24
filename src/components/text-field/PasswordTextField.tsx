@@ -1,6 +1,6 @@
 import { LockOpenOutlined, LockOutlined, Visibility, VisibilityOff } from '@mui/icons-material';
 import { IconButton, InputAdornment, type TextFieldProps } from '@mui/material';
-import TextFieldWithIcon from './TextFieldWithIcon.tsx';
+import IconTextField from './IconTextField.tsx';
 import { type ReactNode, useState } from 'react';
 
 type PasswordTextFieldProps = TextFieldProps;
@@ -10,7 +10,7 @@ export default function PasswordTextField({ ...props }: PasswordTextFieldProps):
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <TextFieldWithIcon
+    <IconTextField
       icon={inFocus ? <LockOpenOutlined fontSize="small" /> : <LockOutlined fontSize="small" />}
       type={showPassword ? 'text' : 'password'}
       onFocus={() => setInFocus(true)}

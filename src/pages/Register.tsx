@@ -6,7 +6,7 @@ import { ApiError } from '../api/client.ts';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router';
 import { isMobile } from '../utils/ThemeHelpers.ts';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
-import TextFieldWithIcon from '../components/text-field/TextFieldWithIcon.tsx';
+import IconTextField from '../components/text-field/IconTextField.tsx';
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
@@ -113,28 +113,23 @@ export default function Register() {
 
   return (
     <Container
-      maxWidth="xs"
+      maxWidth="sm"
       sx={{
-        height: '100dvh',
+        height: '100vh',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
       }}
     >
-      <Stack
-        direction="column"
-        sx={{ justifyContent: 'center', alignItems: 'center', width: '100%', mb: 4 }}
-      >
-        <img
-          src="/public/assets/TerminPilot.png"
-          alt="TerminPilot Logo"
-          style={{ width: mobile ? 300 : 400 }}
-        />
-        <Typography variant={mobile ? 'h4' : 'h3'} component="h1" sx={{ mt: 0 }}>
-          TerminPilot
-        </Typography>
-      </Stack>
+      <img
+        src="/assets/TerminPilot.png"
+        alt="TerminPilot Logo"
+        style={{ width: mobile ? 300 : 450 }}
+      />
+      <Typography variant={mobile ? 'h4' : 'h2'} component="h1" sx={{ mt: 0, mb: 4 }}>
+        TerminPilot
+      </Typography>
       <Stack
         component="form"
         onSubmit={async (submit) => {
@@ -152,7 +147,7 @@ export default function Register() {
           </Alert>
         )}
 
-        <TextFieldWithIcon
+        <IconTextField
           id="username-input"
           label="Benutzername"
           icon={<PersonOutlined fontSize="small" />}

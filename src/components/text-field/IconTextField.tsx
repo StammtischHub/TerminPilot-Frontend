@@ -1,15 +1,15 @@
 import { TextField, InputAdornment, type TextFieldProps } from '@mui/material';
 import type { ReactNode } from 'react';
 
-type TextFieldWithIconProps = TextFieldProps & {
+type IconTextFieldProps = TextFieldProps & {
   icon: ReactNode;
 };
 
-export default function TextFieldWithIcon({ icon, slotProps, ...props }: TextFieldWithIconProps) {
+export default function IconTextField({ icon, slotProps, ...props }: IconTextFieldProps) {
   return (
     <TextField
       variant="filled"
-      fullWidth
+      size="medium"
       sx={{
         width: '80%',
       }}

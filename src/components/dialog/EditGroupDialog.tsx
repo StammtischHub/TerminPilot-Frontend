@@ -76,6 +76,8 @@ export default function EditGroupDialog({
     [allUsers, user.id],
   );
 
+  const canSave = groupName.trim().length > 0 && checkedUserIds.length >= 2 && !isSaving;
+
   const isChecked = (id: number) => checkedUserIds.includes(id);
 
   const handleToggle = (id: number) => {
@@ -84,13 +86,11 @@ export default function EditGroupDialog({
     );
   };
 
-  const canSave = groupName.trim().length > 0 && checkedUserIds.length >= 2 && !isSaving;
-
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!group) return;
     setIsSaving(true);
     setError(null);
-    api
+    const {data, response} = await api
       .PATCH('/api/user-groups/{user-group-id}', {
         params: { path: { 'user-group-id': group.id } },
         body: {
@@ -98,35 +98,32 @@ export default function EditGroupDialog({
           memberIds: checkedUserIds,
         },
       })
-      .then(({ data, error: apiError }) => {
-        if (apiError || !data) {
-          setError('Die Gruppe konnte nicht gespeichert werden. Bitte versuche es erneut.');
-          return;
-        }
-        onSave(data);
-        onClose();
-      })
-      .catch(() =>
-        setError('Die Gruppe konnte nicht gespeichert werden. Bitte versuche es erneut.'),
-      )
-      .finally(() => setIsSaving(false));
+    if (!response.ok || !data) {
+      setError('Die Gruppe konnte nicht gespeichert werden. Bitte versuche es erneut.');
+      setIsSaving(false);
+      return;
+    }
+    onSave(data);
+    onClose();
+    setIsSaving(false);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!group) return;
     setIsDeleting(true);
     setError(null);
-    api
+    const {response} = await api
       .DELETE('/api/user-groups/{user-group-id}', {
         params: { path: { 'user-group-id': group.id } },
       })
-      .then(() => {
-        onDelete(group.id);
-        setIsConfirmDeleteDialogOpen(false);
-        onClose();
-      })
-      .catch(() => setError('Die Gruppe konnte nicht gelöscht werden. Bitte versuche es erneut.'))
-      .finally(() => setIsDeleting(false));
+
+    if (!response.ok) {
+      setError('Die Gruppe konnte nicht gelöscht werden. Bitte versuche es erneut.');
+    } else {
+      onDelete(group.id);
+      onClose();
+    }
+    setIsDeleting(false);
   };
 
   return (

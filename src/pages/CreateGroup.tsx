@@ -35,6 +35,7 @@ export default function CreateGroupPage() {
   const [groupName, setGroupName] = useState('');
   const [allUsers, setAllUsers] = useState<UserResponse[]>([]);
   const [isLoadingAllUsers, setIsLoadingAllUsers] = useState(true);
+  const [checkedMembers, setCheckedMembers] = useState<UserResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -47,17 +48,15 @@ export default function CreateGroupPage() {
       .finally(() => setIsLoadingAllUsers(false));
   }, []);
 
-  const isUserChecked = (users: UserResponse[], userToCheck: UserResponse) =>
-    users.some((checkedUser) => checkedUser.id === userToCheck.id);
-
-  const [checkedMembers, setCheckedMembers] = useState<UserResponse[]>([]);
-
-  const canProceed = checkedMembers.length >= 1 && groupName.trim().length > 0;
-
   const otherUsers = useMemo(
     () => allUsers.filter((availableUser) => availableUser.id !== user.id),
     [allUsers, user.id],
   );
+
+  const canProceed = checkedMembers.length >= 1 && groupName.trim().length > 0;
+
+  const isUserChecked = (users: UserResponse[], userToCheck: UserResponse) =>
+    users.some((checkedUser) => checkedUser.id === userToCheck.id);
 
   const handleToggle = (toggledUser: UserResponse) => () => {
     const exists = isUserChecked(checkedMembers, toggledUser);
@@ -69,8 +68,9 @@ export default function CreateGroupPage() {
   };
 
   const handleSubmit = async () => {
+    setError(null);
     setIsSubmitting(true);
-    await api
+    const {response} = await api
       .POST('/api/user-groups', {
         body: {
           name: groupName,
@@ -78,14 +78,12 @@ export default function CreateGroupPage() {
           memberIds: checkedMembers.map((checkedMember) => checkedMember.id),
         },
       })
-      .then(() => {
-      })
-      .catch((error) => {
-        setError(error.message);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+    if(!response.ok){
+      setError(response.statusText);
+    } else {
+      navigate('/home')
+    }
+    setIsSubmitting(false);
   };
 
   const renderUserItem = (availableUser: UserResponse, creator = false) => {
@@ -123,11 +121,6 @@ export default function CreateGroupPage() {
   return (
     <AppBarsWrapper>
       <Stack spacing={3} sx={{ alignItems: 'center', marginY: 3 }}>
-        {error && (
-          <Alert severity="error" sx={{ width: '100%' }}>
-            {error}
-          </Alert>
-        )}
         <Paper
           elevation={4}
           sx={{
@@ -146,6 +139,12 @@ export default function CreateGroupPage() {
           </Box>
 
           <Divider sx={{ my: 3 }} />
+
+          {error && (
+            <Alert severity="error" sx={{ width: '100%', mb: 3 }}>
+              {error}
+            </Alert>
+          )}
 
           <Box sx={{ flexShrink: 0, mb: 3 }}>
             <TextField

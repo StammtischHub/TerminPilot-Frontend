@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import { Alert, Button, Container, Link, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Alert, Button, Link, Stack, Typography } from '@mui/material';
 import { Login as LoginIcon, PersonOutlined } from '@mui/icons-material';
-import { useAuth } from '../auth/AuthContext.tsx';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router';
-import { isMobile } from '../utils/ThemeHelpers.ts';
+import { useAuth } from '../auth/AuthContext.tsx';
+import AuthLayout from '../components/AuthLayout.tsx';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
 import IconTextField from '../components/text-field/IconTextField.tsx';
 import { useSafeSubmit } from '../hooks/useSafeSubmit.ts';
 
 export default function Login() {
-  const mobile = useMediaQuery(isMobile);
   const navigate = useNavigate();
 
   const { login, user, isLoading } = useAuth();
@@ -23,33 +22,16 @@ export default function Login() {
 
   const handleSubmit = () =>
     submit(() => login(username, password), {
-      errorMessages: { 401: 'Die Kombination aus Benutzername oder Passwort ist falsch!' },
+      errorMessages: { 401: 'Die Kombination aus Benutzername und Passwort ist falsch.' },
       onSuccess: () => navigate('/home', { replace: true }),
     });
 
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-      }}
-    >
-      <img
-        src="/assets/TerminPilot.png"
-        alt="TerminPilot Logo"
-        style={{ width: mobile ? 300 : 450, textAlign: 'center' }}
-      />
-      <Typography variant={mobile ? 'h4' : 'h2'} component="h1" sx={{ mt: 0, mb: 4 }}>
-        TerminPilot
-      </Typography>
+    <AuthLayout>
       <Stack
         component="form"
-        onSubmit={(submit) => {
-          submit.preventDefault();
+        onSubmit={(event) => {
+          event.preventDefault();
           void handleSubmit();
         }}
         noValidate
@@ -81,7 +63,7 @@ export default function Login() {
           autoComplete="current-password"
           required
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(event) => setPassword(event.target.value)}
         />
 
         <Typography component="p" variant="body2">
@@ -101,6 +83,6 @@ export default function Login() {
           Einloggen
         </Button>
       </Stack>
-    </Container>
+    </AuthLayout>
   );
 }

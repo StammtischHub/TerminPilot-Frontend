@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Box,
@@ -63,7 +63,7 @@ export default function EditGroupDialog({
   const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useMemo(() => {
+  useEffect(() => {
     if (!open) return;
     api
       .GET('/api/users', {})

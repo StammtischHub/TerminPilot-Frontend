@@ -1,7 +1,8 @@
-import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Box,
+  Button,
   Checkbox,
   Divider,
   List,
@@ -10,21 +11,18 @@ import {
   ListItemText,
   Paper,
   Skeleton,
+  Stack,
   TextField,
   Typography,
 } from '@mui/material';
+import { Group, GroupAdd, GroupOff } from '@mui/icons-material';
+import { useNavigate } from 'react-router';
+import { Blobatar } from '@blobatar/react';
+import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
 import { generateSeparateStyle } from '../utils/ThemeHelpers.ts';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import { useMemo, useState } from 'react';
 import { api } from '../api/client.ts';
 import type { Schema } from '../api/types.ts';
 import { useAuthedUser } from '../auth/useAuthedUser.ts';
-import { useNavigate } from 'react-router';
-import GroupIcon from '@mui/icons-material/Group';
-import GroupOffIcon from '@mui/icons-material/GroupOff';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import { Blobatar } from '@blobatar/react';
 import { useSafeSubmit } from '../hooks/useSafeSubmit.ts';
 
 type UserResponse = Schema<'UserResponse'>;
@@ -38,15 +36,29 @@ export default function CreateGroupPage() {
   const [groupName, setGroupName] = useState('');
   const [allUsers, setAllUsers] = useState<UserResponse[]>([]);
   const [isLoadingAllUsers, setIsLoadingAllUsers] = useState(true);
-  const [checkedMembers, setCheckedMembers] = useState<UserResponse[]>([]);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [checkedMemberIds, setCheckedMemberIds] = useState<number[]>([]);
 
-  useMemo(() => {
+  useEffect(() => {
+    const controller = new AbortController();
+
     api
-      .GET('/api/users', {})
-      .then(({ data }) => {
+      .GET('/api/users', { signal: controller.signal })
+      .then(({ data, error: responseError }) => {
+        if (responseError) {
+          setLoadFailed(true);
+          return;
+        }
         setAllUsers(data ?? []);
       })
-      .finally(() => setIsLoadingAllUsers(false));
+      .catch(() => {
+        if (!controller.signal.aborted) setLoadFailed(true);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsLoadingAllUsers(false);
+      });
+
+    return () => controller.abort();
   }, []);
 
   const otherUsers = useMemo(
@@ -54,19 +66,13 @@ export default function CreateGroupPage() {
     [allUsers, user.id],
   );
 
-  const canProceed = checkedMembers.length >= 1 && groupName.trim().length > 0;
+  const trimmedGroupName = groupName.trim();
+  const canProceed = checkedMemberIds.length >= 1 && trimmedGroupName.length > 0;
 
-  const isUserChecked = (users: UserResponse[], userToCheck: UserResponse) =>
-    users.some((checkedUser) => checkedUser.id === userToCheck.id);
-
-  const handleToggle = (toggledUser: UserResponse) => () => {
-    const exists = isUserChecked(checkedMembers, toggledUser);
-    const newChecked = exists
-      ? checkedMembers.filter((checkedUser) => checkedUser.id !== toggledUser.id)
-      : [...checkedMembers, toggledUser];
-
-    setCheckedMembers(newChecked);
-  };
+  const handleToggle = (userId: number) => () =>
+    setCheckedMemberIds((prev) =>
+      prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId],
+    );
 
   const handleSubmit = () =>
     submit(
@@ -74,9 +80,9 @@ export default function CreateGroupPage() {
         (
           await api.POST('/api/user-groups', {
             body: {
-              name: groupName,
+              name: trimmedGroupName,
               creatorId: user.id,
-              memberIds: checkedMembers.map((m) => m.id),
+              memberIds: checkedMemberIds,
             },
           })
         ).response,
@@ -86,55 +92,86 @@ export default function CreateGroupPage() {
       },
     );
 
-  const renderUserItem = (availableUser: UserResponse, creator = false) => {
-    const labelId = `checkbox-list-label-${availableUser.id}`;
-    const checked = creator ? true : isUserChecked(checkedMembers, availableUser);
+  const renderUserItem = (listUser: UserResponse, isCreator = false) => {
+    const labelId = `checkbox-list-label-${listUser.id}`;
+    const checked = isCreator || checkedMemberIds.includes(listUser.id);
+    const onToggle = isCreator ? undefined : handleToggle(listUser.id);
 
     return (
       <ListItem
-        key={availableUser.id}
+        key={listUser.id}
         disablePadding
         secondaryAction={
           <Checkbox
             edge="end"
             checked={checked}
-            disabled={creator}
-            onChange={handleToggle(availableUser)}
+            disabled={isCreator}
+            onChange={onToggle}
             disableRipple
             slotProps={{ input: { 'aria-labelledby': labelId } }}
           />
         }
       >
-        <ListItemButton onClick={handleToggle(availableUser)} disabled={creator}>
-          <div style={{ marginRight: 15, height: 32, filter: 'drop-shadow(0 0 0.2em black)' }}>
-            <Blobatar name={availableUser.username} width={32} height={32} />
-          </div>
+        <ListItemButton onClick={onToggle} disabled={isCreator}>
+          <Box sx={{ mr: 2, height: 32, filter: 'drop-shadow(0 0 0.2em black)' }}>
+            <Blobatar name={listUser.username} width={32} height={32} />
+          </Box>
           <ListItemText
             id={labelId}
-            primary={creator ? `${availableUser.username} (Du)` : availableUser.username}
+            primary={isCreator ? `${listUser.username} (Du)` : listUser.username}
           />
         </ListItemButton>
       </ListItem>
     );
   };
 
+  const renderOtherUsers = () => {
+    if (loadFailed) {
+      return (
+        <ListItem sx={{ py: 2 }}>
+          <Alert severity="error" sx={{ width: '100%' }}>
+            Die Benutzerliste konnte nicht geladen werden.
+          </Alert>
+        </ListItem>
+      );
+    }
+
+    if (otherUsers.length === 0) {
+      return (
+        <ListItem sx={{ py: 4 }}>
+          <Stack spacing={1} sx={{ width: '100%', alignItems: 'center' }}>
+            <GroupOff color="disabled" fontSize="large" />
+            <Typography variant="body2" color="text.secondary">
+              Keine weiteren verfügbaren Benutzer gefunden.
+            </Typography>
+          </Stack>
+        </ListItem>
+      );
+    }
+
+    return otherUsers.map((otherUser) => renderUserItem(otherUser));
+  };
+
   return (
     <AppBarsWrapper>
-      <Stack spacing={3} sx={{ alignItems: 'center', marginY: 3 }}>
-        <Paper
-          elevation={4}
-          sx={{
-            width: generateSeparateStyle('80%', '60%'),
-            p: 4,
-          }}
-        >
+      <Stack
+        component="form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (canProceed) void handleSubmit();
+        }}
+        noValidate
+        spacing={3}
+        sx={{ alignItems: 'center', marginY: 3 }}
+      >
+        <Paper elevation={4} sx={{ width: generateSeparateStyle('80%', '60%'), p: 4 }}>
           <Box sx={{ flexShrink: 0 }}>
             <Typography variant="overline" color="text.secondary">
               Neue Gruppe
             </Typography>
             <Typography variant="h4">Gruppendetails</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {checkedMembers.length + 1} Mitglied(er) ausgewählt · mindestens 2 nötig
+              {checkedMemberIds.length + 1} Mitglied(er) ausgewählt · mindestens 2 nötig
             </Typography>
           </Box>
 
@@ -160,7 +197,7 @@ export default function CreateGroupPage() {
 
           <Box sx={{ flexShrink: 0, mb: 1.5 }}>
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-              <GroupIcon color="action" fontSize="small" />
+              <Group color="action" fontSize="small" />
               <Typography
                 variant="caption"
                 color="text.secondary"
@@ -194,30 +231,18 @@ export default function CreateGroupPage() {
               <>
                 {renderUserItem(user, true)}
                 <Divider component="li" sx={{ my: 1 }} />
-
-                {otherUsers.length === 0 ? (
-                  <ListItem sx={{ py: 4 }}>
-                    <Stack spacing={1} sx={{ width: '100%', alignItems: 'center' }}>
-                      <GroupOffIcon color="disabled" fontSize="large" />
-                      <Typography variant="body2" color="text.secondary">
-                        Keine weiteren verfügbaren Benutzer gefunden.
-                      </Typography>
-                    </Stack>
-                  </ListItem>
-                ) : (
-                  otherUsers.map((otherUser) => renderUserItem(otherUser))
-                )}
+                {renderOtherUsers()}
               </>
             )}
           </List>
         </Paper>
 
         <Button
+          type="submit"
           variant="contained"
-          startIcon={<GroupAddIcon />}
+          startIcon={<GroupAdd />}
           disabled={!canProceed}
           loading={isSubmitting}
-          onClick={() => handleSubmit()}
           sx={{ width: generateSeparateStyle('50%', '30%') }}
         >
           Gruppe erstellen

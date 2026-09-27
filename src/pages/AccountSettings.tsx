@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { Alert, Box, Button, Divider, Paper, Snackbar, Stack, Typography } from '@mui/material';
 import { Lock, LockReset, ManageAccounts, PersonOutlined, Save } from '@mui/icons-material';
 import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
@@ -15,6 +15,7 @@ import type { Schema } from '../api/types.ts';
 import { useAuth } from '../auth/AuthContext.tsx';
 import { useAuthedUser } from '../auth/useAuthedUser.ts';
 import { useSafeSubmit } from '../hooks/useSafeSubmit.ts';
+import SectionHeader from '../components/SectionHeader.tsx';
 
 type UserResponse = Schema<'UserResponse'>;
 
@@ -36,9 +37,6 @@ export default function AccountSettingsPage() {
               Konto
             </Typography>
             <Typography variant="h4">Einstellungen</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Angemeldet als {user.username}
-            </Typography>
           </Box>
 
           <Divider sx={{ my: 3 }} />
@@ -67,23 +65,6 @@ export default function AccountSettingsPage() {
         </Alert>
       </Snackbar>
     </AppBarsWrapper>
-  );
-}
-
-function SectionHeader({ icon, title }: { icon: ReactNode; title: string }) {
-  return (
-    <Box sx={{ flexShrink: 0, mb: 2 }}>
-      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-        {icon}
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
-        >
-          {title}
-        </Typography>
-      </Stack>
-    </Box>
   );
 }
 

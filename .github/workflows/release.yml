@@ -53,6 +53,9 @@ jobs:
 
   vite_react_typescript:
     name: Vite React TypeScript
+    permissions:
+      contents: read
+      packages: read
     needs:
       - check-permissions
     uses: ./.github/workflows/vite-react-typescript.yml

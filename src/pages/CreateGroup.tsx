@@ -213,7 +213,6 @@ export default function CreateGroupPage() {
               bgcolor: 'background.paper',
               width: '100%',
               flex: 1,
-              minHeight: 175,
               maxHeight: 360,
               overflowY: 'auto',
               py: 0,

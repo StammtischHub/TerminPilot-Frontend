@@ -11,6 +11,7 @@ import {Constraints} from "./pages/TerminFormular/steps/Constraints.tsx";
 import {EventSuggestions} from "./pages/TerminFormular/steps/EventSuggestions.tsx";
 import {EventData} from "./pages/TerminFormular/steps/EventData.tsx";
 import {Overview} from "./pages/TerminFormular/steps/Overview.tsx";
+import CalendarSettings from './pages/CalendarSettings.tsx';
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/create-group" element={<CreateGroup />} />
         <Route path="/account-settings" element={<AccountSettings />} />
+        <Route path="/calendar-settings" element={<CalendarSettings />} />
         <Route path="event" element={<TerminFormularLayout />}>
           <Route index element={<Navigate to="user-selection" replace />} />
           <Route path="user-selection" element={<UserSelection />} />

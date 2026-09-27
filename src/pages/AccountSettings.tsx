@@ -1,7 +1,9 @@
-import { useState, type ReactNode } from 'react';
-import { Alert, Box, Button, Divider, Paper, Snackbar, Stack, Typography } from '@mui/material';
+import { useState } from 'react';
+import { Alert, Box, Button, Divider, Paper, Stack, Typography } from '@mui/material';
 import { Lock, LockReset, ManageAccounts, PersonOutlined, Save } from '@mui/icons-material';
 import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
+import FeedbackSnackbar, { type Feedback } from '../components/FeedbackSnackbar.tsx';
+import SectionHeader from '../components/SectionHeader.tsx';
 import IconTextField from '../components/text-field/IconTextField.tsx';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
 import { generateSeparateStyle } from '../utils/ThemeHelpers.ts';
@@ -25,7 +27,9 @@ interface SectionProps {
 
 export default function AccountSettingsPage() {
   const user = useAuthedUser();
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+
+  const showSuccess = (message: string) => setFeedback({ severity: 'success', message });
 
   return (
     <AppBarsWrapper>
@@ -36,54 +40,20 @@ export default function AccountSettingsPage() {
               Konto
             </Typography>
             <Typography variant="h4">Einstellungen</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Angemeldet als {user.username}
-            </Typography>
           </Box>
 
           <Divider sx={{ my: 3 }} />
 
-          <UsernameSection user={user} onSuccess={setSuccessMessage} />
+          <UsernameSection user={user} onSuccess={showSuccess} />
 
           <Divider sx={{ my: 4 }} />
 
-          <PasswordSection user={user} onSuccess={setSuccessMessage} />
+          <PasswordSection user={user} onSuccess={showSuccess} />
         </Paper>
       </Stack>
 
-      <Snackbar
-        open={successMessage !== null}
-        autoHideDuration={4000}
-        onClose={() => setSuccessMessage(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          severity="success"
-          variant="filled"
-          onClose={() => setSuccessMessage(null)}
-          sx={{ width: '80%' }}
-        >
-          {successMessage}
-        </Alert>
-      </Snackbar>
+      <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback(null)} />
     </AppBarsWrapper>
-  );
-}
-
-function SectionHeader({ icon, title }: { icon: ReactNode; title: string }) {
-  return (
-    <Box sx={{ flexShrink: 0, mb: 2 }}>
-      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-        {icon}
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
-        >
-          {title}
-        </Typography>
-      </Stack>
-    </Box>
   );
 }
 
@@ -119,7 +89,7 @@ function UsernameSection({ user, onSuccess }: SectionProps) {
         },
         onSuccess: () => {
           setTouched(false);
-          onSuccess('Dein Benutzername wurde geändert.');
+          onSuccess('Dein Benutzername wurde erfolgreich geändert.');
         },
       },
     );
@@ -232,7 +202,7 @@ function PasswordSection({ user, onSuccess }: SectionProps) {
         },
         onSuccess: () => {
           resetForm();
-          onSuccess('Dein Passwort wurde geändert.');
+          onSuccess('Dein Passwort wurde erfolgreich geändert.');
         },
       },
     );

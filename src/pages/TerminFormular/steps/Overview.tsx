@@ -58,17 +58,23 @@ export function Overview() {
   const currentStepIndex = steps.findIndex((step) => step.path === 'overview');
   const previousStep = steps.findLast((step, index) => index < currentStepIndex && visitedSteps.includes(step.path));
 
+  const tz = Temporal.Now.timeZoneId();
+
   const handleSubmit = () => {
     const body: CreateEventRequest = {
       title: data.event.title,
-      start: data.event.begin.toString(),
-      end: data.event.end.toString(),
+      start: data.event.begin
+        .toZonedDateTime(tz)
+        .toString({ smallestUnit: 'second', timeZoneName: 'never' }),
+      end: data.event.end
+        .toZonedDateTime(tz)
+        .toString({ smallestUnit: 'second', timeZoneName: 'never' }),
       location: data.event.location || undefined,
       notes: data.event.notes || undefined,
       participants: data.event.users.map((user) => user.id),
     };
 
-    submit(
+    return submit(
       () => api.POST('/api/events', { body }).then(({ response }) => response),
       {
         errorMessages: {

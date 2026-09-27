@@ -7,7 +7,11 @@ import AuthLayout from '../components/AuthLayout.tsx';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
 import IconTextField from '../components/text-field/IconTextField.tsx';
 import { useSafeSubmit } from '../hooks/useSafeSubmit.ts';
-import { validatePassword, validatePasswordConfirmation, validateUsername } from '../utils/Validation.ts';
+import {
+  validatePassword,
+  validatePasswordConfirmation,
+  validateUsername,
+} from '../utils/Validation.ts';
 
 type Field = 'username' | 'password' | 'passwordConfirmation';
 type FieldErrors = Record<Field, string | undefined>;

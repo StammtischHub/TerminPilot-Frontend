@@ -29,7 +29,7 @@ export default function Login() {
       errorMessages: { 401: 'Die Kombination aus Benutzername und Passwort ist falsch.' },
       onSuccess: () => navigate('/home', { replace: true }),
     });
-  }
+  };
 
   return (
     <AuthLayout>

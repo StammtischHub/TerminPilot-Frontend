@@ -19,7 +19,14 @@ vi.mock('./api/client', () => ({
 function renderWithAuth(user: User | null = null) {
   return render(
     <AuthContext.Provider
-      value={{ user, isLoading: false, login: vi.fn(), register: vi.fn(), logout: vi.fn(), updateUser: vi.fn() }}
+      value={{
+        user,
+        isLoading: false,
+        login: vi.fn(),
+        register: vi.fn(),
+        logout: vi.fn(),
+        updateUser: vi.fn(),
+      }}
     >
       <MemoryRouter>
         <App />

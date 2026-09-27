@@ -1,14 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import {
-  Alert,
-  Box,
-  Button,
-  Divider,
-  Paper,
-  Snackbar,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Button, Divider, Paper, Snackbar, Stack, Typography } from '@mui/material';
 import { Lock, LockReset, ManageAccounts, PersonOutlined, Save } from '@mui/icons-material';
 import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
 import IconTextField from '../components/text-field/IconTextField.tsx';
@@ -144,7 +135,10 @@ function UsernameSection({ user, onSuccess }: SectionProps) {
       noValidate
       spacing={2}
     >
-      <SectionHeader icon={<ManageAccounts color="action" fontSize="small" />} title="Benutzername" />
+      <SectionHeader
+        icon={<ManageAccounts color="action" fontSize="small" />}
+        title="Benutzername"
+      />
 
       {error && (
         <Alert severity="error" sx={{ width: '80%' }}>

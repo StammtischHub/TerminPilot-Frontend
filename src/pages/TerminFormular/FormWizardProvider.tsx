@@ -24,7 +24,9 @@ export function FormWizardProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state, replaceTemporalTypes));
-    } catch {}
+    } catch {
+      // ignored
+    }
   }, [state]);
 
   useEffect(() => {

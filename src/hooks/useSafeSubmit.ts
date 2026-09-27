@@ -9,6 +9,14 @@ type SubmitOptions = {
   onSuccess?: (response: Response) => void | Promise<void>;
 };
 
+/**
+ * fetch wirft bei Verbindungsproblemen (Backend aus, CORS, DNS) einen TypeError.
+ * Alles andere (z. B. ein Parse-Fehler im eigenen Code) ist kein Netzwerkfehler.
+ */
+function isNetworkError(error: unknown): boolean {
+  return error instanceof TypeError;
+}
+
 export function useSafeSubmit() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,8 +35,9 @@ export function useSafeSubmit() {
           return;
         }
         setError(errorMessages[response.status] ?? UNKNOWN_ERROR);
-      } catch {
-        setError(NETWORK_ERROR);
+      } catch (caughtError) {
+        console.error('Request fehlgeschlagen:', caughtError);
+        setError(isNetworkError(caughtError) ? NETWORK_ERROR : UNKNOWN_ERROR);
       } finally {
         setIsSubmitting(false);
       }

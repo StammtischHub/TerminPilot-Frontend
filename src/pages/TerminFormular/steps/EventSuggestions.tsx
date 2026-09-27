@@ -26,7 +26,7 @@ import { Temporal } from 'temporal-polyfill';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
-import {useSafeSubmit} from "../../../hooks/useSafeSubmit.ts";
+import { useSafeSubmit } from '../../../hooks/useSafeSubmit.ts';
 
 type Suggestion = Schema<'Suggestion'>;
 
@@ -134,9 +134,7 @@ export function EventSuggestions() {
           <Typography variant="overline" color="text.secondary">
             Neuer Termin
           </Typography>
-          <Typography variant="h4">
-            Terminvorschlag wählen
-          </Typography>
+          <Typography variant="h4">Terminvorschlag wählen</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
             {isLoading
               ? 'Suche nach passenden Terminen …'
@@ -206,7 +204,9 @@ export function EventSuggestions() {
                 <Stack spacing={1}>
                   {proposalsOfDay.map((proposal) => {
                     const isSelected = proposal.id === selectedId;
-                    const durationMinutes = proposal.start.until(proposal.end, { largestUnit: 'minutes' }).minutes;
+                    const durationMinutes = proposal.start.until(proposal.end, {
+                      largestUnit: 'minutes',
+                    }).minutes;
 
                     return (
                       <ListItem
@@ -233,7 +233,10 @@ export function EventSuggestions() {
                           transition: 'border-color 0.15s ease, background-color 0.15s ease',
                         }}
                       >
-                        <ListItemButton onClick={() => setSelectedId(proposal.id)} sx={{ borderRadius: 1 }}>
+                        <ListItemButton
+                          onClick={() => setSelectedId(proposal.id)}
+                          sx={{ borderRadius: 1 }}
+                        >
                           <ListItemIcon sx={{ minWidth: 40 }}>
                             <AccessTimeIcon color={isSelected ? 'primary' : 'action'} />
                           </ListItemIcon>
@@ -254,7 +257,10 @@ export function EventSuggestions() {
 
       <Stack direction="row" spacing={2}>
         {previousStep && (
-          <Button variant="outlined" onClick={() => navigate(`${WIZARD_BASE_PATH}/${previousStep.path}`)}>
+          <Button
+            variant="outlined"
+            onClick={() => navigate(`${WIZARD_BASE_PATH}/${previousStep.path}`)}
+          >
             Zurück
           </Button>
         )}

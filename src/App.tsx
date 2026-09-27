@@ -5,12 +5,12 @@ import { RequireAuth } from './auth/RequireAuth.tsx';
 import Register from './pages/Register.tsx';
 import CreateGroup from './pages/CreateGroup.tsx';
 import AccountSettings from './pages/AccountSettings.tsx';
-import {TerminFormularLayout} from "./pages/TerminFormular/TerminFormularLayout.tsx";
-import {UserSelection} from "./pages/TerminFormular/steps/UserSelection.tsx";
-import {Constraints} from "./pages/TerminFormular/steps/Constraints.tsx";
-import {EventSuggestions} from "./pages/TerminFormular/steps/EventSuggestions.tsx";
-import {EventData} from "./pages/TerminFormular/steps/EventData.tsx";
-import {Overview} from "./pages/TerminFormular/steps/Overview.tsx";
+import { TerminFormularLayout } from './pages/TerminFormular/TerminFormularLayout.tsx';
+import { UserSelection } from './pages/TerminFormular/steps/UserSelection.tsx';
+import { Constraints } from './pages/TerminFormular/steps/Constraints.tsx';
+import { EventSuggestions } from './pages/TerminFormular/steps/EventSuggestions.tsx';
+import { EventData } from './pages/TerminFormular/steps/EventData.tsx';
+import { Overview } from './pages/TerminFormular/steps/Overview.tsx';
 import CalendarSettings from './pages/CalendarSettings.tsx';
 
 export default function App() {

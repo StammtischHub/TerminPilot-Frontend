@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import {ALL_WEEKDAYS, type Weekday} from '../formular.types.ts';
+import { ALL_WEEKDAYS, type Weekday } from '../formular.types.ts';
 import { Temporal } from 'temporal-polyfill';
 import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
 import type { DateValidationError, TimeValidationError } from '@mui/x-date-pickers';
@@ -25,7 +25,7 @@ import EventRepeatIcon from '@mui/icons-material/EventRepeat';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
-import {TemporalPlainDateProvider, TemporalPlainTimeProvider} from "mui-temporal-pickers";
+import { TemporalPlainDateProvider, TemporalPlainTimeProvider } from 'mui-temporal-pickers';
 
 function SectionLabel({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
@@ -62,8 +62,14 @@ export function Constraints() {
     data.constraints?.durationInMinutes ?? 60,
   );
 
-  type DatePeriodErrors = Record<keyof typeof data.constraints.datePeriod, DateValidationError | null>;
-  type TimePeriodErrors = Record<keyof typeof data.constraints.timePeriod, TimeValidationError | null>;
+  type DatePeriodErrors = Record<
+    keyof typeof data.constraints.datePeriod,
+    DateValidationError | null
+  >;
+  type TimePeriodErrors = Record<
+    keyof typeof data.constraints.timePeriod,
+    TimeValidationError | null
+  >;
 
   const [dateErrors, setDateErrors] = useState<DatePeriodErrors>({
     start: null,
@@ -140,7 +146,7 @@ export function Constraints() {
   const handleStartDateChange = (newValue: Temporal.PlainDate | null) => {
     if (!newValue) return;
     setStartDate(newValue);
-    updateStep('constraints', { datePeriod: { ...data.constraints.datePeriod , start: newValue } });
+    updateStep('constraints', { datePeriod: { ...data.constraints.datePeriod, start: newValue } });
   };
 
   const handleEndDateChange = (newValue: Temporal.PlainDate | null) => {
@@ -178,9 +184,7 @@ export function Constraints() {
             <Typography variant="overline" color="text.secondary">
               Neuer Termin
             </Typography>
-            <Typography variant="h4">
-              Rahmenbedingungen
-            </Typography>
+            <Typography variant="h4">Rahmenbedingungen</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
               Lege fest, in welchem Rahmen ein passender Termin gesucht werden soll.
             </Typography>

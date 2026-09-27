@@ -2,7 +2,7 @@ import { StepButton, Step, Stepper } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { steps, WIZARD_BASE_PATH } from './steps.config.ts';
 import { useFormWizard } from './FormWizardContext.tsx';
-import {useActiveStepIndex} from "../../hooks/useActiveStepIndex.ts";
+import { useActiveStepIndex } from '../../hooks/useActiveStepIndex.ts';
 
 export function DesktopStepNavigation() {
   const navigate = useNavigate();

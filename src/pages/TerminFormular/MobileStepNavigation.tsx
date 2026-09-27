@@ -1,7 +1,7 @@
 import MobileStepper from '@mui/material/MobileStepper';
 import Typography from '@mui/material/Typography';
 import { steps } from './steps.config.ts';
-import {useActiveStepIndex} from "../../hooks/useActiveStepIndex.ts";
+import { useActiveStepIndex } from '../../hooks/useActiveStepIndex.ts';
 
 export function MobileStepNavigation() {
   const activeIndex = useActiveStepIndex();
@@ -16,8 +16,8 @@ export function MobileStepNavigation() {
         steps={steps.length}
         position="static"
         activeStep={activeIndex}
-        backButton={<div/>}
-        nextButton={<div/>}
+        backButton={<div />}
+        nextButton={<div />}
       />
     </>
   );

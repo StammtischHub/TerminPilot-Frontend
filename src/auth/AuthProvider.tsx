@@ -10,10 +10,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     api
-      .GET('/api/auth/me')
+      .GET('/api/auth/me', { signal: controller.signal })
       .then(({ data }) => setUser(data ?? null))
-      .finally(() => setIsLoading(false));
+      .catch(() => {
+        if (!controller.signal.aborted) setUser(null);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsLoading(false);
+      });
+
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
@@ -47,7 +56,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ user, isLoading, login, register, logout, updateUser: setUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

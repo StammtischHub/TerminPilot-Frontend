@@ -7,32 +7,10 @@ import AuthLayout from '../components/AuthLayout.tsx';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
 import IconTextField from '../components/text-field/IconTextField.tsx';
 import { useSafeSubmit } from '../hooks/useSafeSubmit.ts';
-
-const USERNAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
+import { validatePassword, validatePasswordConfirmation, validateUsername } from '../utils/Validation.ts';
 
 type Field = 'username' | 'password' | 'passwordConfirmation';
 type FieldErrors = Record<Field, string | undefined>;
-
-function validateUsername(username: string): string | undefined {
-  if (username.length < 3) return 'Der Benutzername muss mindestens 3 Zeichen lang sein.';
-  if (username.length > 50) return 'Der Benutzername darf maximal 50 Zeichen lang sein.';
-  if (!USERNAME_PATTERN.test(username)) return 'Erlaubt sind Buchstaben, Zahlen sowie . _ -';
-  return undefined;
-}
-
-function validatePassword(password: string): string | undefined {
-  if (password.length < 12) return 'Das Passwort muss mindestens 12 Zeichen lang sein.';
-  if (password.length > 72) return 'Das Passwort darf maximal 72 Zeichen lang sein.';
-  return undefined;
-}
-
-function validatePasswordConfirmation(
-  password: string,
-  passwordConfirmation: string,
-): string | undefined {
-  if (passwordConfirmation !== password) return 'Die Passwörter stimmen nicht überein.';
-  return undefined;
-}
 
 function validate(username: string, password: string, passwordConfirmation: string): FieldErrors {
   return {
@@ -62,6 +40,7 @@ export default function Register() {
   if (isLoading) return null;
   if (user) return <Navigate to="/home" replace />;
 
+  // Fehler werden bei jedem Render aus den aktuellen Werten abgeleitet, nicht im State gehalten.
   const errors = validate(username, password, passwordConfirmation);
   const formValid = Object.values(errors).every((fieldError) => fieldError === undefined);
 

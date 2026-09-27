@@ -4,6 +4,7 @@ import Login from './pages/Login.tsx';
 import { RequireAuth } from './auth/RequireAuth.tsx';
 import Register from './pages/Register.tsx';
 import CreateGroup from './pages/CreateGroup.tsx';
+import AccountSettings from './pages/AccountSettings.tsx';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
       <Route element={<RequireAuth />}>
         <Route path="/home" element={<Home />} />
         <Route path="/create-group" element={<CreateGroup />} />
+        <Route path="/account-settings" element={<AccountSettings />} />
       </Route>
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>

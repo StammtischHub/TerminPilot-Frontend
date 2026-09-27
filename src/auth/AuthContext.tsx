@@ -9,6 +9,7 @@ type AuthContextProps = {
   login: (username: string, password: string) => Promise<Response>;
   register: (username: string, password: string) => Promise<Response>;
   logout: () => Promise<void>;
+  updateUser: (user: UserResponse) => void;
 };
 
 export const AuthContext = createContext<AuthContextProps | null>(null);

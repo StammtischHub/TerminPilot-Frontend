@@ -1,16 +1,6 @@
 import createClient, { type Middleware } from 'openapi-fetch';
 import type { paths } from '../../generated/api/schemas';
 
-/** HTTP-Fehler mit Statuscode */
-export class ApiError extends Error {
-  readonly status: number;
-
-  constructor(status: number) {
-    super(`HTTP ${status}`);
-    this.status = status;
-  }
-}
-
 function getCookie(name: string): string | null {
   const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
   return match ? decodeURIComponent(match[1]) : null;

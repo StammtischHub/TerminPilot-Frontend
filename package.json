@@ -21,12 +21,14 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
+    "@blobatar/react": "^2.7.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^9.0.0",
     "@mui/material": "^9.0.0",
     "@mui/x-date-pickers": "^9.10.0",
     "@stammtischhub/terminpilot-api-spec": "3.0.0",
+    "blobatar": "^2.7.0",
     "mui-temporal-pickers": "^1.2.1",
     "openapi-fetch": "^0.17.0",
     "react": "^19.2.4",
@@ -62,7 +64,9 @@
   "packageManager": "pnpm@11.11.0",
   "compilerOptions": {
     "paths": {
-      "@api-schemas/*": ["generated/api/*"]
+      "@api-schemas/*": [
+        "generated/api/*"
+      ]
     }
   }
 }

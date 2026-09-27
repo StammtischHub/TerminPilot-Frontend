@@ -1,158 +1,107 @@
 import { useState } from 'react';
-import { Alert, Button, Container, Link, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Alert, Button, Link, Stack, Typography } from '@mui/material';
 import { PersonAddAlt1 as RegisterIcon, PersonOutlined } from '@mui/icons-material';
-import { useAuth } from '../auth/AuthContext.tsx';
-import { ApiError } from '../api/client.ts';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router';
-import { isMobile } from '../utils/ThemeHelpers.ts';
+import { useAuth } from '../auth/AuthContext.tsx';
+import AuthLayout from '../components/AuthLayout.tsx';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
-import TextFieldWithIcon from '../components/text-field/TextFieldWithIcon.tsx';
+import IconTextField from '../components/text-field/IconTextField.tsx';
+import { useSafeSubmit } from '../hooks/useSafeSubmit.ts';
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
+type Field = 'username' | 'password' | 'passwordConfirmation';
+type FieldErrors = Record<Field, string | undefined>;
+
+function validateUsername(username: string): string | undefined {
+  if (username.length < 3) return 'Der Benutzername muss mindestens 3 Zeichen lang sein.';
+  if (username.length > 50) return 'Der Benutzername darf maximal 50 Zeichen lang sein.';
+  if (!USERNAME_PATTERN.test(username)) return 'Erlaubt sind Buchstaben, Zahlen sowie . _ -';
+  return undefined;
+}
+
+function validatePassword(password: string): string | undefined {
+  if (password.length < 12) return 'Das Passwort muss mindestens 12 Zeichen lang sein.';
+  if (password.length > 72) return 'Das Passwort darf maximal 72 Zeichen lang sein.';
+  return undefined;
+}
+
+function validatePasswordConfirmation(
+  password: string,
+  passwordConfirmation: string,
+): string | undefined {
+  if (passwordConfirmation !== password) return 'Die Passwörter stimmen nicht überein.';
+  return undefined;
+}
+
+function validate(username: string, password: string, passwordConfirmation: string): FieldErrors {
+  return {
+    username: validateUsername(username),
+    password: validatePassword(password),
+    passwordConfirmation: validatePasswordConfirmation(password, passwordConfirmation),
+  };
+}
+
+const ALL_TOUCHED: Record<Field, boolean> = {
+  username: true,
+  password: true,
+  passwordConfirmation: true,
+};
+
 export default function Register() {
-  const mobile = useMediaQuery(isMobile);
   const navigate = useNavigate();
 
   const { register, user, isLoading } = useAuth();
+  const { submit, isSubmitting, error } = useSafeSubmit();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<{
-    username?: string;
-    password?: string;
-    passwordConfirmation?: string;
-  }>({});
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({});
 
   if (isLoading) return null;
   if (user) return <Navigate to="/home" replace />;
 
-  const validateUsername = () => {
-    if (username.length < 3) {
-      setFieldErrors({
-        ...fieldErrors,
-        username: 'Der Benutzername muss mindesten 3 Zeichen lang sein.',
-      });
-    } else if (username.length > 50) {
-      setFieldErrors({
-        ...fieldErrors,
-        username: 'Der Benutzername darf maximal 50 Zeichen lang sein.',
-      });
-    } else if (!USERNAME_PATTERN.test(username)) {
-      setFieldErrors({ ...fieldErrors, username: 'Erlaubt sind Buchstaben, Zahlen sowie . _ -' });
-    } else if (fieldErrors.username) {
-      setFieldErrors({ ...fieldErrors, username: undefined });
-    }
-    return Object.keys(fieldErrors).length === 0;
-  };
+  const errors = validate(username, password, passwordConfirmation);
+  const formValid = Object.values(errors).every((fieldError) => fieldError === undefined);
 
-  const validatePassword = () => {
-    if (password.length < 12) {
-      setFieldErrors({
-        ...fieldErrors,
-        password: 'Das Passwort muss mindestens 12 Zeichen lang sein.',
-      });
-    } else if (password.length > 72) {
-      setFieldErrors({
-        ...fieldErrors,
-        password: 'Das Passwort darf maximal 72 Zeichen lang sein.',
-      });
-    } else if (fieldErrors.password) {
-      setFieldErrors({ ...fieldErrors, password: undefined });
-    }
-    return Object.keys(fieldErrors).length === 0;
-  };
+  const shownError = (field: Field) => (touched[field] ? errors[field] : undefined);
+  const touch = (field: Field) => () => setTouched((prev) => ({ ...prev, [field]: true }));
 
-  const validatePasswordConfirmation = () => {
-    if (passwordConfirmation !== password) {
-      setFieldErrors({
-        ...fieldErrors,
-        passwordConfirmation: 'Die Passwörter stimmen nicht überein.',
-      });
-    } else if (fieldErrors.passwordConfirmation) {
-      setFieldErrors({ ...fieldErrors, passwordConfirmation: undefined });
-    }
-    return Object.keys(fieldErrors).length === 0;
-  };
-
-  const formValid = Object.values(fieldErrors).every((value) => value === undefined);
-
-  const handleRegisterSubmit = async () => {
-    setSubmitError(null);
+  const handleSubmit = () => {
     if (!formValid) {
-      setSubmitError('Nicht alle Eingabefelder sind korrekt ausgefüllt.');
+      setTouched(ALL_TOUCHED);
       return;
     }
-    setSubmitting(true);
-    await register(username, password)
-      .then(() => navigate('/home', { replace: true }))
-      .catch((error) => {
-        if (!(error instanceof ApiError)) {
-          setSubmitError(
-            'Unbekannter Fehler bei der Registrierung. Bitte versuche es später erneut.',
-          );
-          return;
-        }
-        switch (error.status) {
-          case 409: {
-            setSubmitError('Dieser Benutzername ist bereits vergeben.');
-            break;
-          }
-          default: {
-            setSubmitError(
-              'Unbekannter Fehler bei der Registrierung. Bitte versuche es später erneut.',
-            );
-          }
-        }
-      })
-      .finally(() => setSubmitting(false));
+    return submit(() => register(username, password), {
+      errorMessages: {
+        400: 'Ungültige Registrierungsdaten wurden übermittelt.',
+        409: 'Dieser Benutzername ist bereits vergeben.',
+      },
+      onSuccess: () => navigate('/home', { replace: true }),
+    });
   };
 
   return (
-    <Container
-      maxWidth="xs"
-      sx={{
-        height: '100dvh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-      }}
-    >
-      <Stack
-        direction="column"
-        sx={{ justifyContent: 'center', alignItems: 'center', width: '100%', mb: 4 }}
-      >
-        <img
-          src="/public/assets/TerminPilot.png"
-          alt="TerminPilot Logo"
-          style={{ width: mobile ? 300 : 400 }}
-        />
-        <Typography variant={mobile ? 'h4' : 'h3'} component="h1" sx={{ mt: 0 }}>
-          TerminPilot
-        </Typography>
-      </Stack>
+    <AuthLayout>
       <Stack
         component="form"
-        onSubmit={async (submit) => {
-          submit.preventDefault();
-          await handleRegisterSubmit();
+        onSubmit={(event) => {
+          event.preventDefault();
+          void handleSubmit();
         }}
         noValidate
         direction="column"
         spacing={2}
         sx={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}
       >
-        {submitError && (
+        {error && (
           <Alert severity="error" sx={{ width: '100%' }}>
-            {submitError}
+            {error}
           </Alert>
         )}
 
-        <TextFieldWithIcon
+        <IconTextField
           id="username-input"
           label="Benutzername"
           icon={<PersonOutlined fontSize="small" />}
@@ -161,9 +110,9 @@ export default function Register() {
           required
           value={username}
           onChange={(event) => setUsername(event.target.value)}
-          onBlur={() => validateUsername()}
-          error={Boolean(fieldErrors.username)}
-          helperText={fieldErrors.username ?? '3–50 Zeichen'}
+          onBlur={touch('username')}
+          error={Boolean(shownError('username'))}
+          helperText={shownError('username') ?? '3–50 Zeichen'}
         />
 
         <PasswordTextField
@@ -171,11 +120,12 @@ export default function Register() {
           label="Passwort"
           placeholder="Passwort"
           autoComplete="new-password"
+          required
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          onBlur={() => validatePassword()}
-          error={Boolean(fieldErrors.password)}
-          helperText={fieldErrors.password ?? 'Mindestens 12 Zeichen'}
+          onBlur={touch('password')}
+          error={Boolean(shownError('password'))}
+          helperText={shownError('password') ?? 'Mindestens 12 Zeichen'}
         />
 
         <PasswordTextField
@@ -183,11 +133,12 @@ export default function Register() {
           label="Passwort bestätigen"
           placeholder="Passwort wiederholen"
           autoComplete="new-password"
+          required
           value={passwordConfirmation}
           onChange={(event) => setPasswordConfirmation(event.target.value)}
-          onBlur={() => validatePasswordConfirmation()}
-          error={Boolean(fieldErrors.passwordConfirmation)}
-          helperText={fieldErrors.passwordConfirmation ?? ''}
+          onBlur={touch('passwordConfirmation')}
+          error={Boolean(shownError('passwordConfirmation'))}
+          helperText={shownError('passwordConfirmation')}
         />
 
         <Typography component="p" variant="body2">
@@ -202,12 +153,11 @@ export default function Register() {
           variant="contained"
           sx={{ width: '80%' }}
           startIcon={<RegisterIcon />}
-          loading={submitting}
-          disabled={!formValid}
+          loading={isSubmitting}
         >
           Konto erstellen
         </Button>
       </Stack>
-    </Container>
+    </AuthLayout>
   );
 }

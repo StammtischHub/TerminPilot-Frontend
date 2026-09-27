@@ -90,14 +90,13 @@ export default function EditGroupDialog({
     if (!group) return;
     setIsSaving(true);
     setError(null);
-    const {data, response} = await api
-      .PATCH('/api/user-groups/{user-group-id}', {
-        params: { path: { 'user-group-id': group.id } },
-        body: {
-          name: groupName.trim(),
-          memberIds: checkedUserIds,
-        },
-      })
+    const { data, response } = await api.PATCH('/api/user-groups/{user-group-id}', {
+      params: { path: { 'user-group-id': group.id } },
+      body: {
+        name: groupName.trim(),
+        memberIds: checkedUserIds,
+      },
+    });
     if (!response.ok || !data) {
       setError('Die Gruppe konnte nicht gespeichert werden. Bitte versuche es erneut.');
       setIsSaving(false);
@@ -112,10 +111,9 @@ export default function EditGroupDialog({
     if (!group) return;
     setIsDeleting(true);
     setError(null);
-    const {response} = await api
-      .DELETE('/api/user-groups/{user-group-id}', {
-        params: { path: { 'user-group-id': group.id } },
-      })
+    const { response } = await api.DELETE('/api/user-groups/{user-group-id}', {
+      params: { path: { 'user-group-id': group.id } },
+    });
 
     if (!response.ok) {
       setError('Die Gruppe konnte nicht gelöscht werden. Bitte versuche es erneut.');

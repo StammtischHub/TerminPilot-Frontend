@@ -6,8 +6,8 @@ type UserResponse = Schema<'UserResponse'>;
 type AuthContextProps = {
   user: UserResponse | null;
   isLoading: boolean;
-  login: (username: string, password: string) => Promise<void>;
-  register: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<Response>;
+  register: (username: string, password: string) => Promise<Response>;
   logout: () => Promise<void>;
 };
 

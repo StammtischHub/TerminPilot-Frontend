@@ -6,35 +6,26 @@ import { Link as RouterLink, Navigate, useNavigate } from 'react-router';
 import { isMobile } from '../utils/ThemeHelpers.ts';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
 import IconTextField from '../components/text-field/IconTextField.tsx';
+import { useSafeSubmit } from '../hooks/useSafeSubmit.ts';
 
 export default function Login() {
   const mobile = useMediaQuery(isMobile);
   const navigate = useNavigate();
 
   const { login, user, isLoading } = useAuth();
+  const { submit, isSubmitting, error } = useSafeSubmit();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (isLoading) return null;
   if (user) return <Navigate to="/home" replace />;
 
-  const handleLoginSubmit = async () => {
-    setError(null);
-    setIsSubmitting(true);
-    await login(username, password)
-      .then(() => {
-        navigate('/home');
-      })
-      .catch(() => {
-        setError('Die Kombination aus Benutzername oder Passwort ist falsch!');
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
-  };
+  const handleSubmit = () =>
+    submit(() => login(username, password), {
+      errorMessages: { 401: 'Die Kombination aus Benutzername oder Passwort ist falsch!' },
+      onSuccess: () => navigate('/home', { replace: true }),
+    });
 
   return (
     <Container
@@ -59,7 +50,7 @@ export default function Login() {
         component="form"
         onSubmit={(submit) => {
           submit.preventDefault();
-          void handleLoginSubmit();
+          void handleSubmit();
         }}
         noValidate
         direction="column"

@@ -25,19 +25,20 @@ import GroupIcon from '@mui/icons-material/Group';
 import GroupOffIcon from '@mui/icons-material/GroupOff';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import { Blobatar } from '@blobatar/react';
+import { useSafeSubmit } from '../hooks/useSafeSubmit.ts';
 
 type UserResponse = Schema<'UserResponse'>;
 
 export default function CreateGroupPage() {
   const navigate = useNavigate();
-
   const user = useAuthedUser();
+
+  const { submit, isSubmitting, error } = useSafeSubmit();
+
   const [groupName, setGroupName] = useState('');
   const [allUsers, setAllUsers] = useState<UserResponse[]>([]);
   const [isLoadingAllUsers, setIsLoadingAllUsers] = useState(true);
   const [checkedMembers, setCheckedMembers] = useState<UserResponse[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useMemo(() => {
     api
@@ -67,24 +68,23 @@ export default function CreateGroupPage() {
     setCheckedMembers(newChecked);
   };
 
-  const handleSubmit = async () => {
-    setError(null);
-    setIsSubmitting(true);
-    const {response} = await api
-      .POST('/api/user-groups', {
-        body: {
-          name: groupName,
-          creatorId: user.id,
-          memberIds: checkedMembers.map((checkedMember) => checkedMember.id),
-        },
-      })
-    if(!response.ok){
-      setError(response.statusText);
-    } else {
-      navigate('/home')
-    }
-    setIsSubmitting(false);
-  };
+  const handleSubmit = () =>
+    submit(
+      async () =>
+        (
+          await api.POST('/api/user-groups', {
+            body: {
+              name: groupName,
+              creatorId: user.id,
+              memberIds: checkedMembers.map((m) => m.id),
+            },
+          })
+        ).response,
+      {
+        errorMessages: { 409: 'Gruppenname wird bereits verwendet' },
+        onSuccess: () => navigate('/home'),
+      },
+    );
 
   const renderUserItem = (availableUser: UserResponse, creator = false) => {
     const labelId = `checkbox-list-label-${availableUser.id}`;

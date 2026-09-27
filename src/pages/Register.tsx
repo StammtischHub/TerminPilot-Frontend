@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { Alert, Button, Container, Link, Stack, Typography, useMediaQuery } from '@mui/material';
 import { PersonAddAlt1 as RegisterIcon, PersonOutlined } from '@mui/icons-material';
 import { useAuth } from '../auth/AuthContext.tsx';
-import { ApiError } from '../api/client.ts';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router';
 import { isMobile } from '../utils/ThemeHelpers.ts';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
 import IconTextField from '../components/text-field/IconTextField.tsx';
+import { useSafeSubmit } from '../hooks/useSafeSubmit.ts';
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
@@ -15,6 +15,7 @@ export default function Register() {
   const navigate = useNavigate();
 
   const { register, user, isLoading } = useAuth();
+  const { submit, isSubmitting, error, setError } = useSafeSubmit();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -24,8 +25,6 @@ export default function Register() {
     password?: string;
     passwordConfirmation?: string;
   }>({});
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
 
   if (isLoading) return null;
   if (user) return <Navigate to="/home" replace />;
@@ -80,35 +79,18 @@ export default function Register() {
 
   const formValid = Object.values(fieldErrors).every((value) => value === undefined);
 
-  const handleRegisterSubmit = async () => {
-    setSubmitError(null);
+  const handleSubmit = () => {
     if (!formValid) {
-      setSubmitError('Nicht alle Eingabefelder sind korrekt ausgefüllt.');
+      setError('Nicht alle Eingabefelder sind korrekt ausgefüllt.');
       return;
     }
-    setSubmitting(true);
-    await register(username, password)
-      .then(() => navigate('/home', { replace: true }))
-      .catch((error) => {
-        if (!(error instanceof ApiError)) {
-          setSubmitError(
-            'Unbekannter Fehler bei der Registrierung. Bitte versuche es später erneut.',
-          );
-          return;
-        }
-        switch (error.status) {
-          case 409: {
-            setSubmitError('Dieser Benutzername ist bereits vergeben.');
-            break;
-          }
-          default: {
-            setSubmitError(
-              'Unbekannter Fehler bei der Registrierung. Bitte versuche es später erneut.',
-            );
-          }
-        }
-      })
-      .finally(() => setSubmitting(false));
+    return submit(() => register(username, password), {
+      errorMessages: {
+        400: 'Ungültige Registrierungsdaten wurden übermittelt.',
+        409: 'Dieser Benutzername ist bereits vergeben.',
+      },
+      onSuccess: () => navigate('/home', { replace: true }),
+    });
   };
 
   return (
@@ -134,16 +116,16 @@ export default function Register() {
         component="form"
         onSubmit={async (submit) => {
           submit.preventDefault();
-          await handleRegisterSubmit();
+          await handleSubmit();
         }}
         noValidate
         direction="column"
         spacing={2}
         sx={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}
       >
-        {submitError && (
+        {error && (
           <Alert severity="error" sx={{ width: '100%' }}>
-            {submitError}
+            {error}
           </Alert>
         )}
 
@@ -197,7 +179,7 @@ export default function Register() {
           variant="contained"
           sx={{ width: '80%' }}
           startIcon={<RegisterIcon />}
-          loading={submitting}
+          loading={isSubmitting}
           disabled={!formValid}
         >
           Konto erstellen

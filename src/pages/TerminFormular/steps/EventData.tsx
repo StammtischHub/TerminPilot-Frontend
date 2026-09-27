@@ -6,10 +6,10 @@ import { useFormWizard } from '../FormWizardContext.tsx';
 import { steps, WIZARD_BASE_PATH } from '../steps.config.ts';
 import { Box, Divider, Paper, TextField, Typography } from '@mui/material';
 import { generateSeparateStyle } from '../../../utils/ThemeHelpers.ts';
-import {DateTimePicker, renderTimeViewClock} from '@mui/x-date-pickers';
+import { DateTimePicker, renderTimeViewClock } from '@mui/x-date-pickers';
 import EventIcon from '@mui/icons-material/Event';
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import {TemporalPlainDateTimeProvider} from "mui-temporal-pickers";
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { TemporalPlainDateTimeProvider } from 'mui-temporal-pickers';
 import { Temporal } from 'temporal-polyfill';
 
 export function EventData() {
@@ -21,12 +21,8 @@ export function EventData() {
   }, [visitStep]);
 
   const [title, setTitle] = useState(data.event.title ?? '');
-  const [beginDateTime, setBeginDateTime] = useState<Temporal.PlainDateTime>(
-    data.event.begin
-  );
-  const [endDateTime, setEndDateTime] = useState<Temporal.PlainDateTime>(
-    data.event.end
-  );
+  const [beginDateTime, setBeginDateTime] = useState<Temporal.PlainDateTime>(data.event.begin);
+  const [endDateTime, setEndDateTime] = useState<Temporal.PlainDateTime>(data.event.end);
   const [location, setLocation] = useState(data.event.location ?? '');
   const [notes, setNotes] = useState(data.event.notes ?? '');
 
@@ -49,20 +45,22 @@ export function EventData() {
     if (!newEndDate) return;
     setEndDateTime(newEndDate);
     updateStep('event', { end: newEndDate });
-  }
+  };
 
   const handleLocationChange = (newLocation: string) => {
     setLocation(newLocation);
     updateStep('event', { location: newLocation });
-  }
+  };
 
   const handleNotesChange = (newNotes: string) => {
     setNotes(newNotes);
     updateStep('event', { notes: newNotes });
-  }
+  };
 
   const currentStepIndex = steps.findIndex((step) => step.path === 'event-data');
-  const previousStep = steps.findLast((step, index) => index < currentStepIndex && visitedSteps.includes(step.path));
+  const previousStep = steps.findLast(
+    (step, index) => index < currentStepIndex && visitedSteps.includes(step.path),
+  );
   const nextStep = steps[currentStepIndex + 1];
 
   return (
@@ -73,9 +71,7 @@ export function EventData() {
             <Typography variant="overline" color="text.secondary">
               Neuer Termin
             </Typography>
-            <Typography variant="h4">
-              Termindetails
-            </Typography>
+            <Typography variant="h4">Termindetails</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
               Lege weitere Informationen zum Termin fest.
             </Typography>
@@ -143,7 +139,9 @@ export function EventData() {
                       required: true,
                       fullWidth: true,
                       error: !dateTimeRangeValid,
-                      helperText: !dateTimeRangeValid ? 'Ende muss nach dem Start liegen' : undefined,
+                      helperText: !dateTimeRangeValid
+                        ? 'Ende muss nach dem Start liegen'
+                        : undefined,
                     },
                   }}
                 />

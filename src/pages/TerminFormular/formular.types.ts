@@ -1,9 +1,17 @@
-import { Temporal } from "temporal-polyfill";
-import type {Schema} from "../../api/types.ts";
+import { Temporal } from 'temporal-polyfill';
+import type { Schema } from '../../api/types.ts';
 
 export type Weekday = Schema<'Weekday'>;
 
-export const ALL_WEEKDAYS: Weekday[] = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+export const ALL_WEEKDAYS: Weekday[] = [
+  'MONDAY',
+  'TUESDAY',
+  'WEDNESDAY',
+  'THURSDAY',
+  'FRIDAY',
+  'SATURDAY',
+  'SUNDAY',
+];
 
 export type FormUser = { id: number; name: string };
 
@@ -25,7 +33,9 @@ export type FormData = {
 };
 
 export function createInitialFormData(): FormData {
-  const defaultStartDateTime = Temporal.Now.plainDateTimeISO().add({ hours: 1 }).with({ minute: 30 })
+  const defaultStartDateTime = Temporal.Now.plainDateTimeISO()
+    .add({ hours: 1 })
+    .with({ minute: 30 });
   const currentPlainDate = Temporal.Now.plainDateISO();
 
   return {
@@ -62,7 +72,7 @@ const TEMPORAL_CLASSES = {
 } as const;
 
 type TemporalTypeName = keyof typeof TEMPORAL_CLASSES;
-const TAG = "__temporal";
+const TAG = '__temporal';
 
 export function replaceTemporalTypes(this: unknown, key: string, value: unknown): unknown {
   const original = (this as Record<string, unknown>)[key];
@@ -76,7 +86,7 @@ export function replaceTemporalTypes(this: unknown, key: string, value: unknown)
 }
 
 export function reviveTemporalTypes(_key: string, value: unknown): unknown {
-  if (typeof value === "object" && value !== null && TAG in value) {
+  if (typeof value === 'object' && value !== null && TAG in value) {
     const typeName = (value as Record<string, unknown>)[TAG] as TemporalTypeName;
     const raw = (value as Record<string, unknown>).value as string;
     return TEMPORAL_CLASSES[typeName].from(raw);

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import {useLocation, useNavigate} from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { useFormWizard } from '../FormWizardContext.tsx';
@@ -18,9 +18,10 @@ import {
   ListSubheader,
   Paper,
   Skeleton,
-  Typography, useMediaQuery,
+  Typography,
+  useMediaQuery,
 } from '@mui/material';
-import {generateSeparateStyle, isMobile} from '../../../utils/ThemeHelpers.ts';
+import { generateSeparateStyle, isMobile } from '../../../utils/ThemeHelpers.ts';
 import type { Schema } from '../../../api/types.ts';
 import { api } from '../../../api/client.ts';
 import { useAuthedUser } from '../../../auth/useAuthedUser.ts';
@@ -28,9 +29,9 @@ import type { FormUser } from '../formular.types.ts';
 import GroupOffIcon from '@mui/icons-material/GroupOff';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
-import {useSafeSubmit} from "../../../hooks/useSafeSubmit.ts";
+import { useSafeSubmit } from '../../../hooks/useSafeSubmit.ts';
 
-type UserResponse = Schema<'UserResponse'>
+type UserResponse = Schema<'UserResponse'>;
 
 const getInitials = (name: string) =>
   name
@@ -41,7 +42,7 @@ const getInitials = (name: string) =>
     .join('');
 
 export function UserSelection() {
-  const mobile = useMediaQuery(isMobile)
+  const mobile = useMediaQuery(isMobile);
   const location = useLocation();
   const state = location.state || {};
   const navigate = useNavigate();
@@ -50,7 +51,11 @@ export function UserSelection() {
 
   const { data, visitedSteps, updateStep, visitStep } = useFormWizard();
   const [allUsers, setAllUsers] = useState<UserResponse[]>([]);
-  const { submit: submitAllUsers, isSubmitting: isLoadingAllUsers, error: allUsersError } = useSafeSubmit();
+  const {
+    submit: submitAllUsers,
+    isSubmitting: isLoadingAllUsers,
+    error: allUsersError,
+  } = useSafeSubmit();
   const { submit: submitUserGroup, error: userGroupError } = useSafeSubmit();
 
   const isUserChecked = (users: FormUser[], userToCheck: FormUser) =>
@@ -59,44 +64,43 @@ export function UserSelection() {
   const [checkedUsers, setCheckedUsers] = useState<FormUser[]>(() =>
     isUserChecked(data.event.users, { id: authenticatedUser.id, name: authenticatedUser.username })
       ? data.event.users
-      : [...data.event.users, { id: authenticatedUser.id, name: authenticatedUser.username }]
+      : [...data.event.users, { id: authenticatedUser.id, name: authenticatedUser.username }],
   );
 
   useEffect(() => {
     submitAllUsers(() =>
-      api
-        .GET('/api/users', {})
-        .then(({ data: body, response }) => {
-          if (response.ok) {
-            setAllUsers(body ?? []);
-          }
-          return response;
-        }),
+      api.GET('/api/users', {}).then(({ data: body, response }) => {
+        if (response.ok) {
+          setAllUsers(body ?? []);
+        }
+        return response;
+      }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (!state.userGroupId || visitedSteps.includes("user-selection")) return;
+    if (!state.userGroupId || visitedSteps.includes('user-selection')) return;
 
     submitUserGroup(() =>
       api
         .GET('/api/users/{user-id}/user-groups', {
           params: {
-            path: { "user-id": authenticatedUser.id },
-            query: { "user-group-id": state.userGroupId },
+            path: { 'user-id': authenticatedUser.id },
+            query: { 'user-group-id': state.userGroupId },
           },
         })
         .then(({ data: body, response }) => {
           if (response.ok) {
             const uniqueMembers = Array.from(
               new Map(
-                (body ?? [])
-                  .flatMap((group) => group.members)
-                  .map((member) => [member.id, member]),
+                (body ?? []).flatMap((group) => group.members).map((member) => [member.id, member]),
               ).values(),
             );
-            setCheckedUsers([...uniqueMembers, { id: authenticatedUser.id, name: authenticatedUser.username }]);
+            setCheckedUsers([
+              ...uniqueMembers,
+              { id: authenticatedUser.id, name: authenticatedUser.username },
+            ]);
           }
           return response;
         }),
@@ -110,13 +114,12 @@ export function UserSelection() {
 
   useEffect(() => {
     updateStep('event', { users: checkedUsers });
-  }, [checkedUsers, updateStep])
+  }, [checkedUsers, updateStep]);
 
   const otherUsers = useMemo(
     () => allUsers.filter((availableUser) => availableUser.id !== authenticatedUser.id),
-    [allUsers, authenticatedUser.id]
+    [allUsers, authenticatedUser.id],
   );
-
 
   const handleToggle = (toggledUser: FormUser) => () => {
     const exists = isUserChecked(checkedUsers, toggledUser);
@@ -166,7 +169,10 @@ export function UserSelection() {
               {getInitials(availableUser.username)}
             </Avatar>
           </ListItemAvatar>
-          <ListItemText id={labelId} primary={organizer ? `${availableUser.username} (Du)` : availableUser.username} />
+          <ListItemText
+            id={labelId}
+            primary={organizer ? `${availableUser.username} (Du)` : availableUser.username}
+          />
         </ListItemButton>
       </ListItem>
     );
@@ -178,22 +184,20 @@ export function UserSelection() {
         elevation={4}
         sx={{
           width: generateSeparateStyle('80%', '60%'),
-          p: 4
+          p: 4,
         }}
       >
         <Box sx={{ flexShrink: 0 }}>
           <Typography variant="overline" color="text.secondary">
             Neuer Termin
           </Typography>
-          <Typography variant="h4">
-            Teilnehmer auswählen
-          </Typography>
+          <Typography variant="h4">Teilnehmer auswählen</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
             {checkedUsers.length} Teilnehmer ausgewählt · mindestens 2 nötig
           </Typography>
         </Box>
 
-        <Divider sx={{ my: 3 }}/>
+        <Divider sx={{ my: 3 }} />
 
         {(allUsersError || userGroupError) && (
           <Alert severity="error" sx={{ mb: 2 }}>
@@ -210,7 +214,7 @@ export function UserSelection() {
             maxHeight: 420,
             overflowY: 'auto',
             py: 0,
-            mt: 0
+            mt: 0,
           }}
         >
           {isLoadingAllUsers ? (
@@ -222,13 +226,31 @@ export function UserSelection() {
             ))
           ) : (
             <>
-              <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12, lineHeight: 'normal', pl: 0 }}>
+              <ListSubheader
+                disableSticky
+                sx={{
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.5,
+                  fontSize: 12,
+                  lineHeight: 'normal',
+                  pl: 0,
+                }}
+              >
                 Organisator
               </ListSubheader>
               {renderUserItem(authenticatedUser, true)}
               <Divider component="li" sx={{ mt: 2, mb: 3 }} />
 
-              <ListSubheader disableSticky sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12, lineHeight: 'normal', pl: 0 }}>
+              <ListSubheader
+                disableSticky
+                sx={{
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.5,
+                  fontSize: 12,
+                  lineHeight: 'normal',
+                  pl: 0,
+                }}
+              >
                 Weitere Teilnehmer
               </ListSubheader>
               {otherUsers.length === 0 ? (

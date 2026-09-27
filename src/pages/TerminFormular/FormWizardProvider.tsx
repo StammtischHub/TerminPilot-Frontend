@@ -24,7 +24,9 @@ export function FormWizardProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state, replaceTemporalTypes));
-    } catch {}
+    } catch {
+      // ignored
+    }
   }, [state]);
 
   useEffect(() => {
@@ -40,17 +42,17 @@ export function FormWizardProvider({ children }: { children: ReactNode }) {
   const updateStep = useCallback(
     (step: keyof FormData, payload: Partial<FormData[keyof FormData]>) =>
       dispatch({ type: 'UPDATE_STEP', step, payload } as Action),
-    []
+    [],
   ) as FormWizardContextValue['updateStep'];
   const visitStep = useCallback<FormWizardContextValue['visitStep']>(
     (step) => dispatch({ type: 'VISIT_STEP', step }),
-    []
+    [],
   );
   const reset = useCallback(() => dispatch({ type: 'RESET' }), []);
 
   const value = useMemo<FormWizardContextValue>(
     () => ({ ...state, updateStep, visitStep, reset }),
-    [state, updateStep, visitStep, reset]
+    [state, updateStep, visitStep, reset],
   );
 
   return <FormWizardContext.Provider value={value}>{children}</FormWizardContext.Provider>;

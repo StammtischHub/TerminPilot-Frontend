@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import {createInitialFormData, type FormData} from './formular.types.ts';
+import { createInitialFormData, type FormData } from './formular.types.ts';
 import type { StepPath } from './steps.config.ts';
 
 export type WizardState = {
@@ -16,8 +16,8 @@ export function createInitialState(): WizardState {
 
 export type Action =
   | {
-  [K in keyof FormData]: { type: 'UPDATE_STEP'; step: K; payload: Partial<FormData[K]> };
-}[keyof FormData]
+      [K in keyof FormData]: { type: 'UPDATE_STEP'; step: K; payload: Partial<FormData[K]> };
+    }[keyof FormData]
   | { type: 'VISIT_STEP'; step: StepPath }
   | { type: 'RESET' };
 
@@ -43,10 +43,7 @@ export function reducer(state: WizardState, action: Action): WizardState {
 }
 
 export type FormWizardContextValue = WizardState & {
-  updateStep: <K extends keyof FormData>(
-    step: K,
-    payload: Partial<FormData[K]>,
-  ) => void;
+  updateStep: <K extends keyof FormData>(step: K, payload: Partial<FormData[K]>) => void;
   visitStep: (step: StepPath) => void;
   reset: () => void;
 };

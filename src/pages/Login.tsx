@@ -20,11 +20,16 @@ export default function Login() {
   if (isLoading) return null;
   if (user) return <Navigate to="/home" replace />;
 
-  const handleSubmit = () =>
-    submit(() => login(username, password), {
+  const formValid = username && password;
+
+  const handleSubmit = () => {
+    if (!formValid) return;
+
+    return submit(() => login(username, password), {
       errorMessages: { 401: 'Die Kombination aus Benutzername und Passwort ist falsch.' },
       onSuccess: () => navigate('/home', { replace: true }),
     });
+  }
 
   return (
     <AuthLayout>
@@ -78,6 +83,7 @@ export default function Login() {
           variant="contained"
           sx={{ width: '80%' }}
           startIcon={<LoginIcon />}
+          disabled={!formValid}
           loading={isSubmitting}
         >
           Einloggen

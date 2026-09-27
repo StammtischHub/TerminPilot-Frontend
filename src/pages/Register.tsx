@@ -20,12 +20,6 @@ function validate(username: string, password: string, passwordConfirmation: stri
   };
 }
 
-const ALL_TOUCHED: Record<Field, boolean> = {
-  username: true,
-  password: true,
-  passwordConfirmation: true,
-};
-
 export default function Register() {
   const navigate = useNavigate();
 
@@ -40,7 +34,6 @@ export default function Register() {
   if (isLoading) return null;
   if (user) return <Navigate to="/home" replace />;
 
-  // Fehler werden bei jedem Render aus den aktuellen Werten abgeleitet, nicht im State gehalten.
   const errors = validate(username, password, passwordConfirmation);
   const formValid = Object.values(errors).every((fieldError) => fieldError === undefined);
 
@@ -48,10 +41,8 @@ export default function Register() {
   const touch = (field: Field) => () => setTouched((prev) => ({ ...prev, [field]: true }));
 
   const handleSubmit = () => {
-    if (!formValid) {
-      setTouched(ALL_TOUCHED);
-      return;
-    }
+    if (!formValid) return;
+
     return submit(() => register(username, password), {
       errorMessages: {
         400: 'Ungültige Registrierungsdaten wurden übermittelt.',
@@ -133,6 +124,7 @@ export default function Register() {
           sx={{ width: '80%' }}
           startIcon={<RegisterIcon />}
           loading={isSubmitting}
+          disabled={!formValid}
         >
           Konto erstellen
         </Button>

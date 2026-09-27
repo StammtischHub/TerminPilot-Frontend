@@ -17,7 +17,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const APP_SPECIFIC_PASSWORD_PATTERN = /^[a-z]{4}-[a-z]{4}-[a-z]{4}-[a-z]{4}$/;
 
 const GOOGLE_RESULT_FEEDBACK: Partial<Record<string, Feedback>> = {
-  connected: { severity: 'success', message: 'Dein Google Kalender wurde verbunden.' },
+  connected: { severity: 'success', message: 'Dein Google Kalender wurde erfolgreich verbunden.' },
   error: {
     severity: 'error',
     message: 'Die Verbindung mit Google ist fehlgeschlagen. Bitte versuche es erneut.',

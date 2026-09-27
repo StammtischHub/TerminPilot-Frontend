@@ -70,13 +70,13 @@ export default function HomePage() {
     setGroups((prev) => prev.map((group) => (group.id === updatedGroup.id ? updatedGroup : group)));
     setFeedback({
       severity: 'success',
-      message: `Die Gruppe „${updatedGroup.name}" wurde gespeichert.`,
+      message: `Die Gruppe „${updatedGroup.name}" wurde erfolgreich gespeichert.`,
     });
   };
 
   const onGroupDelete = (groupId: number) => {
     setGroups((prev) => prev.filter((group) => group.id !== groupId));
-    setFeedback({ severity: 'success', message: 'Die Gruppe wurde gelöscht.' });
+    setFeedback({ severity: 'success', message: 'Die Gruppe wurde erfolgreich gelöscht.' });
   };
 
   const renderGroups = () => {

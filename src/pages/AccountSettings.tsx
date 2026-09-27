@@ -89,7 +89,7 @@ function UsernameSection({ user, onSuccess }: SectionProps) {
         },
         onSuccess: () => {
           setTouched(false);
-          onSuccess('Dein Benutzername wurde geändert.');
+          onSuccess('Dein Benutzername wurde erfolgreich geändert.');
         },
       },
     );
@@ -202,7 +202,7 @@ function PasswordSection({ user, onSuccess }: SectionProps) {
         },
         onSuccess: () => {
           resetForm();
-          onSuccess('Dein Passwort wurde geändert.');
+          onSuccess('Dein Passwort wurde erfolgreich geändert.');
         },
       },
     );

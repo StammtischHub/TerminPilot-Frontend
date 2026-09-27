@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Alert, Box, Button, Divider, Paper, Snackbar, Stack, Typography } from '@mui/material';
+import { Alert, Box, Button, Divider, Paper, Stack, Typography } from '@mui/material';
 import { Lock, LockReset, ManageAccounts, PersonOutlined, Save } from '@mui/icons-material';
 import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
+import FeedbackSnackbar, { type Feedback } from '../components/FeedbackSnackbar.tsx';
+import SectionHeader from '../components/SectionHeader.tsx';
 import IconTextField from '../components/text-field/IconTextField.tsx';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
 import { generateSeparateStyle } from '../utils/ThemeHelpers.ts';
@@ -15,7 +17,6 @@ import type { Schema } from '../api/types.ts';
 import { useAuth } from '../auth/AuthContext.tsx';
 import { useAuthedUser } from '../auth/useAuthedUser.ts';
 import { useSafeSubmit } from '../hooks/useSafeSubmit.ts';
-import SectionHeader from '../components/SectionHeader.tsx';
 
 type UserResponse = Schema<'UserResponse'>;
 
@@ -26,7 +27,9 @@ interface SectionProps {
 
 export default function AccountSettingsPage() {
   const user = useAuthedUser();
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+
+  const showSuccess = (message: string) => setFeedback({ severity: 'success', message });
 
   return (
     <AppBarsWrapper>
@@ -41,29 +44,15 @@ export default function AccountSettingsPage() {
 
           <Divider sx={{ my: 3 }} />
 
-          <UsernameSection user={user} onSuccess={setSuccessMessage} />
+          <UsernameSection user={user} onSuccess={showSuccess} />
 
           <Divider sx={{ my: 4 }} />
 
-          <PasswordSection user={user} onSuccess={setSuccessMessage} />
+          <PasswordSection user={user} onSuccess={showSuccess} />
         </Paper>
       </Stack>
 
-      <Snackbar
-        open={successMessage !== null}
-        autoHideDuration={4000}
-        onClose={() => setSuccessMessage(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          severity="success"
-          variant="filled"
-          onClose={() => setSuccessMessage(null)}
-          sx={{ width: '80%' }}
-        >
-          {successMessage}
-        </Alert>
-      </Snackbar>
+      <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback(null)} />
     </AppBarsWrapper>
   );
 }

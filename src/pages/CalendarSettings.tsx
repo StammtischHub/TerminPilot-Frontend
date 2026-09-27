@@ -1,18 +1,9 @@
 import { useEffect, useState } from 'react';
-import {
-  Alert,
-  Box,
-  Button,
-  Divider,
-  Link,
-  Paper,
-  Snackbar,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Button, Divider, Link, Paper, Stack, Typography } from '@mui/material';
 import { AlternateEmail, CloudOutlined, EventAvailable, Google } from '@mui/icons-material';
 import { useSearchParams } from 'react-router';
 import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
+import FeedbackSnackbar, { type Feedback } from '../components/FeedbackSnackbar.tsx';
 import SectionHeader from '../components/SectionHeader.tsx';
 import IconTextField from '../components/text-field/IconTextField.tsx';
 import PasswordTextField from '../components/text-field/PasswordTextField.tsx';
@@ -24,8 +15,6 @@ const GOOGLE_RESULT_PARAM = 'google';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const APP_SPECIFIC_PASSWORD_PATTERN = /^[a-z]{4}-[a-z]{4}-[a-z]{4}-[a-z]{4}$/;
-
-type Feedback = { severity: 'success' | 'error'; message: string };
 
 const GOOGLE_RESULT_FEEDBACK: Partial<Record<string, Feedback>> = {
   connected: { severity: 'success', message: 'Dein Google Kalender wurde verbunden.' },
@@ -81,21 +70,7 @@ export default function CalendarSettingsPage() {
         </Paper>
       </Stack>
 
-      <Snackbar
-        open={shownFeedback !== null}
-        autoHideDuration={6000}
-        onClose={closeFeedback}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          severity={shownFeedback?.severity ?? 'success'}
-          variant="filled"
-          onClose={closeFeedback}
-          sx={{ width: '100%' }}
-        >
-          {shownFeedback?.message}
-        </Alert>
-      </Snackbar>
+      <FeedbackSnackbar feedback={shownFeedback} onClose={closeFeedback} autoHideDuration={6000} />
     </AppBarsWrapper>
   );
 }

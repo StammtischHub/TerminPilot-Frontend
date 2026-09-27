@@ -14,6 +14,7 @@ import {
 import { AddBox, GroupAdd } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import AppBarsWrapper from '../components/AppBarsWrapper.tsx';
+import FeedbackSnackbar, { type Feedback } from '../components/FeedbackSnackbar.tsx';
 import GroupCard from '../components/GroupCard.tsx';
 import EditGroupDialog from '../components/dialog/EditGroupDialog.tsx';
 import { generateSeparateStyle } from '../utils/ThemeHelpers.ts';
@@ -37,6 +38,7 @@ export default function HomePage() {
   const [loadFailed, setLoadFailed] = useState(false);
   const [editingGroup, setEditingGroup] = useState<UserGroupResponse | null>(null);
   const [isEditGroupDialogOpen, setIsEditGroupDialogOpen] = useState(false);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -64,11 +66,18 @@ export default function HomePage() {
     return () => controller.abort();
   }, [user.id]);
 
-  const onGroupSave = (updatedGroup: UserGroupResponse) =>
+  const onGroupSave = (updatedGroup: UserGroupResponse) => {
     setGroups((prev) => prev.map((group) => (group.id === updatedGroup.id ? updatedGroup : group)));
+    setFeedback({
+      severity: 'success',
+      message: `Die Gruppe „${updatedGroup.name}" wurde gespeichert.`,
+    });
+  };
 
-  const onGroupDelete = (groupId: number) =>
+  const onGroupDelete = (groupId: number) => {
     setGroups((prev) => prev.filter((group) => group.id !== groupId));
+    setFeedback({ severity: 'success', message: 'Die Gruppe wurde gelöscht.' });
+  };
 
   const renderGroups = () => {
     if (isLoadingGroups) {
@@ -177,6 +186,8 @@ export default function HomePage() {
         onSave={onGroupSave}
         onDelete={onGroupDelete}
       />
+
+      <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback(null)} />
     </AppBarsWrapper>
   );
 }
